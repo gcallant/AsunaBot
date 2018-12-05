@@ -171,17 +171,42 @@ async def create_event(context):
          return msg.content.strip()
 
       event_name = await ask_user("What do you want to name the event?", author, client)
-      valid = False
 
-      while not valid:
-         try:
-            event_day_raw = await ask_user("What day is the event (ex. 06/24/1990)?", author, client)
-            event_day = datetime.datetime.strptime(event_day_raw, "%m/%d/%Y")
-            valid = True
-         except ValueError as e:
-            await client.send_message(author, "Sorry, you entered the date in an unrecognized format, try again with MM/DD/YYYY\n")
-            #TODO: Insert some logging here
+      async def askUserChecked(message, author, client, function, format, exceptionMessage):
+         valid = False
+         while not valid:
+            try:
+               raw_data = await ask_user(message, author, client)
+               data = function(raw_data, format)
+               return data
+            except:
+              await client.send_message(author, exceptionMessage)
+
+      event_day = await askUserChecked(message="What day is the event (ex. 06/24/1990)?", author=author, client=client,
+                                 function=datetime.datetime.strptime, format="%m/%d/%Y",
+                                 exceptionMessage="Sorry, you entered the date in an unrecognized format, try again with MM/DD/YYYY\n")
+
+
+      
+
       event_time = await ask_user("What time is the event (in CST)?", author, client)
+
+
+      eventNumReminders = await askUserChecked("How many reminders would you like to make (specify a number 0-3)\n"
+                                               "You'll be asked when you'd like to set them in the follow question.",
+                                               author, client, int, 10,
+                                               "Sorry, you entered the number in an unrecognized format, try again with 0-3\n")
+
+      # if eventNumReminders > 0:
+      #    valid = False
+      #    while not valid:
+      #       try:
+      #          eventReminders = [eventNumReminders]
+      #          for events in eventReminders:
+      #             eventReminders[event] = await askUserChecked("").__format__(events + 1)
+      #       except:
+      #          print("Nope")
+
       event_leader = await ask_user("Who is leading the event?", author, client)
       num_of_tanks = await ask_user("How many TANKS for the event?", author, client)
       num_of_heals = await ask_user("How many HEALERS for the event?", author, client)
