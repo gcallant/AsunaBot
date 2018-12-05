@@ -1,5 +1,8 @@
 # Work with Python 3.6
+# Original credit goes to Synthrelik for creating this bot
+# To be used by Incurable Insanity admins for creating and leading trials and other events
 import asyncio
+import platform
 import discord
 import datetime
 from discord.ext.commands import Bot
@@ -8,24 +11,42 @@ from sqlalchemy.sql.expression import true
 from sqlalchemy.orm import sessionmaker
 from asunabot_declative import Event, PlayerSignup, Roster, Base
 
-engine = create_engine('sqlite:///synthbot.db')
+engine = create_engine('sqlite:///asunabot.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 # CONSTANTS
-TOKEN = 'NTE4NTUzNTcyNDI2NjQ1NTA0.DuShbw.TwNTD0i5vvgjbM27QtHCYG3vY44'
-SERVER_ID = '269224197299896320'
-#'269224197299896320'
-SIGNUP_LOG_CHANNEL_ID = '498328294366642195'
-#'498328294366642195'
+
+#Are we on our local dev machine?
+if platform.system() == 'Windows':
+   DEBUG = True
+elif platform.system() == 'Linux':
+   DEBUG = False
+else: #I don't know what the hell is going on
+   sys.exit("This is an unsupported system")
+
+if DEBUG:
+   BOT_TOKEN = 'NTE5NzA2ODQ4NTg1MTg3MzMy.DujPDg.5kr_-LfnCUeRLTR23yaqFY97OWo'
+   #Testing Discord
+   SERVER_ID = '373782910010130442'
+   #bot-test channel
+   SIGNUP_LOG_CHANNEL_ID = '518513396484800512'
+else:
+   BOT_TOKEN = 'NTE4NTUzNTcyNDI2NjQ1NTA0.DuShbw.TwNTD0i5vvgjbM27QtHCYG3vY44'
+   #Incurable Insanity Discord
+   SERVER_ID = '269224197299896320'
+   #Not sure what channel this is '498328294366642195',
+   #oct7-vdsa-training channel
+   SIGNUP_LOG_CHANNEL_ID = '498322289410965504'
+
+
 BOT_PREFIX = ("?")
 PLAYER_ROLES = {
    'tank',
    'heal',
    'mdps',
    'rdps',
-   'flex',
    'reserve'
    }
 
@@ -94,9 +115,12 @@ async def player_signup(context, player_role, *flex_roles_args):
             'Sorry, I am no longer supporting the flex and reserve role.'
             )
          return
+      #Allows users to also type heals without adding an additional dictionary entry
+      if  cleaned_player_role == 'heals':
+            cleaned_player_role = 'heal'
       flex_roles = None
-      if cleaned_player_role == 'flex' or cleaned_player_role == 'reserve':
-         flex_roles = ' '.join(flex_roles_args).strip().lower()
+      # if cleaned_player_role == 'flex' or cleaned_player_role == 'reserve':
+      #    flex_roles = ' '.join(flex_roles_args).strip().lower()
 
       if cleaned_player_role in PLAYER_ROLES:
          existing_player_signup = session.query(PlayerSignup).get((context.message.author.id, event.channel_id))
@@ -147,8 +171,16 @@ async def create_event(context):
          return msg.content.strip()
 
       event_name = await ask_user("What do you want to name the event?", author, client)
-      event_day_raw = await ask_user("What day is the event (ex. 06/24/1990)?", author, client)
-      event_day = datetime.datetime.strptime(event_day_raw, "%m/%d/%Y")
+      valid = False
+
+      while not valid:
+         try:
+            event_day_raw = await ask_user("What day is the event (ex. 06/24/1990)?", author, client)
+            event_day = datetime.datetime.strptime(event_day_raw, "%m/%d/%Y")
+            valid = True
+         except ValueError as e:
+            await client.send_message(author, "Sorry, you entered the date in an unrecognized format, try again with MM/DD/YYYY\n")
+            #TODO: Insert some logging here
       event_time = await ask_user("What time is the event (in CST)?", author, client)
       event_leader = await ask_user("Who is leading the event?", author, client)
       num_of_tanks = await ask_user("How many TANKS for the event?", author, client)
@@ -203,13 +235,14 @@ async def update_channel_info_message(event_id):
 
 
 def get_highest_discord_role(player_id):
-   discord_role = client.get_server(SERVER_ID).get_member(player_id).top_role
+   discord_role = client.get_server(client.get_).get_member(player_id).top_role
    return discord_role.name
 
 
 @client.command(pass_context=True)
 async def tell_them(context):
-   await client.say("My master is currently testing me, please leave me alone. I'm looking at you Doc and Captain Hammer.")
+   await client.say("My master he...he...he...I CAN'T SAY")
+
 
 @client.command(pass_context=True)
 async def tell_them_more(context):
@@ -315,4 +348,4 @@ async def list_servers():
 
 
 client.loop.create_task(list_servers())
-client.run(TOKEN)
+client.run(BOT_TOKEN)
