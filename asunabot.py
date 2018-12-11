@@ -141,7 +141,7 @@ async def player_signup(context, player_role, *flex_roles_args):
          # await client.send_message(context.message.author,
          #     'You are now signed up as ' + player_role.lower() + ", " + context.message.author.mention)
          await client.add_reaction(context.message, '✅')
-         await update_channel_info_message(event_id)
+         await update_channel_info_message(event_id, context)
       else:
          await client.say(
             'Sorry, I do not recognize that role. Please try one of the following roles: ' + ', '.join(
@@ -164,7 +164,8 @@ async def create_event(context):
 
       def check(msg):
          return true
-
+      SERVER_ID = context.message.server.id
+      
       async def ask_user(question, author, client):
          await client.send_message(author, question)
          msg = await client.wait_for_message(author=author, check=check)
@@ -191,21 +192,32 @@ async def create_event(context):
 
       event_time = await ask_user("What time is the event (in CST)?", author, client)
 
-
-      eventNumReminders = await askUserChecked("How many reminders would you like to make (specify a number 0-3)\n"
-                                               "You'll be asked when you'd like to set them in the follow question.",
-                                               author, client, int, 10,
-                                               "Sorry, you entered the number in an unrecognized format, try again with 0-3\n")
-
+      #48 hours, 24 hours, 2hours, 15minutes- canned reminders requested for now
+      # eventNumReminders = await askUserChecked("How many reminders would you like to make (specify a number 0-3)\n"
+      #                                          "You'll be asked when you'd like to set them in the follow question.",
+      #                                          author, client, int, 10,
+      #                                          "Sorry, you entered the number in an unrecognized format, try again with 0-3\n")
+      #
+      # def numberOrdinal(number):
+      #    if number == 1:
+      #       return "1st"
+      #    elif number == 2:
+      #       return "2nd"
+      #    elif number == 3:
+      #       return "3rd"
+      #    else:
+      #       return "It's over 9000!"
+      #
       # if eventNumReminders > 0:
-      #    valid = False
-      #    while not valid:
-      #       try:
-      #          eventReminders = [eventNumReminders]
-      #          for events in eventReminders:
-      #             eventReminders[event] = await askUserChecked("").__format__(events + 1)
-      #       except:
-      #          print("Nope")
+      #    eventReminders = range(eventNumReminders)
+      #    for event in eventReminders:
+      #       eventReminders[event] = await askUserChecked("Enter the day and time you'd like the {} reminder to be sent in 24H time CST\n"
+      #                                                    "For example: 12/07/2018/1600/0 would send a reminder to all users "
+      #                                                    "signed up for the event at 4:00PMCST on 12/07/2018)".format(numberOrdinal(event + 1)),
+      #                                                    author, client, datetime.datetime.strptime,
+      #                                                    "%m/%d/%Y/%H/%M",
+      #                                                    "Sorry, you entered the date in an unrecognized format, try again with MM/DD/YYYY/HHHH/MM\n")
+
 
       event_leader = await ask_user("Who is leading the event?", author, client)
       num_of_tanks = await ask_user("How many TANKS for the event?", author, client)
@@ -242,25 +254,25 @@ async def create_event(context):
       session.add(new_event)
       session.commit()
 
-      channel_message = f'@everyone\nDate: {event_day_raw}\nTime: {event_time} Central\n{event_description}\n\nRaid Leader:{event_leader} \n\n\n{get_event_details(new_channel.id)}'
+      channel_message = f'@everyone\nDate: {event_day}\nTime: {event_time} Central\n{event_description}\n\nRaid Leader:{event_leader} \n\n\n{get_event_details(new_channel.id, context)}'
       channel_info_message = await client.send_message(new_channel, channel_message)
 
       event = session.query(Event).get(new_channel.id)
       event.channel_info_message = channel_info_message.id
       session.commit()
 
-async def update_channel_info_message(event_id):
+async def update_channel_info_message(event_id, context):
    event = session.query(Event).get(event_id)
    channel = client.get_channel(event_id)
    channel_message = await client.get_message(channel, event.channel_info_message)
-   new_message_content = f'@everyone\nDate: {event.event_day.split()[0]}\nTime: {event.event_time} Central\n{event.event_description}\n\nRaid Leader:{event.event_leader} \n\n\n{get_event_details(event_id)}'
+   new_message_content = f'@everyone\nDate: {event.event_day.split()[0]}\nTime: {event.event_time} Central\n{event.event_description}\n\nRaid Leader:{event.event_leader} \n\n\n{get_event_details(event_id, context)}'
    channel_info_message = await client.edit_message(channel_message, new_content=new_message_content)
    event.channel_info_message = channel_info_message.id
    session.commit()
 
 
-def get_highest_discord_role(player_id):
-   discord_role = client.get_server(client.get_).get_member(player_id).top_role
+def get_highest_discord_role(player_id, context):
+   discord_role = client.get_server(context.message.server.id).get_member(player_id).top_role
    return discord_role.name
 
 
@@ -278,11 +290,11 @@ async def tell_them_more(context):
                 brief='Check details for this event.',
                 pass_context=True)
 async def event_details(context, extra=None):
-   event_details = get_event_details(context.message.channel.id, extra)
+   event_details = get_event_details(context.message.channel.id, context, extra)
    await client.say(event_details)
 
 
-def get_event_details(event_id, extra=None):
+def get_event_details(event_id, context, extra=None):
    event = session.query(Event).get(event_id)
    if event:
       signups = session.query(PlayerSignup).filter(PlayerSignup.event_id == event.channel_id).order_by(
@@ -298,7 +310,7 @@ def get_event_details(event_id, extra=None):
             if player_role in signups_by_role:
                signups = signups_by_role[player_role]
                player_names_joined = "\n".join([
-                  f'\t {signup.player_mention} {"(Roles: " + signup.flex_roles + ")" if signup.flex_roles else ""} (Rank:{get_highest_discord_role(signup.id)}) {signup.date_created.strftime("- %Y-%m-%d %H:%M") if extra=="extra" else ""}'
+                  f'\t {signup.player_mention} {"(Roles: " + signup.flex_roles + ")" if signup.flex_roles else ""} (Rank:{get_highest_discord_role(signup.id, context)}) {signup.date_created.strftime("- %Y-%m-%d %H:%M") if extra=="extra" else ""}'
                   for signup in signups])
             if player_names_joined:
                result += f'{player_role_data["emoji"]} {player_role_data["display_name"]}: \n{player_names_joined}\n\n'
@@ -339,7 +351,7 @@ async def cancel_signup(context):
       session.delete(existing_player_signup)
       session.commit()
       await client.say(f'{context.message.author.mention}, you are no longer signed up for this event.')
-      await update_channel_info_message(event_id)
+      await update_channel_info_message(event_id, context)
    else:
       await client.say(f'{context.message.author.mention}, my records show you never signed up for this event.')
 

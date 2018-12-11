@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="synthbot" uuid="d749aced-69e9-4a61-8fe3-ee83b8b861cd">
+    <data-source source="LOCAL" name="asunabot" uuid="01f07da8-97fd-4262-b00b-2002614aed36">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\Grantley\Documents\AsunaBot\synthbot.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\Grantley\Documents\AsunaBot\asunabot.db</jdbc-url>
       <driver-properties>
         <property name="enable_load_extension" value="true" />
       </driver-properties>
