@@ -1,5 +1,6 @@
 # Work with Python 3.6
 # Original credit goes to Synthrelik for creating this bot
+# Work continued on by AerianaFilauria
 # To be used by Incurable Insanity admins for creating and leading trials and other events
 import asyncio
 import platform
@@ -36,9 +37,8 @@ else:
    BOT_TOKEN = 'NTE4NTUzNTcyNDI2NjQ1NTA0.DuShbw.TwNTD0i5vvgjbM27QtHCYG3vY44'
    #Incurable Insanity Discord
    SERVER_ID = '269224197299896320'
-   #Not sure what channel this is '498328294366642195',
-   #oct7-vdsa-training channel
-   SIGNUP_LOG_CHANNEL_ID = '498322289410965504'
+   #botspam channel
+   SIGNUP_LOG_CHANNEL_ID = '480506881237057566'
 
 
 BOT_PREFIX = ("?")
@@ -150,125 +150,155 @@ async def player_signup(context, player_role, *flex_roles_args):
       await client.say("Oops, it looks like there wasn't an event created for this channel.")
 
 
+@client.command(name='edit',
+                description='Edits the event in the current channel.',
+                brief='Edits this event.',
+                pass_context=True)
+async def edit_event(context):
+   author = await check_permissions(context)
+   if not author:
+      return
+
+   message = context.message
+
+   # we do not want the bot to reply to itself
+   if message.author == client.user:
+      return
+
+   channel = context.message.channel
+   event_id = channel.id
+   event = session.query(Event).get(event_id)
+   if event:
+      await update_channel_info_message(event_id, context)
+   else:
+      await client.say("Oops, it looks like there wasn't an event created for this channel.")
+
+
+async def check_permissions(context):
+   if not context.message.author.server_permissions.administrator:
+      await client.send_message(context.message.author,
+                                "Sorry, I don't seem to have you on my list of admins. If this is an error "
+                                "please contact a Thane and let them know you need admin permissions.")
+   else:
+      return context.message.author
+
+
 @client.command(name='event',
                 aliases=['event-create'],
                 description='Creates an event, and a new channel for that event.',
                 brief='Create an event',
                 pass_context=True)
 async def create_event(context):
-   if not context.message.author.server_permissions.administrator:
-      await client.send_message(context.message.author,
-                                "Woah! Slow your roll bub. You're not an admin and can't do this.")
-   else:
-      author = context.message.author
+   author = await check_permissions(context)
+   if not author:
+      return
+   
+   def check(msg):
+      return true
+   SERVER_ID = context.message.server.id
 
-      def check(msg):
-         return true
-      SERVER_ID = context.message.server.id
-      
-      async def ask_user(question, author, client):
-         await client.send_message(author, question)
-         msg = await client.wait_for_message(author=author, check=check)
-         return msg.content.strip()
+   async def ask_user(question, author, client):
+      await client.send_message(author, question)
+      msg = await client.wait_for_message(author=author, check=check)
+      return msg.content.strip()
 
-      event_name = await ask_user("What do you want to name the event?", author, client)
+   event_name = await ask_user("What do you want to name the event?", author, client)
 
-      async def askUserChecked(message, author, client, function, format, exceptionMessage):
-         valid = False
-         while not valid:
-            try:
-               raw_data = await ask_user(message, author, client)
-               data = function(raw_data, format)
-               return data
-            except:
-              await client.send_message(author, exceptionMessage)
+   async def askUserChecked(message, author, client, function, format, exceptionMessage):
+      valid = False
+      while not valid:
+        try:
+            raw_data = await ask_user(message, author, client)
+            data = function(raw_data, format)
+            return data
+        except:
+            await client.send_message(author, exceptionMessage)
 
-      event_day = await askUserChecked(message="What day is the event (ex. 06/24/1990)?", author=author, client=client,
-                                 function=datetime.datetime.strptime, format="%m/%d/%Y",
-                                 exceptionMessage="Sorry, you entered the date in an unrecognized format, try again with MM/DD/YYYY\n")
+   event_day = await askUserChecked(message="What day is the event (ex. 06/24/1990)?", author=author, client=client,
+                              function=datetime.datetime.strptime, format="%m/%d/%Y",
+                              exceptionMessage="Sorry, you entered the date in an unrecognized format, try again with MM/DD/YYYY\n")
 
+   event_time = await askUserChecked("What CST time is the event in 24 hour format (ex. 1800 for 6:00PM)?",
+                                     author, client, datetime.datetime.strptime, "%H",
+                                     "Sorry, you entered the time in an unrecognized format, try again with HHHH (24 Hour)\n")
+   event_leader = await ask_user("Who is leading the event?", author, client)
+   num_of_tanks = await ask_user("How many TANKS for the event?", author, client)
+   num_of_heals = await ask_user("How many HEALERS for the event?", author, client)
+   num_of_mdps = await ask_user("How many MELEE DPS for the event?", author, client)
+   num_of_rdps = await ask_user("How many RANGED DPS for the event?", author, client)
+   event_description = await ask_user("What is the event description?", author, client)
+   event_rank = await ask_user("What is the lowest rank that can apply for the event?", author, client)
 
-      
+   new_roster = Roster(
+      max_tanks=num_of_tanks,
+      max_heal=num_of_heals,
+      max_mdps=num_of_mdps,
+      max_rdps=num_of_rdps
+      )
+   session.add(new_roster)
+   session.commit()
 
-      event_time = await ask_user("What time is the event (in CST)?", author, client)
+   new_channel = await client.create_channel(client.get_server(SERVER_ID), event_name, type=discord.ChannelType.text)
+   await client.send_message(author, 'Created new channel for event with name: ' + event_name)
 
-      #48 hours, 24 hours, 2hours, 15minutes- canned reminders requested for now
-      # eventNumReminders = await askUserChecked("How many reminders would you like to make (specify a number 0-3)\n"
-      #                                          "You'll be asked when you'd like to set them in the follow question.",
-      #                                          author, client, int, 10,
-      #                                          "Sorry, you entered the number in an unrecognized format, try again with 0-3\n")
-      #
-      # def numberOrdinal(number):
-      #    if number == 1:
-      #       return "1st"
-      #    elif number == 2:
-      #       return "2nd"
-      #    elif number == 3:
-      #       return "3rd"
-      #    else:
-      #       return "It's over 9000!"
-      #
-      # if eventNumReminders > 0:
-      #    eventReminders = range(eventNumReminders)
-      #    for event in eventReminders:
-      #       eventReminders[event] = await askUserChecked("Enter the day and time you'd like the {} reminder to be sent in 24H time CST\n"
-      #                                                    "For example: 12/07/2018/1600/0 would send a reminder to all users "
-      #                                                    "signed up for the event at 4:00PMCST on 12/07/2018)".format(numberOrdinal(event + 1)),
-      #                                                    author, client, datetime.datetime.strptime,
-      #                                                    "%m/%d/%Y/%H/%M",
-      #                                                    "Sorry, you entered the date in an unrecognized format, try again with MM/DD/YYYY/HHHH/MM\n")
+   new_event = Event(
+      event_name=event_name,
+      channel_id=new_channel.id,
+      event_day=event_day,
+      event_time=event_time,
+      event_leader=event_leader,
+      created_by_id=author.id,
+      roster=new_roster,
+      event_description=event_description,
+      min_rank=event_rank
+      )
 
+   session.add(new_event)
+   session.commit()
 
-      event_leader = await ask_user("Who is leading the event?", author, client)
-      num_of_tanks = await ask_user("How many TANKS for the event?", author, client)
-      num_of_heals = await ask_user("How many HEALERS for the event?", author, client)
-      num_of_mdps = await ask_user("How many MELEE DPS for the event?", author, client)
-      num_of_rdps = await ask_user("How many RANGED DPS for the event?", author, client)
-      event_description = await ask_user("What is the event description?", author, client)
-      event_rank = await ask_user("What is the lowest rank that can apply for the event?", author, client)
+   channel_message = f'@everyone\nDate: {str(event_day).split()[0]}\nTime: {str(event_time).split()[1]} Central\n{event_description}\n\nRaid Leader:{event_leader} \n\n\n{get_event_details(new_channel.id, context)}'
+   channel_info_message = await client.send_message(new_channel, channel_message)
 
-      new_roster = Roster(
-         max_tanks=num_of_tanks,
-         max_heal=num_of_heals,
-         max_mdps=num_of_mdps,
-         max_rdps=num_of_rdps
-         )
-      session.add(new_roster)
-      session.commit()
-
-      new_channel = await client.create_channel(client.get_server(SERVER_ID), event_name, type=discord.ChannelType.text)
-      await client.send_message(author, 'Created new channel for event with name: ' + event_name)
-
-      new_event = Event(
-         event_name=event_name,
-         channel_id=new_channel.id,
-         event_day=event_day,
-         event_time=event_time,
-         event_leader=event_leader,
-         created_by_id=author.id,
-         roster=new_roster,
-         event_description=event_description,
-         min_rank=event_rank
-         )
-
-      session.add(new_event)
-      session.commit()
-
-      channel_message = f'@everyone\nDate: {event_day}\nTime: {event_time} Central\n{event_description}\n\nRaid Leader:{event_leader} \n\n\n{get_event_details(new_channel.id, context)}'
-      channel_info_message = await client.send_message(new_channel, channel_message)
-
-      event = session.query(Event).get(new_channel.id)
-      event.channel_info_message = channel_info_message.id
-      session.commit()
+   event = session.query(Event).get(new_channel.id)
+   event.channel_info_message = channel_info_message.id
+   session.commit()
 
 async def update_channel_info_message(event_id, context):
    event = session.query(Event).get(event_id)
    channel = client.get_channel(event_id)
    channel_message = await client.get_message(channel, event.channel_info_message)
-   new_message_content = f'@everyone\nDate: {event.event_day.split()[0]}\nTime: {event.event_time} Central\n{event.event_description}\n\nRaid Leader:{event.event_leader} \n\n\n{get_event_details(event_id, context)}'
+   new_message_content = f'@everyone\nDate: {event.event_day.split()[0]}\nTime: {event.event_time.split()[1]} Central\n{event.event_description}\n\nRaid Leader:{event.event_leader} \n\n\n{get_event_details(event_id, context)}'
    channel_info_message = await client.edit_message(channel_message, new_content=new_message_content)
    event.channel_info_message = channel_info_message.id
    session.commit()
+
+def set_reminders():
+   print()
+   #48 hours, 24 hours, 2hours, 15minutes- canned reminders requested for now
+   # eventNumReminders = await askUserChecked("How many reminders would you like to make (specify a number 0-3)\n"
+   #                                          "You'll be asked when you'd like to set them in the follow question.",
+   #                                          author, client, int, 10,
+   #                                          "Sorry, you entered the number in an unrecognized format, try again with 0-3\n")
+   #
+   # def numberOrdinal(number):
+   #    if number == 1:
+   #       return "1st"
+   #    elif number == 2:
+   #       return "2nd"
+   #    elif number == 3:
+   #       return "3rd"
+   #    else:
+   #       return "It's over 9000!"
+   #
+   # if eventNumReminders > 0:
+   #    eventReminders = range(eventNumReminders)
+   #    for event in eventReminders:
+   #       eventReminders[event] = await askUserChecked("Enter the day and time you'd like the {} reminder to be sent in 24H time CST\n"
+   #                                                    "For example: 12/07/2018/1600/0 would send a reminder to all users "
+   #                                                    "signed up for the event at 4:00PMCST on 12/07/2018)".format(numberOrdinal(event + 1)),
+   #                                                    author, client, datetime.datetime.strptime,
+   #                                                    "%m/%d/%Y/%H/%M",
+   #                                                    "Sorry, you entered the date in an unrecognized format, try again with MM/DD/YYYY/HHHH/MM\n")
 
 
 def get_highest_discord_role(player_id, context):
@@ -276,14 +306,14 @@ def get_highest_discord_role(player_id, context):
    return discord_role.name
 
 
-@client.command(pass_context=True)
-async def tell_them(context):
-   await client.say("My master he...he...he...I CAN'T SAY")
-
-
-@client.command(pass_context=True)
-async def tell_them_more(context):
-   await client.say("My master he...he...he...I CAN'T SAY")
+# @client.command(pass_context=True)
+# async def tell_them(context):
+#    await client.say("My master he...he...he...I CAN'T SAY")
+#
+#
+# @client.command(pass_context=True)
+# async def tell_them_more(context):
+#    await client.say("My master he...he...he...I CAN'T SAY")
 
 @client.command(name='event-details',
                 description='Check details for this event.',
@@ -373,16 +403,20 @@ async def on_ready():
    print(client.user.id)
    print('------')
 
+async def checkReminders():
+   stub
 
-async def list_servers():
+
+async def runClient():
    await client.wait_until_ready()
    while not client.is_closed:
       print("Current servers:")
+      #checkReminders()
       for server in client.servers:
          print(server.name)
       print('------')
       await asyncio.sleep(600)
 
 
-client.loop.create_task(list_servers())
+client.loop.create_task(runClient())
 client.run(BOT_TOKEN)
