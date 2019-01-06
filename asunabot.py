@@ -344,6 +344,20 @@ async def cancelEventCreation(context):
       await client.say("ごめんなさい, this command will only work during an event creation.")
 
 
+@client.command(name='reminderCheck',
+                description='Initiates a command to check all events for reminders to send out now, instead of '
+                            'during the usual 5 minute check',
+                brief='Checks all events for reminders',
+                pass_context=True)
+async def runRemindersNow(context):
+   author = await check_permissions(context)
+   if not author:
+      return
+
+   await client.say("A request to run a check for all reminders was initiated")
+   await checkReminders()
+
+
 def get_event_details(event_id, context, extra=None):
    event = session.query(Event).get(event_id)
    if event:
@@ -432,7 +446,7 @@ use the command ?cancel in the {event.event_name} channel."
 
 def imminentMessage(event, player):
    return f"こんにちわ, {player.player_name}, your event {event.event_name} starts in less than 15 minutes!\nPlease get logged in \
-on the character as a {player.player_roles} and x-up in chat in the next 5 minutes.\nPlease ensure your inventory is \
+on your character as a {player.player_roles} and x-up in chat in the next 5 minutes.\nPlease ensure your inventory is \
 clear and you have all appropriate gear, food, and potions needed for the run. We will be starting shortly!"
 
 def getMessageForTime(reminder, event, player):
@@ -468,6 +482,7 @@ def markReminderSent(reminderNumber, eventID):
       if(newReminder == None):
          newReminder = Reminder(id = eventID, first_reminder_sent=False, second_reminder_sent=False,
                                 third_reminder_sent=True, fourth_reminder_sent=False)
+         session.add(newReminder)
       else:
          newReminder.third_reminder_sent = True
       session.commit()
@@ -475,6 +490,7 @@ def markReminderSent(reminderNumber, eventID):
       if(newReminder == None):
          newReminder = Reminder(id = eventID, first_reminder_sent=False, second_reminder_sent=False,
                                 third_reminder_sent=False, fourth_reminder_sent=True)
+         session.add(newReminder)
       else:
          newReminder.fourth_reminder_sent = True
       session.commit()
@@ -503,20 +519,23 @@ def reminderSent(reminderNumber, eventID):
    return reminder
 
 def getTimeRange(event):
-  eventDay = event.event_day
-  eventTime = event.event_time
+  eventDay = str(event.event_day).split()[0]
+  eventTime = str(event.event_time).split()[1]
+  dateString = eventDay + eventTime
+  eventDate = datetime.datetime.strptime(dateString, "%Y-%m-%d%H:%M:%S")
   timeinTwoDays = datetime.datetime.now() + timedelta(hours=48)
   timeinOneDay = datetime.datetime.now() + timedelta(hours=24)
   timeinTwoHours = datetime.datetime.now() + timedelta(hours=2)
   timeinFifteenMinutes = datetime.datetime.now() + timedelta(minutes=15)
+  now = datetime.datetime.now()
 
-  if timeinTwoDays <= eventDay > timeinOneDay:
+  if timeinTwoDays >= eventDate > timeinOneDay:
      return 0
-  elif timeinOneDay <= eventDay > timeinTwoHours:
+  elif timeinOneDay >= eventDate > timeinTwoHours:
      return 1
-  elif timeinTwoHours <= eventTime > timeinFifteenMinutes:
+  elif timeinTwoHours >= eventDate > timeinFifteenMinutes:
      return 2
-  elif timeinFifteenMinutes <= eventTime:
+  elif timeinFifteenMinutes >= eventDate > now:
      return 3
   else:
      return 4
@@ -528,16 +547,16 @@ async def checkReminders():
    for event in events:
       timeRange = getTimeRange(event)
       if timeRange < 0 or timeRange > 3:
-         return
+         continue
       eventID = event.channel_id
       if not reminderSent(timeRange, eventID) or None:
-         await sendReminder(reminder, event)
+         await sendReminder(timeRange, event)
 
 
 def getEventsToRemind():
    timeInTwoDays = datetime.datetime.now() + timedelta(hours=48)
-   events = session.query(Event).filter(Event.active) \
-      .filter(Event.event_day <= timeInTwoDays)
+   events = session.query(Event).filter(Event.active == True) \
+      .filter(timeInTwoDays >= Event.event_day).all()
    return events
 
 
