@@ -111,17 +111,17 @@ async def player_signup(context, player_role, *flex_roles_args):
    event = session.query(Event).get(event_id)
    if event:
       cleaned_player_role = player_role.strip().lower()
-      if cleaned_player_role == 'flex' or cleaned_player_role == 'reserve':
+      if cleaned_player_role == 'flex': #or cleaned_player_role == 'reserve':
          await client.say(
-            'ごめんなさい, I am no longer supporting the flex and reserve role.'
+            'ごめんなさい, I am no longer supporting the flex role.'
             )
          return
       #Allows users to also type heals without adding an additional dictionary entry
       if  cleaned_player_role == 'heals':
-            cleaned_player_role = 'heal'
+         cleaned_player_role = 'heal'
       flex_roles = None
-      # if cleaned_player_role == 'flex' or cleaned_player_role == 'reserve':
-      #    flex_roles = ' '.join(flex_roles_args).strip().lower()
+      if cleaned_player_role == 'reserve':
+          flex_roles = ' '.join(flex_roles_args).strip().lower()
 
       if cleaned_player_role in PLAYER_ROLES:
          existing_player_signup = session.query(PlayerSignup).get((context.message.author.id, event.channel_id))
