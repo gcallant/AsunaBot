@@ -13,7 +13,7 @@ from sqlalchemy.sql.expression import true
 from sqlalchemy.orm import sessionmaker
 from asunabot_declative import Event, PlayerSignup, Reminder, Roster, Base
 
-engine = create_engine('sqlite:///asunabot.db')
+engine = create_engine('sqlite:////home/ec2-user/asunabot.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()

@@ -62,5 +62,5 @@ class Reminder(Base):
 
 
 
-engine = create_engine('sqlite:///asunabot.db')
+engine = create_engine('sqlite:////home/ec2-user/asunabot.db')
 Base.metadata.create_all(engine)
