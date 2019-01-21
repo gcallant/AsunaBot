@@ -3,6 +3,17 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 import datetime
+import platform
+
+
+
+#Are we on our local dev machine?
+if platform.system() == 'Windows':
+   DEBUG = True
+elif platform.system() == 'Linux':
+   DEBUG = False
+else: #I don't know what the hell is going on
+   sys.exit("This is an unsupported system")
 
 # Database Structure
 Base = declarative_base()
@@ -62,5 +73,8 @@ class Reminder(Base):
 
 
 
-engine = create_engine('sqlite:////home/ec2-user/asunabot.db')
+if DEBUG:
+   engine = create_engine('sqlite:///asunabot.db')
+else:
+   engine = create_engine('sqlite:////home/ec2-user/asunabot.db')
 Base.metadata.create_all(engine)

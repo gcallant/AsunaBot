@@ -13,10 +13,8 @@ from sqlalchemy.sql.expression import true
 from sqlalchemy.orm import sessionmaker
 from asunabot_declative import Event, PlayerSignup, Reminder, Roster, Base
 
-engine = create_engine('sqlite:////home/ec2-user/asunabot.db')
-Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+
+
 
 # CONSTANTS
 
@@ -29,18 +27,24 @@ else: #I don't know what the hell is going on
    sys.exit("This is an unsupported system")
 
 if DEBUG:
+   engine = create_engine('sqlite:///asunabot.db')
    BOT_TOKEN = 'NTE5NzA2ODQ4NTg1MTg3MzMy.DujPDg.5kr_-LfnCUeRLTR23yaqFY97OWo'
    #Testing Discord
    SERVER_ID = '373782910010130442'
    #bot-test channel
    SIGNUP_LOG_CHANNEL_ID = '518513396484800512'
 else:
+   engine = create_engine('sqlite:////home/ec2-user/asunabot.db')
    BOT_TOKEN = 'NTE4NTUzNTcyNDI2NjQ1NTA0.DuShbw.TwNTD0i5vvgjbM27QtHCYG3vY44'
    #Incurable Insanity Discord
    SERVER_ID = '269224197299896320'
    #botspam channel
    SIGNUP_LOG_CHANNEL_ID = '480506881237057566'
 
+
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
 BOT_PREFIX = ("?")
 PLAYER_ROLES = {
