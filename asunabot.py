@@ -120,8 +120,14 @@ async def player_signup(context, player_role, *flex_roles_args):
             'ごめんなさい, I am no longer supporting the flex role.'
             )
          return
-      #Allows users to also type heals without adding an additional dictionary entry
-      if  cleaned_player_role == 'heals':
+      
+      #Allows users to use ?x cancel
+      if cleaned_player_role == 'cancel':
+         await cancelSignup(context)
+         return
+
+      #Allows users to also type heals or healer without adding an additional dictionary entry
+      if  cleaned_player_role == 'heals' or cleaned_player_role == 'healer':
          cleaned_player_role = 'heal'
       flex_roles = None
       if cleaned_player_role == 'reserve':
@@ -411,6 +417,9 @@ async def my_events(context):
                 brief='Cancel signup',
                 pass_context=True)
 async def cancel_signup(context):
+   await cancelSignup(context)
+
+async def cancelSignup(context):
    event_id = context.message.channel.id
    player_id = context.message.author.id
    event = session.query(Event).get(event_id)
@@ -422,7 +431,6 @@ async def cancel_signup(context):
       await update_channel_info_message(event_id, context)
    else:
       await client.say(f'{context.message.author.mention}, my records show you never signed up for this event.')
-
 
 @client.event
 async def on_channel_delete(channel):

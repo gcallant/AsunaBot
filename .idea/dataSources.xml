@@ -18,11 +18,11 @@
         </library>
       </libraries>
     </data-source>
-    <data-source source="LOCAL" name="asunabotdb.bak" uuid="c566bcb3-cc4f-4828-a04a-e18b4fa5762d">
+    <data-source source="LOCAL" name="Current-AsunaDB" uuid="c566bcb3-cc4f-4828-a04a-e18b4fa5762d">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\Grantley\Documents\AsunaBot\asunabotdb.bak</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$USER_HOME$/Desktop/asunabot.db</jdbc-url>
       <driver-properties>
         <property name="enable_load_extension" value="true" />
       </driver-properties>
