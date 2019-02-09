@@ -443,6 +443,15 @@ async def on_channel_delete(channel):
 
 
 @client.event
+async def on_member_join(member):
+   roles = member.server.roles
+   for role in roles:
+      if role.name == 'Follower':
+         break
+   await client.add_roles(member, role)
+
+
+@client.event
 async def on_ready():
    print('Logged in as')
    print(client.user.name)
