@@ -33,6 +33,7 @@ if DEBUG:
    SERVER_ID = '373782910010130442'
    #bot-test channel
    SIGNUP_LOG_CHANNEL_ID = '518513396484800512'
+   OFFICER_CHANNEL_ID = '543925704358756352'
 else:
    engine = create_engine('sqlite:////home/ec2-user/asunabot.db')
    BOT_TOKEN = 'NTE4NTUzNTcyNDI2NjQ1NTA0.DuShbw.TwNTD0i5vvgjbM27QtHCYG3vY44'
@@ -40,6 +41,7 @@ else:
    SERVER_ID = '269224197299896320'
    #botspam channel
    SIGNUP_LOG_CHANNEL_ID = '480506881237057566'
+   OFFICER_CHANNEL_ID = '433023155557367809'
 
 
 Base.metadata.bind = engine
@@ -562,6 +564,17 @@ def getTimeRange(event):
   else:
      return 4
 
+@client.command(name='promotionCheck',
+                description='Initiates a command to check users for eligible promotions now',
+                brief='Checks promotions',
+                pass_context=True)
+async def checkPromotionsNow(context):
+   author = await check_permissions(context)
+   if not author:
+      return
+
+   await client.say("A request to run a check for promotions was initiated")
+   await checkPromotions()
 
 async def checkReminders():
    events = getEventsToRemind()
@@ -581,12 +594,64 @@ def getEventsToRemind():
       .filter(timeInTwoDays >= Event.event_day).all()
    return events
 
+async def checkCitizenPromotions(thrallList):
+   eligibleMembers = list()
+   message = "Thrall Members eligible for promotion to Citizen:\n\n```"
+   for member in thrallList:
+      if member.joined_at + datetime.timedelta(weeks=2) >= datetime.datetime.now():
+         eligibleMembers.append(member)
+   if len(eligibleMembers) > 0:
+      for member in eligibleMembers:
+         message += member.name
+         message += "\n"
+      message += "```"
+      await client.send_message(client.get_channel(OFFICER_CHANNEL_ID), message)
+
+
+
+async def checkMarauderPromotions(marauderList):
+   eligibleMembers = list()
+   message = "Citizen Members eligible for promotion to Marauder:\n\n```"
+   for member in marauderList:
+      playerEvents = session.query(PlayerSignup).filter(PlayerSignup.id == member.id).all()
+      if len(playerEvents) >= 5:
+         eligibleMembers.append(member)
+         
+   if len(eligibleMembers) > 0:
+      for member in eligibleMembers:
+         message += member.name
+         message += "\n"
+      message += "```"
+      await client.send_message(client.get_channel(OFFICER_CHANNEL_ID), message)
+
+def compileMembers(citizenList, thrallList):
+   server = client.get_server(SERVER_ID)
+   members = server.members
+   for member in members:
+      if member.top_role.name == 'Thrall' and not discord.utils.get(member.roles, name="Inactive"):
+         thrallList.append(member)
+      elif member.top_role.name == 'Citizen' and not discord.utils.get(member.roles, name="Inactive"):
+         citizenList.append(member)
+
+async def checkPromotions():
+   haveRun = False
+   if haveRun == True:
+      return
+   citizenList = list()
+   thrallList = list()
+   #It's most efficient to compile both lists at the same time, since all members have to be
+   #iterated through- doing this through pass-by-reference is the cleanest way
+   compileMembers(citizenList, thrallList)
+   await checkCitizenPromotions(thrallList)
+   await checkMarauderPromotions(citizenList)
+   haveRun = True
 
 async def runClient():
    await client.wait_until_ready()
    while not client.is_closed:
       print("Current servers:")
       await checkReminders()
+      await checkPromotions()
       for server in client.servers:
          print(server.name)
       print('------')
