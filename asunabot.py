@@ -42,7 +42,8 @@ else:
    SERVER_ID = '269224197299896320'
    #botspam channel
    SIGNUP_LOG_CHANNEL_ID = '480506881237057566'
-   OFFICER_CHANNEL_ID = '433023155557367809'
+   #Asuna-communications channel
+   OFFICER_CHANNEL_ID = '544214746249822209'
 
 
 Base.metadata.bind = engine
@@ -598,7 +599,7 @@ async def checkCitizenPromotions(thrallList):
    eligibleMembers = list()
    message = "Thrall Members eligible for promotion to Citizen:\n\n```"
    for member in thrallList:
-      if member.joined_at + datetime.timedelta(weeks=2) >= datetime.datetime.now():
+      if member.joined_at - datetime.timedelta(weeks=2) >= datetime.datetime.now():
          eligibleMembers.append(member)
    if len(eligibleMembers) > 0:
       for member in eligibleMembers:
