@@ -17,6 +17,7 @@ from asunabot_declative import Event, PlayerSignup, Reminder, Roster, Base
 
 
 # CONSTANTS
+haveRun = False
 
 #Are we on our local dev machine?
 if platform.system() == 'Windows':
@@ -98,7 +99,6 @@ DISCORD_ROLES_RANKED = {
    }
 
 client = Bot(command_prefix=BOT_PREFIX)
-
 
 @client.command(name='x',
                 aliases=['X', 'signup', 'apply'],
@@ -634,7 +634,7 @@ def compileMembers(citizenList, thrallList):
          citizenList.append(member)
 
 async def checkPromotions():
-   haveRun = False
+   global haveRun
    if haveRun == True:
       return
    citizenList = list()
