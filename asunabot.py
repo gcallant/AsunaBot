@@ -13,7 +13,7 @@ from sqlalchemy.sql.expression import true
 from sqlalchemy.orm import sessionmaker
 from asunabot_declative import Event, PlayerSignup, Reminder, Roster, Base
 
-
+# Blitz was here
 
 
 # CONSTANTS
