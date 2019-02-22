@@ -72,6 +72,8 @@ class Reminder(Base):
     fourth_reminder_sent = Column(Boolean, default=False, nullable=True)
 
 
+class Player (Base):
+    __tablename__ = 'player'
 
 if DEBUG:
    engine = create_engine('sqlite:///asunabot.db')
