@@ -37,6 +37,7 @@ class Event(Base):
     id = Column(Integer, autoincrement=True)
     channel_id = Column(String, primary_key=True, nullable=True)
     event_name = Column(String(250), nullable=False)
+    trial_name = Column(String(250), nullable=True)
     date_created = Column(DateTime, default=datetime.datetime.now)
     last_updated = Column(DateTime, onupdate=datetime.datetime.now)
     event_time = Column(DateTime, nullable=False)
@@ -72,8 +73,6 @@ class Reminder(Base):
     fourth_reminder_sent = Column(Boolean, default=False, nullable=True)
 
 
-class Player (Base):
-    __tablename__ = 'player'
 
 if DEBUG:
    engine = create_engine('sqlite:///asunabot.db')
