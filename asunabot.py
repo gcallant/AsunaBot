@@ -217,6 +217,7 @@ async def create_event(context):
       await client.send_message(author, question)
       msg = await client.wait_for_message(author=author, check=check)
       data = msg.content.strip()
+      #This allows you to cancel creating an event
       if data == '?cec':
          raise InterruptedError
       return data
@@ -445,6 +446,20 @@ async def on_channel_delete(channel):
                                 f'The following event was marked inactive due to channel removal: {channel.name}.')
 
 
+def welcomeMessage():
+   return "\n**Welcome to _Incurable Insanity_!**\n\nWe are pleased to have you here and want to take this " \
+          "opportunity to lay out the next steps in your journey with us.\n\nFirstly, most of who and " \
+          "what we are can be found in the **Rules-N-Shit** discord text channel. There you will find our " \
+          "ranking system clearly laid out. If you are a player that is wanting some advice on your toon(s), " \
+          "we have class captains of every role and toon type. Please reach out to any officer *(Thane or above)* " \
+          "about hooking you up with the right mentor. If you are more of a seasoned player and are itching " \
+          "to get into one of our progression teams, please reach out to *Blitznacht* or *Angiefaerie*.\n\nNext, " \
+          "we want you to know that **_Incurable Insanity_** is a welcoming and fun place for people to have a " \
+          "great time and kick ass. We have **__3__ rules**: **__no drama__**, **__no elitism__**, **__help people__**. We do **__not__ tolerate** " \
+          "any **hate speech** but we **_adore_ bad puns and innuendo**. So please feel free let myself or any of " \
+          "the officers know what your in-game goals are and " \
+          "we would love to help you meet those goals!\n\n - **Angiefaerie, GM**"
+
 @client.event
 async def on_member_join(member):
    roles = member.server.roles
@@ -453,6 +468,7 @@ async def on_member_join(member):
    #    if role.name == 'Follower':
    #       break
    await client.add_roles(member, role)
+   await client.send_message(member, welcomeMessage())
 
 
 @client.event
@@ -597,9 +613,10 @@ def getEventsToRemind():
 
 async def checkCitizenPromotions(thrallList):
    eligibleMembers = list()
+   twoWeeksAgo = datetime.datetime.now() - datetime.timedelta(weeks=2)
    message = "Thrall Members eligible for promotion to Citizen:\n\n```"
    for member in thrallList:
-      if member.joined_at - datetime.timedelta(weeks=2) >= datetime.datetime.now():
+      if member.joined_at <= twoWeeksAgo:
          eligibleMembers.append(member)
    if len(eligibleMembers) > 0:
       for member in eligibleMembers:
@@ -614,7 +631,7 @@ async def checkMarauderPromotions(marauderList):
    eligibleMembers = list()
    message = "Citizen Members eligible for promotion to Marauder:\n\n```"
    for member in marauderList:
-      playerEvents = session.query(PlayerSignup).filter(PlayerSignup.id == member.id).all()
+      playerEvents = session.query(PlayerSignup).outerjoin(Event).filter(PlayerSignup.id == member.id and Event.event_day < datetime.datetime.now()).all()
       if len(playerEvents) >= 5:
          eligibleMembers.append(member)
          
