@@ -241,6 +241,11 @@ async def create_event(context):
       event_time = await askUserChecked("What CST time is the event in 24 hour format (ex. 1800 for 6PM)?",
                                         author, client, datetime.datetime.strptime, "%H%M",
                                         "ごめんなさい, you entered the time in an unrecognized format, try again with HHHH (24 Hour)\n")
+      #Adding Event Trial Name
+      eventTrialName = await ask_user("What trials are you running? If multiple please list them."
+                                      " You may use acronyms."
+                                      " If running a dungeon type n/a Example: vAA, vHRC, vSO, vAS, vCR, vHoF, vMoL,"
+                                      " nAA, nHRC, nSO, nCR, nHoF, nMoL", author, client)
       event_leader = await ask_user("Who is leading the event?", author, client)
       num_of_tanks = await ask_user("How many TANKS for the event?", author, client)
       num_of_heals = await ask_user("How many HEALERS for the event?", author, client)
@@ -267,6 +272,7 @@ async def create_event(context):
 
    new_event = Event(
       event_name=event_name,
+      trial_name=eventTrialName,
       channel_id=new_channel.id,
       event_day=event_day,
       event_time=event_time,
@@ -275,6 +281,7 @@ async def create_event(context):
       roster=new_roster,
       event_description=event_description,
       min_rank=event_rank
+
       )
 
    session.add(new_event)
