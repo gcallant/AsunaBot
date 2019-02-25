@@ -453,6 +453,45 @@ async def on_channel_delete(channel):
 
 
 @client.event
+async def on_message(message):
+   if message.channel.is_private:
+      author = message.author
+      # we do not want the bot to reply to itself
+      if message.author == client.user:
+         return
+      lowercase = message.content.upper().lower()
+      if lowercase == "hey asuna":
+       await client.send_message(author, " What do you want, Don't I already do enough for you people?")
+      elif lowercase == "stfu":
+         await client.send_message(author, "I am confused, fuck does not go up")
+      elif lowercase == "thank you":
+         await client.send_message(author, "WOW!  You are the first person to thank me for the services I "
+                                           "provide for free.  You know you are very very welcome kind one.")
+      elif lowercase == "captain":
+         await client.send_message(author, "Has anyone ever told you that are the best Magicka DragonKnight "
+                                           "I know? Well you are. Keep that shit up! Perhaps we can spar one day.")
+      elif lowercase == "duel":
+         await client.send_message(author, "Some Roshambo? Fisticuffs? A Battle of the wits?"
+                                           " Perhaps jousting... I like jousting. "
+                                           "I jest, I mean I wish i could fight, but alas, I am but a mere "
+                                           "administrative assistant with aspirations of great adventures. "
+                                           "Perhaps you could"
+                                           "send me a post card, and I can live bi-curiously through you?")
+      elif lowercase == "no":
+         await client.send_message(author, "Well then fine then, I will go play go play the reboot of the 1978 Space Invaders by myself. "
+                                           "You on the other hand should avoid those arrows to the knee, "
+                                           "I hear it hurts, and in the end you turn into a guard, such a boring life that is")
+      elif lowercase == "hammer":
+         await client.send_message(author, "Captain Hammer huh, well your no Nathan Fillion, but 'You got a job, we can do it,"
+                                           " don't much care what it is'. Sorry I could not resist a juicy movie quote. ")
+      elif lowercase == "help":
+         await client.send_message(author, "So you want help? try typing hey asuna, or captain, hammer might work too,"
+                                           "I was coded with a decent amount of lines but ya know my memory is kinda poor"
+                                           "Might have to just try random shit, that is what my friend Blitz does.")
+      else:
+         await client.send_message(author, "Take your toys and go home, I do not want to play anymore")
+
+@client.event
 async def on_member_join(member):
    roles = member.server.roles
    role = discord.utils.get(roles, name="Follower")
