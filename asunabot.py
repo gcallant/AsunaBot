@@ -50,7 +50,7 @@ session = DBSession()
 BOT_PREFIX = ("?")
 PLAYER_ROLES = {
    'tank',
-   'heal',
+   'healer',
    'mdps',
    'rdps',
    'reserve'
@@ -61,7 +61,7 @@ PLAYER_ROLES_DATA = {
       'emoji': ':shield:',
       'display_name': 'Tank'
       },
-   'heal': {
+   'healer': {
       'emoji': ':ambulance:',
       'display_name': 'Healer'
       },
@@ -109,7 +109,7 @@ async def player_signup(context, player_role, *flex_roles_args):
    channel = context.message.channel
    deleteMessageAfter = 5
    event_id = channel.id
-   flex_roles = None
+   flex_roles = ""
    event = session.query(Event).get(event_id)
    if event:
       cleaned_player_role = player_role.strip().lower()
@@ -126,12 +126,26 @@ async def player_signup(context, player_role, *flex_roles_args):
          return
 
       #Allows users to also type heals or healer without adding an additional dictionary entry
-      if  cleaned_player_role == 'heals' or cleaned_player_role == 'healer':
-         cleaned_player_role = 'heal'
+      if  cleaned_player_role == 'heals' or cleaned_player_role == 'heal':
+         cleaned_player_role = 'healer'
 
       if cleaned_player_role in PLAYER_ROLES:
+         if DISCORD_ROLES_RANKED[message.author.top_role.name] > DISCORD_ROLES_RANKED[event.min_rank]:
+            await client.say(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
+                       f"as a {message.author.top_role.name}. You'll be signed up as reserve.\nIf this is an error, "
+                       f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
+            flex_roles = cleaned_player_role
+            cleaned_player_role = "reserve"
+         elif event.min_rank == "Shieldbreaker" and discord.utils.get(message.author.roles, name=cleaned_player_role) == None:
+            await client.say(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
+                       f"as a {cleaned_player_role}. You'll be signed up as a reserve.\nIf you are certified as a different role, "
+                       f"please signup with a role you are certified for.\nIf this is an error, "
+                       f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
+            flex_roles = cleaned_player_role
+            cleaned_player_role = "reserve"
+
          if flex_roles_args:
-            flex_roles = ' '.join(flex_roles_args).strip().lower()
+            flex_roles = ' '.join(flex_roles_args).strip().lower() + ' ' + flex_roles
          existing_player_signup = session.query(PlayerSignup).get((context.message.author.id, event.channel_id))
          if existing_player_signup:
             existing_player_signup.player_roles = cleaned_player_role
@@ -150,8 +164,8 @@ async def player_signup(context, player_role, *flex_roles_args):
          # await client.send_message(context.message.author,
          #     'You are now signed up as ' + player_role.lower() + ", " + context.message.author.mention)
          await client.add_reaction(context.message, '✅')
-         await disappearingMessage(context.message)
          await update_channel_info_message(event_id, context)
+         await disappearingMessage(context.message)
       else:
          await client.say('ごめんなさい, I do not recognize that role. Please try one of the following roles: '
                           + ', '.join(PLAYER_ROLES), delete_after=deleteMessageAfter)
@@ -236,6 +250,14 @@ async def create_event(context):
             return data
          except ValueError:
             await client.send_message(author, exceptionMessage)
+
+   #Tries rank in dictionary, if rank doesn't exist, throws and rethrows exception
+   def validateMinRank(rank, format=None):
+      try:
+         possibleRank = DISCORD_ROLES_RANKED[rank]
+         return rank
+      except KeyError: #Keeps our function with only one exception
+         raise ValueError
    try:
       event_name = await ask_user("What do you want to name the event?", author, client)
 
@@ -257,7 +279,11 @@ async def create_event(context):
       num_of_mdps = await ask_user("How many MELEE DPS for the event?", author, client)
       num_of_rdps = await ask_user("How many RANGED DPS for the event?", author, client)
       event_description = await ask_user("What is the event description?", author, client)
-      event_rank = await ask_user("What is the lowest rank that can apply for the event?", author, client)
+      event_rank = await askUserChecked("What is the lowest rank that can apply for the event?",
+                                        author, client, validateMinRank, None,
+                                        "ごめんなさい, you entered an unrecognized minimum rank, please enter "
+                                        "one of the following **exactly** as written:\n"
+                                        "Valkyrie, Shieldbreaker, Marauder, Citizen, Thrall, Follower\n")
    except InterruptedError:
       await client.send_message(author, "Event creation has been canceled.")
       print(f'Event creation was canceled by {author} {datetime.datetime.now()}')
@@ -292,7 +318,7 @@ async def create_event(context):
    session.add(new_event)
    session.commit()
 
-   channel_message = f'@everyone\nDate: {str(event_day).split()[0]}\nTime: {str(event_time).split()[1]} Central\n{event_description}\n\nRaid Leader:{event_leader} \n\n\n{get_event_details(new_channel.id, context)}'
+   channel_message = f'@everyone\nDate: {str(event_day).split()[0]}\nTime: {str(event_time).split()[1]} Central\n{event_description}\n\nRaid Leader:{event_leader} \n\n\n{get_event_details(new_channel.id, context)}\n\nMinimum Rank: {event_rank}\nIf you are not this rank, you may still signup, but you will be listed as reserve.'
    channel_info_message = await client.send_message(new_channel, channel_message)
 
    event = session.query(Event).get(new_channel.id)
@@ -303,7 +329,7 @@ async def update_channel_info_message(event_id, context):
    event = session.query(Event).get(event_id)
    channel = client.get_channel(event_id)
    channel_message = await client.get_message(channel, event.channel_info_message)
-   new_message_content = f'@everyone\nDate: {str(event.event_day).split()[0]}\nTime: {str(event.event_time).split()[1]} Central\n{event.event_description}\n\nRaid Leader:{event.event_leader} \n\n\n{get_event_details(event_id, context)}'
+   new_message_content = f'@everyone\nDate: {str(event.event_day).split()[0]}\nTime: {str(event.event_time).split()[1]} Central\n{event.event_description}\n\nRaid Leader:{event.event_leader} \n\n\n{get_event_details(event_id, context)}\n\nMinimum Rank: {event.min_rank}\nIf you are not this rank, you may still signup, but you will be listed as reserve.'
    channel_info_message = await client.edit_message(channel_message, new_content=new_message_content)
    event.channel_info_message = channel_info_message.id
    session.commit()
@@ -440,9 +466,11 @@ async def cancelSignup(context):
       await client.say(f'{context.message.author.mention}, you are no longer signed up for this event.',
                        delete_after=deleteMessageAfter)
       await update_channel_info_message(event_id, context)
+      await disappearingMessage(context.message, deleteMessageAfter)
    else:
       await client.say(f'{context.message.author.mention}, my records show you never signed up for this event.',
                        delete_after=deleteMessageAfter)
+      await disappearingMessage(context.message, deleteMessageAfter)
 
 @client.event
 async def on_channel_delete(channel):
@@ -451,8 +479,7 @@ async def on_channel_delete(channel):
       existing_event.active = False
       session.commit()
       await client.send_message(client.get_channel(SIGNUP_LOG_CHANNEL_ID),
-                                f'The following event was marked inactive due to channel removal: {channel.name}.',
-                                delete_after=10)
+                                f'The following event was marked inactive due to channel removal: {channel.name}.')
 
 
 def welcomeMessage():
