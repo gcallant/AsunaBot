@@ -116,7 +116,8 @@ async def player_signup(context, player_role, *flex_roles_args):
       if cleaned_player_role == 'flex':
          await client.say(
             'If you wish to flex a role, signup for your preferred role with additional specifiers '
-            '(eg. ?x rdps mdps, tank)', delete_after=deleteMessageAfter)
+            '(eg. ?x rdps mdps, tank)', delete_after=10)
+         await disappearingMessage(context.message, deleteMessageAfter)
          return
       
       #Allows users to use ?x cancel
@@ -149,13 +150,21 @@ async def player_signup(context, player_role, *flex_roles_args):
          # await client.send_message(context.message.author,
          #     'You are now signed up as ' + player_role.lower() + ", " + context.message.author.mention)
          await client.add_reaction(context.message, '✅')
+         await disappearingMessage(context.message)
          await update_channel_info_message(event_id, context)
       else:
          await client.say('ごめんなさい, I do not recognize that role. Please try one of the following roles: '
                           + ', '.join(PLAYER_ROLES), delete_after=deleteMessageAfter)
+         await disappearingMessage(context.message, deleteMessageAfter)
    else:
       await client.say("せみません, it looks like there wasn't an event created for this channel.",
                        delete_after=deleteMessageAfter)
+      await disappearingMessage(context.message, deleteMessageAfter)
+
+#Waits specified amount of seconds (default 20), then makes specified message "disappear" (deletes it)
+async def disappearingMessage(message, timeToWait=20):
+   await asyncio.sleep(timeToWait)
+   await client.delete_message(message)
 
 @client.command(name='edit',
                 description='Edits the event in the current channel.',
