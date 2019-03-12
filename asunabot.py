@@ -419,7 +419,7 @@ def get_event_details(event_id, context, extra=None):
             if player_role in signups_by_role:
                signups = signups_by_role[player_role]
                player_names_joined = "\n".join([
-                  f'\t {signup.player_mention} {"(Can Flex: " + signup.flex_roles + ")" if signup.flex_roles else ""} (Rank:{get_highest_discord_role(signup.id, context)}) {signup.date_created.strftime("- %Y-%m-%d %H:%M") if extra=="extra" else ""}'
+                  f'\t {signup.player_mention} {"(Can Flex: " + signup.flex_roles + ")" if signup.flex_roles else ""} (Rank:{get_highest_discord_role(signup.id, context)}) {signup.date_created.strftime("- %Y-%m-%d %H:%M")}' #Removed to always show timestamp if extra=="extra" else ""}'
                   for signup in signups])
             if player_names_joined:
                result += f'{player_role_data["emoji"]} {player_role_data["display_name"]}: \n{player_names_joined}\n\n'
