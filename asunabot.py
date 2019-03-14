@@ -290,6 +290,7 @@ async def create_event(context):
    except InterruptedError:
       await client.send_message(author, "Event creation has been canceled.")
       print(f'Event creation was canceled by {author} {datetime.datetime.now()}')
+      creationevent = False
       return
 
    new_roster = Roster(
@@ -505,6 +506,7 @@ def welcomeMessage():
 async def on_message(message):
    if message.content.startswith("?"):
       await client.process_commands(message)
+      return
    if message.channel.is_private:
       author = message.author
       # we do not want the bot to reply to itself
