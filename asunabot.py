@@ -1,6 +1,6 @@
 # Work with Python 3.6
 # Original credit goes to Synthrelik for creating this bot
-# Work continued on by AerianaFilauria
+# Work continued on by Aeriana Filauria (and some help from Blitznacht112)
 # To be used by Incurable Insanity admins for creating and leading trials and other events
 import asyncio
 import platform
@@ -12,9 +12,6 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.sql.expression import true
 from sqlalchemy.orm import sessionmaker
 from asunabot_declative import Event, PlayerSignup, Reminder, Roster, Base
-
-# Blitz was here
-
 
 # CONSTANTS
 haveRun = False
@@ -53,7 +50,7 @@ session = DBSession()
 BOT_PREFIX = ("?")
 PLAYER_ROLES = {
    'tank',
-   'heal',
+   'healer',
    'mdps',
    'rdps',
    'reserve'
@@ -64,7 +61,7 @@ PLAYER_ROLES_DATA = {
       'emoji': ':shield:',
       'display_name': 'Tank'
       },
-   'heal': {
+   'healer': {
       'emoji': ':ambulance:',
       'display_name': 'Healer'
       },
@@ -75,10 +72,6 @@ PLAYER_ROLES_DATA = {
    'rdps': {
       'emoji': ':bow_and_arrow:',
       'display_name': 'Ranged'
-      },
-   'flex': {
-      'emoji': ':question:',
-      'display_name': 'Flex'
       },
    'reserve': {
       'emoji': ':fingers_crossed:',
@@ -114,14 +107,17 @@ async def player_signup(context, player_role, *flex_roles_args):
       return
 
    channel = context.message.channel
+   deleteMessageAfter = 5
    event_id = channel.id
+   flex_roles = ""
    event = session.query(Event).get(event_id)
    if event:
       cleaned_player_role = player_role.strip().lower()
-      if cleaned_player_role == 'flex': #or cleaned_player_role == 'reserve':
+      if cleaned_player_role == 'flex':
          await client.say(
-            'ごめんなさい, I am no longer supporting the flex role.'
-            )
+            'If you wish to flex a role, signup for your preferred role with additional specifiers '
+            '(eg. ?x rdps mdps, tank)', delete_after=10)
+         await disappearingMessage(context.message, deleteMessageAfter)
          return
       
       #Allows users to use ?x cancel
@@ -130,13 +126,26 @@ async def player_signup(context, player_role, *flex_roles_args):
          return
 
       #Allows users to also type heals or healer without adding an additional dictionary entry
-      if  cleaned_player_role == 'heals' or cleaned_player_role == 'healer':
-         cleaned_player_role = 'heal'
-      flex_roles = None
-      if cleaned_player_role == 'reserve':
-          flex_roles = ' '.join(flex_roles_args).strip().lower()
+      if  cleaned_player_role == 'heals' or cleaned_player_role == 'heal':
+         cleaned_player_role = 'healer'
 
       if cleaned_player_role in PLAYER_ROLES:
+         if DISCORD_ROLES_RANKED[message.author.top_role.name] > DISCORD_ROLES_RANKED[event.min_rank]:
+            await client.say(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
+                       f"as a {message.author.top_role.name}. You'll be signed up as reserve.\nIf this is an error, "
+                       f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
+            flex_roles = cleaned_player_role
+            cleaned_player_role = "reserve"
+         elif event.min_rank == "Shieldbreaker" and discord.utils.get(message.author.roles, name=cleaned_player_role) == None:
+            await client.say(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
+                       f"as a {cleaned_player_role}. You'll be signed up as a reserve.\nIf you are certified as a different role, "
+                       f"please signup with a role you are certified for.\nIf this is an error, "
+                       f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
+            flex_roles = cleaned_player_role
+            cleaned_player_role = "reserve"
+
+         if flex_roles_args:
+            flex_roles = ' '.join(flex_roles_args).strip().lower() + ' ' + flex_roles
          existing_player_signup = session.query(PlayerSignup).get((context.message.author.id, event.channel_id))
          if existing_player_signup:
             existing_player_signup.player_roles = cleaned_player_role
@@ -156,20 +165,29 @@ async def player_signup(context, player_role, *flex_roles_args):
          #     'You are now signed up as ' + player_role.lower() + ", " + context.message.author.mention)
          await client.add_reaction(context.message, '✅')
          await update_channel_info_message(event_id, context)
+         await disappearingMessage(context.message)
       else:
-         await client.say(
-            'ごめんなさい, I do not recognize that role. Please try one of the following roles: ' + ', '.join(
-               PLAYER_ROLES))
+         await client.say('ごめんなさい, I do not recognize that role. Please try one of the following roles: '
+                          + ', '.join(PLAYER_ROLES), delete_after=deleteMessageAfter)
+         await disappearingMessage(context.message, deleteMessageAfter)
    else:
-      await client.say("せみません, it looks like there wasn't an event created for this channel.")
+      await client.say("せみません, it looks like there wasn't an event created for this channel.",
+                       delete_after=deleteMessageAfter)
+      await disappearingMessage(context.message, deleteMessageAfter)
 
+#Waits specified amount of seconds (default 20), then makes specified message "disappear" (deletes it)
+async def disappearingMessage(message, timeToWait=20):
+   await asyncio.sleep(timeToWait)
+   await client.delete_message(message)
 
 @client.command(name='edit',
                 description='Edits the event in the current channel.',
                 brief='Edits this event.',
                 pass_context=True)
 async def edit_event(context):
-   client.say("ごめんなさい, functionality has not yet been implemented for this feature.")
+   deleteMessageAfter = 5
+   client.say("ごめんなさい, functionality has not yet been implemented for this feature.",
+              delete_after=deleteMessageAfter)
    author = await check_permissions(context)
    if not author:
       return
@@ -186,7 +204,8 @@ async def edit_event(context):
    if event:
       await update_channel_info_message(event_id, context)
    else:
-      await client.say("せみません, it looks like there wasn't an event created for this channel.")
+      await client.say("せみません, it looks like there wasn't an event created for this channel.",
+                       delete_after=deleteMessageAfter)
 
 
 async def check_permissions(context):
@@ -230,6 +249,14 @@ async def create_event(context):
             return data
          except ValueError:
             await client.send_message(author, exceptionMessage)
+
+   #Tries rank in dictionary, if rank doesn't exist, throws and rethrows exception
+   def validateMinRank(rank, format=None):
+      try:
+         possibleRank = DISCORD_ROLES_RANKED[rank]
+         return rank
+      except KeyError: #Keeps our function with only one exception
+         raise ValueError
    try:
       event_name = await ask_user("What do you want to name the event?", author, client)
 
@@ -251,7 +278,11 @@ async def create_event(context):
       num_of_mdps = await ask_user("How many MELEE DPS for the event?", author, client)
       num_of_rdps = await ask_user("How many RANGED DPS for the event?", author, client)
       event_description = await ask_user("What is the event description?", author, client)
-      event_rank = await ask_user("What is the lowest rank that can apply for the event?", author, client)
+      event_rank = await askUserChecked("What is the lowest rank that can apply for the event?",
+                                        author, client, validateMinRank, None,
+                                        "ごめんなさい, you entered an unrecognized minimum rank, please enter "
+                                        "one of the following **exactly** as written:\n"
+                                        "Valkyrie, Shieldbreaker, Marauder, Citizen, Thrall, Follower\n")
    except InterruptedError:
       await client.send_message(author, "Event creation has been canceled.")
       print(f'Event creation was canceled by {author} {datetime.datetime.now()}')
@@ -286,7 +317,7 @@ async def create_event(context):
    session.add(new_event)
    session.commit()
 
-   channel_message = f'@everyone\nDate: {str(event_day).split()[0]}\nTime: {str(event_time).split()[1]} Central\n{event_description}\n\nRaid Leader:{event_leader} \n\n\n{get_event_details(new_channel.id, context)}'
+   channel_message = f'@everyone\nDate: {str(event_day).split()[0]}\nTime: {str(event_time).split()[1]} Central\n{event_description}\n\nRaid Leader:{event_leader} \n\n\n{get_event_details(new_channel.id, context)}\n\nMinimum Rank: {event_rank}\nIf you are not this rank, you may still signup, but you will be listed as reserve.'
    channel_info_message = await client.send_message(new_channel, channel_message)
 
    event = session.query(Event).get(new_channel.id)
@@ -297,7 +328,7 @@ async def update_channel_info_message(event_id, context):
    event = session.query(Event).get(event_id)
    channel = client.get_channel(event_id)
    channel_message = await client.get_message(channel, event.channel_info_message)
-   new_message_content = f'@everyone\nDate: {str(event.event_day).split()[0]}\nTime: {str(event.event_time).split()[1]} Central\n{event.event_description}\n\nRaid Leader:{event.event_leader} \n\n\n{get_event_details(event_id, context)}'
+   new_message_content = f'@everyone\nDate: {str(event.event_day).split()[0]}\nTime: {str(event.event_time).split()[1]} Central\n{event.event_description}\n\nRaid Leader:{event.event_leader} \n\n\n{get_event_details(event_id, context)}\n\nMinimum Rank: {event.min_rank}\nIf you are not this rank, you may still signup, but you will be listed as reserve.'
    channel_info_message = await client.edit_message(channel_message, new_content=new_message_content)
    event.channel_info_message = channel_info_message.id
    session.commit()
@@ -335,23 +366,14 @@ def get_highest_discord_role(player_id, context):
    discord_role = client.get_server(context.message.server.id).get_member(player_id).top_role
    return discord_role.name
 
-
-# @client.command(pass_context=True)
-# async def tell_them(context):
-#    await client.say("My master he...he...he...I CAN'T SAY")
-#
-#
-# @client.command(pass_context=True)
-# async def tell_them_more(context):
-#    await client.say("My master he...he...he...I CAN'T SAY")
-
 @client.command(name='event-details',
                 description='Check details for this event.',
                 brief='Check details for this event.',
                 pass_context=True)
 async def event_details(context, extra=None):
    event_details = get_event_details(context.message.channel.id, context, extra)
-   await client.say(event_details)
+   deleteMessageAfter = 20
+   await client.say(event_details, delete_after=deleteMessageAfter)
 
 
 @client.command(name='cec',
@@ -361,7 +383,9 @@ async def event_details(context, extra=None):
                 pass_context=True)
 async def cancelEventCreation(context):
    if not context.message.channel.is_private:
-      await client.say("ごめんなさい, this command will only work during an event creation.")
+      deleteMessageAfter = 5
+      await client.say("ごめんなさい, this command will only work during an event creation.",
+                       delete_after=deleteMessageAfter)
 
 
 @client.command(name='reminderCheck',
@@ -373,8 +397,8 @@ async def runRemindersNow(context):
    author = await check_permissions(context)
    if not author:
       return
-
-   await client.say("A request to run a check for all reminders was initiated")
+   deleteMessageAfter = 5
+   await client.say("A request to run a check for all reminders was initiated", delete_after=deleteMessageAfter)
    await checkReminders()
 
 
@@ -394,7 +418,7 @@ def get_event_details(event_id, context, extra=None):
             if player_role in signups_by_role:
                signups = signups_by_role[player_role]
                player_names_joined = "\n".join([
-                  f'\t {signup.player_mention} {"(Roles: " + signup.flex_roles + ")" if signup.flex_roles else ""} (Rank:{get_highest_discord_role(signup.id, context)}) {signup.date_created.strftime("- %Y-%m-%d %H:%M") if extra=="extra" else ""}'
+                  f'\t {signup.player_mention} {"(Can Flex: " + signup.flex_roles + ")" if signup.flex_roles else ""} (Rank:{get_highest_discord_role(signup.id, context)}) {signup.date_created.strftime("- %Y-%m-%d %H:%M")}' #Removed to always show timestamp if extra=="extra" else ""}'
                   for signup in signups])
             if player_names_joined:
                result += f'{player_role_data["emoji"]} {player_role_data["display_name"]}: \n{player_names_joined}\n\n'
@@ -432,15 +456,20 @@ async def cancel_signup(context):
 async def cancelSignup(context):
    event_id = context.message.channel.id
    player_id = context.message.author.id
+   deleteMessageAfter = 5
    event = session.query(Event).get(event_id)
    existing_player_signup = session.query(PlayerSignup).get((player_id, event_id))
    if existing_player_signup:
       session.delete(existing_player_signup)
       session.commit()
-      await client.say(f'{context.message.author.mention}, you are no longer signed up for this event.')
+      await client.say(f'{context.message.author.mention}, you are no longer signed up for this event.',
+                       delete_after=deleteMessageAfter)
       await update_channel_info_message(event_id, context)
+      await disappearingMessage(context.message, deleteMessageAfter)
    else:
-      await client.say(f'{context.message.author.mention}, my records show you never signed up for this event.')
+      await client.say(f'{context.message.author.mention}, my records show you never signed up for this event.',
+                       delete_after=deleteMessageAfter)
+      await disappearingMessage(context.message, deleteMessageAfter)
 
 @client.event
 async def on_channel_delete(channel):
@@ -490,6 +519,45 @@ async def on_message(message):
                                            "Might have to just try random shit, that is what my friend Blitz does.")
       else:
          await client.send_message(author, "Take your toys and go home, I do not want to play anymore")
+
+# @client.event
+# async def on_message(message):
+#    if message.channel.is_private:
+#       author = message.author
+#       # we do not want the bot to reply to itself
+#       if message.author == client.user:
+#          return
+#       lowercase = message.content.upper().lower()
+#       if lowercase == "hey asuna":
+#        await client.send_message(author, " What do you want, Don't I already do enough for you people?")
+#       elif lowercase == "stfu":
+#          await client.send_message(author, "I am confused, fuck does not go up")
+#       elif lowercase == "thank you":
+#          await client.send_message(author, "WOW!  You are the first person to thank me for the services I "
+#                                            "provide for free.  You know you are very very welcome kind one.")
+#       elif lowercase == "captain":
+#          await client.send_message(author, "Has anyone ever told you that are the best Magicka DragonKnight "
+#                                            "I know? Well you are. Keep that shit up! Perhaps we can spar one day.")
+#       elif lowercase == "duel":
+#          await client.send_message(author, "Some Roshambo? Fisticuffs? A Battle of the wits?"
+#                                            " Perhaps jousting... I like jousting. "
+#                                            "I jest, I mean I wish i could fight, but alas, I am but a mere "
+#                                            "administrative assistant with aspirations of great adventures. "
+#                                            "Perhaps you could"
+#                                            "send me a post card, and I can live bi-curiously through you?")
+#       elif lowercase == "no":
+#          await client.send_message(author, "Well then fine then, I will go play go play the reboot of the 1978 Space Invaders by myself. "
+#                                            "You on the other hand should avoid those arrows to the knee, "
+#                                            "I hear it hurts, and in the end you turn into a guard, such a boring life that is")
+#       elif lowercase == "hammer":
+#          await client.send_message(author, "Captain Hammer huh, well your no Nathan Fillion, but 'You got a job, we can do it,"
+#                                            " don't much care what it is'. Sorry I could not resist a juicy movie quote. ")
+#       elif lowercase == "help":
+#          await client.send_message(author, "So you want help? try typing hey asuna, or captain, hammer might work too,"
+#                                            "I was coded with a decent amount of lines but ya know my memory is kinda poor"
+#                                            "Might have to just try random shit, that is what my friend Blitz does.")
+#       else:
+#          await client.send_message(author, "Take your toys and go home, I do not want to play anymore")
 
 @client.event
 async def on_member_join(member):
@@ -619,8 +687,8 @@ async def checkPromotionsNow(context):
    author = await check_permissions(context)
    if not author:
       return
-
-   await client.say("A request to run a check for promotions was initiated")
+   deleteMessageAfter = 5
+   await client.say("A request to run a check for promotions was initiated", delete_after=deleteMessageAfter)
    await checkPromotions()
 
 async def checkReminders():
