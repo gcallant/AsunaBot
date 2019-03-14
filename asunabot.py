@@ -15,6 +15,7 @@ from asunabot_declative import Event, PlayerSignup, Reminder, Roster, Base
 
 # CONSTANTS
 haveRun = False
+creationevent = False
 
 #Are we on our local dev machine?
 if platform.system() == 'Windows':
@@ -227,7 +228,7 @@ async def create_event(context):
    author = await check_permissions(context)
    if not author:
       return
-   
+
    def check(msg):
       return true
    SERVER_ID = context.message.server.id
@@ -236,7 +237,6 @@ async def create_event(context):
       await client.send_message(author, question)
       msg = await client.wait_for_message(author=author, check=check)
       data = msg.content.strip()
-      #This allows you to cancel creating an event
       if data == '?cec':
          raise InterruptedError
       return data
@@ -259,6 +259,8 @@ async def create_event(context):
       except KeyError: #Keeps our function with only one exception
          raise ValueError
    try:
+      global creationevent
+      creationevent = True
       event_name = await ask_user("What do you want to name the event?", author, client)
 
       event_day = await askUserChecked(message="What day is the event (ex. 06/24/1990)?", author=author, client=client,
@@ -324,6 +326,7 @@ async def create_event(context):
    event = session.query(Event).get(new_channel.id)
    event.channel_info_message = channel_info_message.id
    session.commit()
+   creationevent = False
 
 async def update_channel_info_message(event_id, context):
    event = session.query(Event).get(event_id)
@@ -482,58 +485,48 @@ async def on_channel_delete(channel):
                                 f'The following event was marked inactive due to channel removal: {channel.name}.')
 
 
-def welcomeMessage():
-   return "\n**Welcome to _Incurable Insanity_!**\n\nWe are pleased to have you here and want to take this " \
-          "opportunity to lay out the next steps in your journey with us.\n\nFirstly, most of who and " \
-          "what we are can be found in the **Rules-N-Shit** discord text channel. There you will find our " \
-          "ranking system clearly laid out. If you are a player that is wanting some advice on your toon(s), " \
-          "we have class captains of every role and toon type. Please reach out to any officer *(Thane or above)* " \
-          "about hooking you up with the right mentor. If you are more of a seasoned player and are itching " \
-          "to get into one of our progression teams, please reach out to *Blitznacht* or *Angiefaerie*.\n\nNext, " \
-          "we want you to know that **_Incurable Insanity_** is a welcoming and fun place for people to have a " \
-          "great time and kick ass. We have **__3__ rules**: **__no drama__**, **__no elitism__**, **__help people__**. We do **__not__ tolerate** " \
-          "any **hate speech** but we **_adore_ bad puns and innuendo**. So please feel free let myself or any of " \
-          "the officers know what your in-game goals are and " \
-          "we would love to help you meet those goals!\n\n - **Angiefaerie, GM**"
+@client.event
+async def on_message(message):
+   if message.content.startswith("?"):
+      await client.process_commands(message)
+   if message.channel.is_private:
+      author = message.author
+      # we do not want the bot to reply to itself
+      if message.author == client.user:
+         return
+      if creationevent == False:
+         lowercase = message.content.upper().lower()
+         if lowercase == "hey asuna":
+          await client.send_message(author, " What do you want, Don't I already do enough for you people?")
+         elif lowercase == "stfu":
+            await client.send_message(author, "I am confused, fuck does not go up")
+         elif lowercase == "thank you":
+            await client.send_message(author, "WOW!  You are the first person to thank me for the services I "
+                                              "provide for free.  You know you are very very welcome kind one.")
+         elif lowercase == "captain":
+            await client.send_message(author, "Has anyone ever told you that are the best Magicka DragonKnight "
+                                              "I know? Well you are. Keep that shit up! Perhaps we can spar one day.")
+         elif lowercase == "duel":
+            await client.send_message(author, "Some Roshambo? Fisticuffs? A Battle of the wits?"
+                                              " Perhaps jousting... I like jousting. "
+                                              "I jest, I mean I wish i could fight, but alas, I am but a mere "
+                                              "administrative assistant with aspirations of great adventures. "
+                                              "Perhaps you could"
+                                              "send me a post card, and I can live bi-curiously through you?")
+         elif lowercase == "no":
+            await client.send_message(author, "Well then fine then, I will go play go play the reboot of the 1978 Space Invaders by myself. "
+                                              "You on the other hand should avoid those arrows to the knee, "
+                                              "I hear it hurts, and in the end you turn into a guard, such a boring life that is")
+         elif lowercase == "hammer":
+            await client.send_message(author, "Captain Hammer huh, well your no Nathan Fillion, but 'You got a job, we can do it,"
+                                              " don't much care what it is'. Sorry I could not resist a juicy movie quote. ")
+         elif lowercase == "help":
+            await client.send_message(author, "So you want help? try typing hey asuna, or captain, hammer might work too,"
+                                              "I was coded with a decent amount of lines but ya know my memory is kinda poor"
+                                              "Might have to just try random shit, that is what my friend Blitz does.")
+         else:
+            await client.send_message(author, "Take your toys and go home, I do not want to play anymore")
 
-# @client.event
-# async def on_message(message):
-#    if message.channel.is_private:
-#       author = message.author
-#       # we do not want the bot to reply to itself
-#       if message.author == client.user:
-#          return
-#       lowercase = message.content.upper().lower()
-#       if lowercase == "hey asuna":
-#        await client.send_message(author, " What do you want, Don't I already do enough for you people?")
-#       elif lowercase == "stfu":
-#          await client.send_message(author, "I am confused, fuck does not go up")
-#       elif lowercase == "thank you":
-#          await client.send_message(author, "WOW!  You are the first person to thank me for the services I "
-#                                            "provide for free.  You know you are very very welcome kind one.")
-#       elif lowercase == "captain":
-#          await client.send_message(author, "Has anyone ever told you that are the best Magicka DragonKnight "
-#                                            "I know? Well you are. Keep that shit up! Perhaps we can spar one day.")
-#       elif lowercase == "duel":
-#          await client.send_message(author, "Some Roshambo? Fisticuffs? A Battle of the wits?"
-#                                            " Perhaps jousting... I like jousting. "
-#                                            "I jest, I mean I wish i could fight, but alas, I am but a mere "
-#                                            "administrative assistant with aspirations of great adventures. "
-#                                            "Perhaps you could"
-#                                            "send me a post card, and I can live bi-curiously through you?")
-#       elif lowercase == "no":
-#          await client.send_message(author, "Well then fine then, I will go play go play the reboot of the 1978 Space Invaders by myself. "
-#                                            "You on the other hand should avoid those arrows to the knee, "
-#                                            "I hear it hurts, and in the end you turn into a guard, such a boring life that is")
-#       elif lowercase == "hammer":
-#          await client.send_message(author, "Captain Hammer huh, well your no Nathan Fillion, but 'You got a job, we can do it,"
-#                                            " don't much care what it is'. Sorry I could not resist a juicy movie quote. ")
-#       elif lowercase == "help":
-#          await client.send_message(author, "So you want help? try typing hey asuna, or captain, hammer might work too,"
-#                                            "I was coded with a decent amount of lines but ya know my memory is kinda poor"
-#                                            "Might have to just try random shit, that is what my friend Blitz does.")
-#       else:
-#          await client.send_message(author, "Take your toys and go home, I do not want to play anymore")
 
 @client.event
 async def on_member_join(member):
@@ -543,7 +536,6 @@ async def on_member_join(member):
    #    if role.name == 'Follower':
    #       break
    await client.add_roles(member, role)
-   await client.send_message(member, welcomeMessage())
 
 
 @client.event
@@ -688,10 +680,9 @@ def getEventsToRemind():
 
 async def checkCitizenPromotions(thrallList):
    eligibleMembers = list()
-   twoWeeksAgo = datetime.datetime.now() - datetime.timedelta(weeks=2)
    message = "Thrall Members eligible for promotion to Citizen:\n\n```"
    for member in thrallList:
-      if member.joined_at <= twoWeeksAgo:
+      if member.joined_at - datetime.timedelta(weeks=2) >= datetime.datetime.now():
          eligibleMembers.append(member)
    if len(eligibleMembers) > 0:
       for member in eligibleMembers:
@@ -706,7 +697,7 @@ async def checkMarauderPromotions(marauderList):
    eligibleMembers = list()
    message = "Citizen Members eligible for promotion to Marauder:\n\n```"
    for member in marauderList:
-      playerEvents = session.query(PlayerSignup).outerjoin(Event).filter(PlayerSignup.id == member.id and Event.event_day < datetime.datetime.now()).all()
+      playerEvents = session.query(PlayerSignup).filter(PlayerSignup.id == member.id).all()
       if len(playerEvents) >= 5:
          eligibleMembers.append(member)
          
