@@ -82,7 +82,7 @@ PLAYER_ROLES_DATA = {
 
 DISCORD_ROLES_RANKED = {
    'High Queen': 1,
-   'Jarl': 2,
+   'The Hand': 2,
    'Thane': 3,
    'Aesir': 4,
    'Valkyrie': 5,
