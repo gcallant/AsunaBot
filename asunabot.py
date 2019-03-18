@@ -217,7 +217,17 @@ async def check_permissions(context):
    else:
       return context.message.author
 
+async def ask_user(question, author, client):
+   await client.send_message(author, question)
+   msg = await client.wait_for_message(author=author, check=check)
+   data = msg.content.strip()
+   #This allows you to cancel creating an event
+   if data == '?cec':
+      raise InterruptedError
+   return data
 
+def check(msg):
+   return true
 
 @client.command(name='event',
                 aliases=['event-create'],
@@ -229,18 +239,7 @@ async def create_event(context):
    if not author:
       return
 
-   def check(msg):
-      return true
    SERVER_ID = context.message.server.id
-
-   async def ask_user(question, author, client):
-      await client.send_message(author, question)
-      msg = await client.wait_for_message(author=author, check=check)
-      data = msg.content.strip()
-      #This allows you to cancel creating an event
-      if data == '?cec':
-         raise InterruptedError
-      return data
 
    async def askUserChecked(message, author, client, function, format, exceptionMessage):
       valid = False
@@ -502,6 +501,15 @@ def welcomeMessage():
           "we would love to help you meet those goals!\n\n - **Angiefaerie, GM**"
 
 
+async def echo(message):
+   author = message.author
+   if author.id != "289942088596979713":
+      await client.send_message(author, "Take your toys and go home, I do not want to play anymore")
+      return
+   channel = await ask_user("What's the channel id?", author, client)
+   message = await ask_user("What's the message?", author, client)
+   await client.send_message(client.get_channel(channel), message)
+
 @client.event
 async def on_message(message):
    if message.content.startswith("?"):
@@ -511,6 +519,9 @@ async def on_message(message):
       author = message.author
       # we do not want the bot to reply to itself
       if message.author == client.user:
+         return
+      if message.content == "echo":
+         await echo(message)
          return
       if creationevent == False:
          lowercase = message.content.upper().lower()
