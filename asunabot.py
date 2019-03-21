@@ -376,9 +376,9 @@ def get_highest_discord_role(player_id, context):
                 brief='Check details for this event.',
                 pass_context=True)
 async def event_details(context, extra=None):
+   author = context.message.author
    event_details = get_event_details(context.message.channel.id, context, extra)
-   deleteMessageAfter = 20
-   await client.say(event_details, delete_after=deleteMessageAfter)
+   await client.send_message(author, event_details)
 
 
 @client.command(name='cec',
