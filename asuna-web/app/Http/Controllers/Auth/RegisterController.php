@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Auth\Events\Registered;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -49,9 +52,9 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'eso_name' => ['required', 'string', 'max:255'],
-            'discord_id' => ['required', 'string', 'max:255'],
-            'authcode' => ['required', 'string', 'min:8'],
+            'eso_name' => ['required', 'string', 'max:255', 'unique:users'],
+            'discord_id' => ['required', 'string', 'max:255', 'unique:users'],
+            'authcode' => ['required', 'string', 'min:8', 'unique:users'],
         ]);
     }
 
@@ -73,5 +76,37 @@ class RegisterController extends Controller
             'guild_rank' => 'Follower',
             'role' => 'Member',
         ]);
+    }
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    protected function register(Request $request)
+    {
+        $validator = $this->validator($request->all());
+
+        if($validator->fails()){
+          // User or authcode already exists.
+          return response($validator->errors(), 409);
+        }
+
+        event(new Registered($user = $this->create($request->all())));
+
+        return $this->registered($request, $user);
+    }
+
+    /**
+     * The user has been registered.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function registered(Request $request, $user)
+    {
+        return $user;
     }
 }
