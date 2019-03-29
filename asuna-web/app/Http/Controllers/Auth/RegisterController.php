@@ -75,7 +75,7 @@ class RegisterController extends Controller
             // Every user's "password" is FAKE_PASSWORD.
             // It is never used, but must exist or errors will occur.
             'password' => Hash::make("FAKE_PASSWORD"),
-            'role' => 'Member',
+            'role' => 'MEMBER',
         ]);
     }
 
@@ -92,7 +92,7 @@ class RegisterController extends Controller
 
         $validator = $this->validator($request->all());
 
-        if($validator->fails()){
+        if($validator->fails()) {
           // User already exists.
           return response($validator->errors(), 409);
         }

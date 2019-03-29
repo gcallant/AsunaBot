@@ -25,6 +25,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('create-event', function($user) {
+            return config('enums.roles')[$user->role] >= config('enums.roles')['RAID LEADER'];
+        });
     }
 }
