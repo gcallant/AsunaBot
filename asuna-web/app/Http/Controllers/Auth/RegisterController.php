@@ -87,7 +87,8 @@ class RegisterController extends Controller
      */
     protected function register(Request $request)
     {
-        $request->request->set('authcode', $this->generateAuthCode());
+        $authcode = $this->generateAuthCode();
+        $request->request->set('authcode', hash('sha256', $authcode));
 
         $validator = $this->validator($request->all());
 
@@ -97,6 +98,10 @@ class RegisterController extends Controller
         }
 
         event(new Registered($user = $this->create($request->all())));
+
+        // Replace hashed authcode with plaintext to return to users.
+        // Hashed representation is still in database.
+        $user->authcode = $authcode;
 
         return $this->registered($request, $user);
     }

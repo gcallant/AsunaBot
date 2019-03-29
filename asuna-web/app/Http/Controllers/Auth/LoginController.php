@@ -50,6 +50,9 @@ class LoginController extends Controller
     protected function validateLogin(Request $request)
     {
         $request->request->set('password', "FAKE_PASSWORD");
+        $authcode = $request->input('authcode');
+        $authcode = hash('sha256', $authcode);
+        $request->request->set('authcode', $authcode);
 
         $this->validate($request, [
             'authcode' => 'required|string',
@@ -80,6 +83,19 @@ class LoginController extends Controller
 
         return $this->authenticated($request, $this->guard()->user())
                 ?: redirect()->intended($this->redirectPath());
+    }
+
+    /**
+     * Get the failed login response instance.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        return response()->json(['data' => 'Login failed.']);
     }
 
     /**
