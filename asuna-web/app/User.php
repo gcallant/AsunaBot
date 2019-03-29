@@ -25,7 +25,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'authcode', 'remember_token',
+        'password', 'remember_token',
     ];
 
     /**
@@ -35,4 +35,29 @@ class User extends Authenticatable
      */
     protected $casts = [
     ];
+
+    /**
+     * Generate an API session token.
+     *
+     * @return The generated token.
+     */
+    public function generateToken()
+    {
+      $this->api_token = str_random(60);
+      $this->save();
+
+      return $this->api_token;
+    }
+
+    /**
+     * Invalidate the API session token.
+     *
+     * @return void
+     */
+     public function invalidateToken()
+     {
+       $this->api_token = null;
+       $this->save();
+     }
+
 }

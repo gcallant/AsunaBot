@@ -86,10 +86,12 @@ class RegisterController extends Controller
      */
     protected function register(Request $request)
     {
+        $request->request->set('authcode', $this->generateAuthCode());
+
         $validator = $this->validator($request->all());
 
         if($validator->fails()){
-          // User or authcode already exists.
+          // User already exists.
           return response($validator->errors(), 409);
         }
 
@@ -107,6 +109,16 @@ class RegisterController extends Controller
      */
     protected function registered(Request $request, $user)
     {
-        return $user;
+        return response()->json(['data' => $user->toArray()], 201);
+    }
+
+    /**
+    * Generate a random 12 character auth code for user login.
+    *
+    * @return The generated authcode.
+    */
+    public function generateAuthCode()
+    {
+      return str_random(4) . '-' . str_random(4) . '-' . str_random(4);
     }
 }

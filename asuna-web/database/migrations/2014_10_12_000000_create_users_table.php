@@ -15,12 +15,13 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('eso_name');
+            $table->string('eso_name')->unique();
             $table->string('discord_id')->unique();
-            $table->string('authcode');
+            $table->string('authcode')->unique();
             $table->string('password'); // Not used, but must be present.
             $table->string('guild_rank');
             $table->string('role');
+            $table->string('api_token')unique()->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

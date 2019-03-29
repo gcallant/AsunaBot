@@ -25,8 +25,6 @@
                             </div>
                         </div> -->
 
-                        <input type="hidden" name="password" value="FAKE_PASSWORD">
-
                         <div class="form-group row">
                             <label for="authcode" class="col-md-4 col-form-label text-md-right">{{ __('Authcode') }}</label>
 
