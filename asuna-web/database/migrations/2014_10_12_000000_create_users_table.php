@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password'); // Not used, but must be present.
             $table->string('guild_rank');
             $table->string('role');
-            $table->string('api_token')unique()->nullable();
+            $table->string('api_token')->unique()->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

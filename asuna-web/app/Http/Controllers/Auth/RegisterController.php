@@ -54,6 +54,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'eso_name' => ['required', 'string', 'max:255', 'unique:users'],
             'discord_id' => ['required', 'string', 'max:255', 'unique:users'],
+            'guild_rank' => ['required', 'string', 'max:255'],
             'authcode' => ['required', 'string', 'min:8', 'unique:users'],
         ]);
     }
@@ -69,11 +70,11 @@ class RegisterController extends Controller
         return User::create([
             'eso_name' => $data['eso_name'],
             'discord_id' => $data['discord_id'],
+            'guild_rank' => $data['guild_rank'],
             'authcode' => $data['authcode'],
             // Every user's "password" is FAKE_PASSWORD.
             // It is never used, but must exist or errors will occur.
             'password' => Hash::make("FAKE_PASSWORD"),
-            'guild_rank' => 'Follower',
             'role' => 'Member',
         ]);
     }

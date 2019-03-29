@@ -6,6 +6,7 @@ import asyncio
 import platform
 import discord
 import datetime
+import requests
 from datetime import timedelta
 from discord.ext.commands import Bot
 from sqlalchemy import create_engine, text
@@ -13,9 +14,11 @@ from sqlalchemy.sql.expression import true
 from sqlalchemy.orm import sessionmaker
 from asunabot_declative import Event, PlayerSignup, Reminder, Roster, Base
 
-# CONSTANTS
+# GLOBALS
 haveRun = False
 creationevent = False
+registering = False
+
 
 #Are we on our local dev machine?
 if platform.system() == 'Windows':
@@ -120,7 +123,7 @@ async def player_signup(context, player_role, *flex_roles_args):
             '(eg. ?x rdps mdps, tank)', delete_after=10)
          await disappearingMessage(context.message, deleteMessageAfter)
          return
-      
+
       #Allows users to use ?x cancel
       if cleaned_player_role == 'cancel':
          await cancelSignup(context)
@@ -476,6 +479,41 @@ async def cancelSignup(context):
                        delete_after=deleteMessageAfter)
       await disappearingMessage(context.message, deleteMessageAfter)
 
+@client.command(name='register',
+                description='Registers the user with the web application.',
+                brief='Website registration.',
+                pass_context=True)
+async def registerUser(context):
+    global registering
+    registering = True
+    author = context.message.author
+    guild_rank = "Follower"
+    try:
+        guild_rank = author.top_role.name
+    except:
+        await client.send_message(author, "Please re-initiate the registration process from the `#bot-spam` channel.")
+        return
+
+    eso_name = await ask_user("狼よ、我が敵を食らえ!\nWhat is your ESO in-game name?", author, client)
+
+    request_data = {'eso_name' : eso_name, 'discord_id' : author.id, 'guild_rank' : guild_rank}
+
+    response = requests.post('http://localhost:8000/api/register', data=request_data)
+
+    if response.status_code == 201:
+        authcode = response.json()['data']['authcode']
+        success_message = f'竜神の剣を喰らえ!\nThank you for registering. You can now log into the website using your custom authcode:\n`{authcode}`'
+        await client.send_message(author, success_message)
+        await client.send_message(client.get_channel(OFFICER_CHANNEL_ID), f'{author.mention} just successfully registered with ESO name {eso_name}')
+    elif response.status_code == 409:
+        fail_message = "龍が我が敵を喰らう!\nIt looks like you're already registered. You can log into the website with your custom authcode, or ask an admin for a new one."
+        await client.send_message(author, fail_message)
+        await client.send_message(client.get_channel(OFFICER_CHANNEL_ID), f'{author.mention} is having trouble trying to register with ESO name {eso_name}')
+
+    registering = False
+
+
+
 @client.event
 async def on_channel_delete(channel):
    existing_event = session.query(Event).get(channel.id)
@@ -523,7 +561,7 @@ async def on_message(message):
       if message.content == "echo":
          await echo(message)
          return
-      if creationevent == False:
+      if not (creationevent or registering):
          lowercase = message.content.upper().lower()
          if lowercase == "hey asuna":
           await client.send_message(author, " What do you want, Don't I already do enough for you people?")
@@ -731,7 +769,7 @@ async def checkMarauderPromotions(marauderList):
       playerEvents = session.query(PlayerSignup).outerjoin(Event).filter(PlayerSignup.id == member.id and Event.event_day < datetime.datetime.now()).all()
       if len(playerEvents) >= 5:
          eligibleMembers.append(member)
-         
+
    if len(eligibleMembers) > 0:
       for member in eligibleMembers:
          message += member.name
