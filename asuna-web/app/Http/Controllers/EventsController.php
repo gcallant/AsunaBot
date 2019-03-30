@@ -17,7 +17,7 @@ class EventsController extends Controller
      */
     public function index()
     {
-        $events = \App\Event::all();
+        $events = Event::all();
         return response()->json(['events' => $events], 200);
     }
 
@@ -43,10 +43,10 @@ class EventsController extends Controller
           return response()->json(['error' => 'Not authorized to create events.'], 403);
         }
 
-
-        $user = Auth::guard('api')->user();
-
-        $request->request->set('created_by_id', $user->discord_id);
+        if (Gate::denies('proxy-create-event')) {
+          $user = Auth::guard('api')->user();
+          $request->request->set('created_by_id', $user->discord_id);
+        }
 
         $validator = Validator::make($request->all(), [
           'event_name' => ['required', 'max:20'],
@@ -58,6 +58,7 @@ class EventsController extends Controller
           'description' => ['required', 'min:3', 'max:250'],
           'min_rank' => ['required'],
           'channel_info_message' => ['nullable'],
+          'channel_id' => ['nullable'],
         ]);
 
         if($validator->fails()) {
