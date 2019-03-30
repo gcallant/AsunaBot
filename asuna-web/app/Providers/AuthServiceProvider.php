@@ -28,5 +28,11 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('create-event', function($user) {
             return config('enums.roles')[$user->role] >= config('enums.roles')['RAID LEADER'];
         });
+
+        Gate::define('edit-event', function($user, $event) {
+            $isAdmin = config('enums.roles')[$user->role] >= config('enums.roles')['ADMIN'];
+            $isEventCreator = $event->created_by_id == $user->discord_id;
+            return $isEventCreator || $isAdmin;
+        });
     }
 }

@@ -75,9 +75,9 @@ class EventsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Event $event)
     {
-        //
+        return response()->json(['event' => $event], 200);
     }
 
     /**
@@ -94,13 +94,37 @@ class EventsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request Contains the updated fields
+     * @param  \App\Event $event The current object in the database
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Event $event)
     {
-        //
+      if (Gate::denies('edit-event', $event)) {
+        return response()->json(['error' => 'Not authorized to update this event.'], 403);
+      }
+
+      $validator = Validator::make($request->all(), [
+        'event_name' => ['max:20'],
+        'trial_name' => ['max:20'],
+        'event_time' => ['date', 'after:now'],
+        'created_by_id' => ['exists:users,discord_id'],
+        'event_leader' => ['exists:users,discord_id'],
+        'active' => ['nullable', 'boolean'],
+        'description' => ['min:3', 'max:250'],
+        'min_rank' => ['string'],
+        'channel_info_message' => ['nullable'],
+        'channel_id' => ['nullable'],
+      ]);
+
+      if($validator->fails()) {
+        return response($validator->errors(), 400);
+      }
+
+      $updatedEvent = $event->update($validator->validated());
+
+      return response()->json(['event' => $event], 200);
+
     }
 
     /**
