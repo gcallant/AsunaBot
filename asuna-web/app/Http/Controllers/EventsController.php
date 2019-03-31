@@ -7,19 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Input;
+use App\Traits\Filterable;
 
 class EventsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $events = Event::all();
-        return response()->json(['events' => $events], 200);
-    }
+    use Filterable;
+
+    protected $resourceClass = Event::class;
 
     /**
      * Show the form for creating a new resource.
