@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Input;
 use App\Traits\Filterable;
 
 class EventsController extends Controller
@@ -69,7 +67,7 @@ class EventsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  Event $event
      * @return \Illuminate\Http\Response
      */
     public function show(Event $event)

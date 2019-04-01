@@ -23,4 +23,5 @@ Route::post('logout', 'Auth\LoginController@logout');
 
 Route::group(['middleware' => 'auth:api'], function() {
     Route::resource('events', 'EventsController');
+    Route::resource('users', 'UsersController');
 });

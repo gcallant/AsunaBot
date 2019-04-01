@@ -115,7 +115,8 @@ class RegisterController extends Controller
      */
     protected function registered(Request $request, $user)
     {
-        return response()->json(['data' => $user->toArray()], 201);
+        $authcode = $user->authcode;
+        return response()->json(['authcode' => $authcode], 201);
     }
 
     /**
