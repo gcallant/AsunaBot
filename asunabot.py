@@ -636,9 +636,19 @@ def markReminderSent(reminderNumber, eventID):
 async def sendReminder(reminder, event):
    players = session.query(PlayerSignup).filter(PlayerSignup.event_id == event.channel_id)
 
+
    for player in players:
       user = await client.get_user_info(player.id)
-      await client.send_message(destination=user, content=getMessageForTime(reminder, event, player))
+      try:
+         await client.send_message(destination=user, content=getMessageForTime(reminder, event, player))
+      except discord.HTTPException as httpError:
+         print(f'Error sending reminder to {user}\n{httpError}')
+      except discord.Forbidden as forbiddenError:
+         print(f'{user}, the dumbass blocked Asuna, or something\n{forbiddenError}')
+      except discord.NotFound as nfError:
+         print(f'{user} was not found, you dicked something up you idjit.\n{nfError}')
+      except discord.InvalidArgument as iaError:
+         print(f'See above- you idjit\n{iaError}')
 
    markReminderSent(reminder, event.channel_id)
 
