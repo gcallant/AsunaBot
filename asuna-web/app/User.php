@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'eso_name', 'discord_id', 'authcode', 'role', 'guild_rank', 'password'
+        'eso_name', 'discord_id', 'discord_name', 'authcode', 'role', 'guild_rank', 'password'
     ];
 
     /**

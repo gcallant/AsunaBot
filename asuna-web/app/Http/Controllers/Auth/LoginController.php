@@ -108,8 +108,8 @@ class LoginController extends Controller
     protected function authenticated(Request $request, $user)
     {
         // Generate an API session token.
-        $user->generateToken();
-        return response()->json(['data' => $user->toArray()], 200);
+        $api_token = $user->generateToken();
+        return response()->json(['api_token' => $api_token], 200);
     }
 
     /**

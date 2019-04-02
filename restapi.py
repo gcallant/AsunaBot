@@ -13,8 +13,8 @@ class RegistrationConflictException(ApiException):
     pass
 
 
-def getEvents():
-    response = requests.get(f'{API_URI}/events', headers=AUTH_HEADER)
+def getEvents(filters={}):
+    response = requests.get(f'{API_URI}/events', headers=AUTH_HEADER, params=filters)
     if response.status_code == 200:
         return response.json()['data']
     print("Multiple event retrieval failed: ", response.json())
@@ -42,8 +42,8 @@ def registerUser(user):
     print(f'HTTP Error {response.status_code}')
     raise RegistrationConflictException(f'HTTP {response.status_code}')
 
-def getUsers():
-    response = requests.get(f'{API_URI}/users', headers=AUTH_HEADER)
+def getUsers(filters={}):
+    response = requests.get(f'{API_URI}/users', headers=AUTH_HEADER, params=filters)
     if response.status_code == 200:
         return response.json()['data']
     print("Multiple user retrieval failed: ", response.json())
@@ -65,6 +65,7 @@ def updateUser(user):
     raise ApiException(f'HTTP {response.status_code}\n{response.json()}')
 
 if __name__ == '__main__':
+    # Lazy programmer unit tests
     user = getUser(4)
     user['role'] = "ADMIN"
     print(updateUser(user))

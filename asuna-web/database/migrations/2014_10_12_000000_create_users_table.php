@@ -17,8 +17,9 @@ class CreateUsersTable extends Migration
             $table->bigIncrements('id');
             $table->string('eso_name')->unique();
             $table->string('discord_id')->unique();
+            $table->string('discord_name');
             $table->string('authcode')->unique();
-            $table->string('password'); // Not used, but must be present.
+            $table->string('password'); // Not really used, but must be present.
             $table->string('guild_rank');
             $table->string('role');
             $table->string('api_token')->unique()->nullable();

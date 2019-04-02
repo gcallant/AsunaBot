@@ -51,6 +51,10 @@ class EventsController extends Controller
           'active' => ['nullable', 'boolean'],
           'description' => ['required', 'min:3', 'max:250'],
           'min_rank' => ['required'],
+          'TANK' => ['integer', 'required_without_all:HEALER,MDPS,RDPS'],
+          'HEALER' => ['integer', 'required_without_all:TANK,MDPS,RDPS'],
+          'MDPS' => ['integer', 'required_without_all:HEALER,TANK,RDPS'],
+          'RDPS' => ['integer', 'required_without_all:HEALER,MDPS,TANK'],
           'channel_info_message' => ['nullable'],
           'channel_id' => ['nullable'],
         ]);

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
+use App\Signup;
 use App\Traits\Filterable;
 
 class UsersController extends Controller
@@ -34,6 +35,26 @@ class UsersController extends Controller
     public function store(Request $request)
     {
         //
+    }
+
+    /**
+    * Get a list of users signed up for a particular event.
+    *
+    * @param int $id Event ID.
+    * @return Illuminate\Https\Response
+    */
+    public function getByEvent($id)
+    {
+      $users = [];
+      $signups = Signup::where(['event_id' => $id])->get()->all();
+
+      foreach($signups as $signup)
+      {
+        $users[] = User::find($signup->player_id);
+      }
+
+      return response()->json(['users' => $users], 200);
+
     }
 
     /**
@@ -76,7 +97,7 @@ class UsersController extends Controller
         'discord_id' => ['string'],
         'authcode' => ['string'],
         'guild_rank' => ['string'],
-        'role' => ['string'],
+        'role' => ['string', config('rules.isValidAppRole')],
 
       ]);
 

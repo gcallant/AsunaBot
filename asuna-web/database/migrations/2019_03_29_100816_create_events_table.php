@@ -25,6 +25,10 @@ class CreateEventsTable extends Migration
             $table->string('description');
             $table->string('min_rank');
             $table->string('channel_info_message')->nullable();
+            $table->integer('TANK')->default(0);
+            $table->integer('HEALER')->default(0);
+            $table->integer('MDPS')->default(0);
+            $table->integer('RDPS')->default(0);
             $table->timestamps();
         });
     }
