@@ -1,0 +1,12 @@
+.form-control.is-invalid, .was-validated .form-control:invalid {
+  padding-right: 0;
+  background-image: none;
+}
+
+.form-control.is-invalid:focus, .was-validated .form-control:invalid:focus {
+  box-shadow: none;
+}
+
+.btn:focus {
+  box-shadow: none;
+}

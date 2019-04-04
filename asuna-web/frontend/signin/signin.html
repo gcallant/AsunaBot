@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="./signin/signin.css">
+
+<div class="container">
+
+  <div class="row justify-content-md-center pt-5">
+    <h1 class="text-light" style="font-size:1000%">Asuna<span class='font-weight-light'>Web</span></h1>
+  </div>
+
+  <div class="row justify-content-md-center pt-5">
+    <form  data-ng-submit="vm.submit()" autocomplete="off">
+		<div class="form-group pb-2">
+		  <input type="text" class="form-control authcode-input" data-ng-class="vm.showSignInError ? 'is-invalid' : ''" id="authcode-input" spellcheck="false" placeholder="XXXX-XXXX-XXXX" data-ng-model="vm.authcode">
+      <div class="invalid-feedback">
+          Invalid Authcode
+      </div>
+  	</div>
+		<button type="submit" class="btn btn-primary btn-large btn-block" data-ng-class="vm.submitEnabled ? '' : 'disabled' ">Submit</button>
+    </form>
+
+  </div>
+
+</div>

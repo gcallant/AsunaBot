@@ -1,0 +1,65 @@
+* {
+  outline: none;
+}
+
+.bg-transparent {
+  background-color: transparent;
+}
+
+.borderless {
+  border: none;
+}
+
+.btn.btn-corners {
+  border-radius: 0;
+}
+
+.authcode-input {
+   border: 0;
+   outline-style:none;
+   box-shadow:none;
+   border-color:transparent;
+   border-bottom: 2px solid #1976D2;
+   width: 100%;
+   font-size: 30px;
+   line-height: 35px;
+   height: 70px;
+   text-align: center;
+   padding: 10px;
+   background: transparent;
+   background-color: transparent;
+   color: #EEEEEE;
+   -webkit-border-radius: 0;
+   border-radius: 0;
+   -webkit-box-shadow: none;
+   box-shadow: none;
+   transition: all 0.5s;
+}
+
+.authcode-input:focus {
+   outline: 0;
+   outline-style:none;
+   box-shadow:none;
+   color: #FFFFFF;
+   -webkit-apperance: none;
+   -moz-appearance: none;
+   background-color: transparent;
+   border-bottom: 2px solid #1976D2;
+}
+
+.fadein, .fadeout {
+  -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.33s;
+  -moz-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.33s;
+  -o-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.33s;
+  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.33s;
+}
+
+.fadein.ng-hide-remove,
+.fadeout.ng-hide-add.ng-hide-add-active {
+  opacity: 0;
+}
+
+.fadeout.ng-hide-add,
+.fadein.ng-hide-remove.ng-hide-remove-active {
+  opacity: 1;
+}

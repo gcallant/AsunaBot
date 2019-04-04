@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html data-ng-app="AsunaWeb">
+
+<head>
+
+	<!-- Latest compiled and minified CSS for Bootstrap-->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<!-- Site information. -->
+	<title>{{metadata.title || 'AsunaWeb'}}</title>
+	<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+	<!-- Stuff AngularJS Needs. -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular-route.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular-animate.js"></script>
+
+	<!-- Custom Styles -->
+	<link rel="stylesheet" href="/app.css">
+</head>
+
+<body class="bg-dark" data-ng-controller="AppController as vm">
+
+	<navbar class="fadein fadeout" data-ng-hide="!vm.signedIn" signed-in="vm.signedIn" username="vm.discord_name"></navbar>
+
+	<div>
+		<div data-ng-view></div>
+	</div>
+
+	<!-- Stuff our application needs. -->
+	<script type="text/javascript" src="./app.js"></script>
+	<script type="text/javascript" src="/nav/navbar.js"></script>
+	<script type="text/javascript" src="./restServices/rest.js"></script>
+  <script type="text/javascript" src="./localStorageService/localstorage.js"></script>
+  <script type="text/javascript" src="./signin/signin.js"></script>
+
+
+	<!-- Latest compiled and minified JavaScript for Bootstrap-->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+</body>
+</html>
