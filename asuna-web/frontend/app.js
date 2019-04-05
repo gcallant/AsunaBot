@@ -21,19 +21,22 @@ angular.module("AsunaWeb", ['ngRoute', 'ngAnimate'])
       vm.signedIn = false;
       vm.discord_name = "";
 
-
-
       $scope.updateLoggedIn = function() {
         if($localstorage.get('api_token')){
           vm.signedIn = true;
+          vm.discord_name = $localstorage.get('discord_name');
         }
         else {
           vm.signedIn = false;
+          vm.discord_name = "";
           $location.path('/signin')
         }
       }
 
-
       $scope.updateLoggedIn();
+
+      if(vm.signedIn){
+        $restservices.setApiToken($localstorage.get('api_token'));
+      }
 
     }]);

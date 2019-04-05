@@ -24,11 +24,11 @@
 	<link rel="stylesheet" href="/app.css">
 </head>
 
-<body class="bg-dark" data-ng-controller="AppController as vm">
+<body data-ng-class="vm.signedIn ? 'bg-light' : 'bg-dark'" data-ng-controller="AppController as vm">
 
 	<navbar class="fadein fadeout" data-ng-hide="!vm.signedIn" signed-in="vm.signedIn" username="vm.discord_name"></navbar>
 
-	<div>
+	<div class="mt-5 pt-5">
 		<div data-ng-view></div>
 	</div>
 
@@ -38,6 +38,7 @@
 	<script type="text/javascript" src="./restServices/rest.js"></script>
   <script type="text/javascript" src="./localStorageService/localstorage.js"></script>
   <script type="text/javascript" src="./signin/signin.js"></script>
+  <script type="text/javascript" src="./events/event/event.js"></script>
 
 
 	<!-- Latest compiled and minified JavaScript for Bootstrap-->

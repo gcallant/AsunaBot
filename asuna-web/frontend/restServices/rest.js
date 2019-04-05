@@ -20,9 +20,17 @@ angular.module('AsunaWeb')
 		return $http.get(API_URI+'/events', filter);
 	}
 
+  restServices.getEvent = function(event_id){
+    return $http.get(API_URI+'/events/'+event_id);
+  }
+
+  restServices.getEventSignups = function(event_id){
+    return $http.get(API_URI+'/events/'+event_id+'/signups');
+  }
+
   restServices.setApiToken = function(token){
     $localstorage.set('api_token', token);
-    $http.defaults.headers.common.Authorization = "bearer " + token;
+    $http.defaults.headers.common.Authorization = "Bearer " + token;
   }
 
   restServices.invalidateApiToken = function(){

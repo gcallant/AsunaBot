@@ -1,0 +1,33 @@
+<div class="container">
+  <h1>{{vm.event.event_name}} | <span class="font-weight-light">{{vm.event.event_time}}</span></h1>
+  <h2 class="font-weight-light"><small>{{vm.event.trial_name}} <i>with</i> {{vm.event.event_leader}}</small></h2>
+  <p class="lead">{{vm.event.description}}</p>
+
+  <div class="row" data-ng-repeat="i in vm.signups | filter: { primary_role : 'TANK' }">
+    <div class="col">FILLED TANK SLOT</div>
+  </div>
+  <div class="row" data-ng-repeat="i in [].constructor(vm.event.TANK-0) track by $index">
+    <div class="col">TANK SLOT</div>
+  </div>
+  <div class="row" data-ng-repeat="i in vm.signups | filter: { primary_role : 'HEALER' }">
+    <div class="col">FILLED HEALER SLOT</div>
+  </div>
+  <div class="row" ng-repeat="i in [].constructor(vm.event.HEALER-0) track by $index">
+    <div class="col">HEALER SLOT</div>
+  </div>
+  <div class="row" data-ng-repeat="i in vm.signups | filter: { primary_role : 'MDPS' }">
+    <div class="col">FILLED MDPS SLOT</div>
+  </div>
+  <div class="row" data-ng-repeat="i in [].constructor(vm.event.MDPS-0) track by $index">
+    <div class="col">MDPS SLOT</div>
+  </div>
+  <div class="row" data-ng-repeat="i in vm.signups | filter: { primary_role : 'RDPS' }">
+    <div class="col">FILLED RDPS SLOT</div>
+  </div>
+  <div class="row" data-ng-repeat="i in [].constructor(vm.event.RDPS-0) track by $index">
+    <div class="col">RDPS SLOT</div>
+  </div>
+  <div class="row" data-ng-repeat="i in vm.signups | filter: { primary_role : 'RESERVE' }">
+    <div class="col">RESERVE SLOT</div>
+  </div>
+</div>

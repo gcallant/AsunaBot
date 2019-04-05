@@ -12,7 +12,6 @@ angular.module('AsunaWeb')
 		vm.authcode;
 
 		vm.submitEnabled = true;
-    vm.loginSuccess = false;
 
 		vm.submit = function() {
 			if(vm.submitEnabled) {
@@ -27,11 +26,17 @@ angular.module('AsunaWeb')
             return;
           }
           $restservices.setApiToken(response.data.api_token);
-          console.log("Login success.");
-          console.log(response);
-          $scope.updateLoggedIn();
-          vm.loginSuccess = true;
-          $location.path('/');
+          $restservices.getCurrentUser()
+          .then(function success(response){
+            $localstorage.set('discord_name', response.data.discord_name);
+            console.log("Login success.");
+            console.log(response);
+            $scope.updateLoggedIn();
+            $location.path('/');
+
+          }, function error(response){
+            console.log(response);
+          });
         }, function error(response){
           vm.showSignInError = true;
           vm.submitEnabled = true;
