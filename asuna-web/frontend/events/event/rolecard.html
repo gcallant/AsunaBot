@@ -1,0 +1,18 @@
+<div class="card ">
+  <div class="card-body">
+    <h2 class="card-title"><i data-ng-class="vm.icon"></i> {{vm.roleName}}</h2>
+    <h6 class="card-subtitle mb-2 text-muted">
+      <em data-ng-class="vm.openSlots ? 'text-success' : 'text-danger'">{{vm.openSlots}} Open Slot{{vm.openSlots == 1 ? '' : 's'}}</em>
+    </h6>
+    <div class="card-text">
+      <h5 data-ng-repeat="signup in vm.roleSignups">
+        <a data-ng-href="#!/users/{{signup.player_id}}">@{{vm.users[vm.allSignups.indexOf(signup)].discord_name}}</a>
+        <small class="text-muted">({{vm.users[vm.allSignups.indexOf(signup)].guild_rank}})</small>
+      </h5>
+    </div>
+  </div>
+  <div class="card-footer">
+    <a data-ng-click="vm.signUp(vm.roleName, [])" class="card-link btn btn-primary">Sign up</a>
+    <a data-ng-click="vm.signUp('RESERVE', [vm.roleName])" class="card-link btn btn-secondary">Reserve</a>
+  </div>
+</div>

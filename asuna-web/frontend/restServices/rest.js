@@ -2,7 +2,7 @@ angular.module('AsunaWeb')
 .factory('$restservices', ['$http', '$localstorage', function($http, $localstorage){
 	var restServices = {};
 
-  var API_URI = "http://localhost:8000/api";
+  var API_URI = "http://asuna.test/api";
 
   restServices.login = function(authcode){
     return $http.post(API_URI+'/login', {'authcode' : authcode});
@@ -28,6 +28,14 @@ angular.module('AsunaWeb')
     return $http.get(API_URI+'/events/'+event_id+'/signups');
   }
 
+	restServices.getEventUsers = function(event_id){
+		return $http.get(API_URI+'/events/'+event_id+'/users');
+	}
+
+	restServices.signup = function(signup){
+		return $http.post(API_URI+'/events/'+signup.event_id+'/signups', signup);
+	}
+
   restServices.setApiToken = function(token){
     $localstorage.set('api_token', token);
     $http.defaults.headers.common.Authorization = "Bearer " + token;
@@ -37,6 +45,17 @@ angular.module('AsunaWeb')
     $localstorage.remove('api_token');
     $http.defaults.headers.common.Authorization = "";
   }
+
+	restServices.handleErrors = function(response, callback){
+		console.log(response);
+		switch(response.status) {
+			case 401:
+				restServices.invalidateApiToken();
+				break;
+		}
+
+		callback();
+	}
 
 	return restServices;
 }]);

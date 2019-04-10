@@ -27,36 +27,101 @@ angular.module('AsunaWeb')
       RDPS : 4,
     };
 
+		vm.currentUser = {};
     vm.signups = [];
+		vm.users = [];
+		vm.tanks = [];
+		vm.healers = [];
+		vm.melee = [];
+		vm.ranged = [];
+
+		vm.tankRole = "Tanks";
+		vm.healRole = "Healers";
+		vm.meleeRole = "Melee";
+		vm.rangedRole = "Ranged";
+
+		vm.tankIcon = "fa fa-shield";
+		vm.healIcon = "fa fa-medkit";
+		vm.meleeIcon = "ra ra-crossed-swords";
+		vm.rangedIcon = "ra ra-arrow-cluster";
 
     vm.getEventSignups = function(){
       $restservices.getEventSignups(vm.eventId)
       .then(function success(response){
-        vm.signups = response.data.signups;
-        console.log(vm.signups);
-      }, function error(response){
-        if(response.status == 401){
-          $restservices.invalidateApiToken();
-          $scope.updateLoggedIn();
-          return;
-        }
-      });
+				vm.signups = response.data.signups;
+	      console.log(vm.signups);
+				vm.sortRoles();
+      })
+			.catch(function(response){
+				$restservices.handleErrors(response, $scope.updateLoggedIn);
+			});
     }
+
+		vm.getEventUsers = function(){
+			$restservices.getEventUsers(vm.eventId)
+			.then(function success(response){
+				vm.users = response.data.users;
+				console.log(vm.users);
+			})
+			.catch(function(response){
+				$restservices.handleErrors(response, callback=$scope.updateLoggedIn);
+			});
+		}
 
     vm.getEvent = function(){
       $restservices.getEvent(vm.eventId)
       .then(function success(response){
-        vm.event = response.data.event;
-      }, function error(response){
-        if(response.status == 401){
-          $restservices.invalidateApiToken();
-          $scope.updateLoggedIn();
-          return;
-        }
-        console.log(response);
+				vm.event = response.data.event;
+				console.log(vm.event);
+      })
+			.catch(function(response){
+				$restservices.handleErrors(response, callback=$scope.updateLoggedIn);
       });
     }
 
-    vm.getEvent();
-    vm.getEventSignups();
+		vm.getUser = function(user_id) {
+			vm.users.find(user => {
+			  return user.id === user_id;
+			});
+		}
+
+		vm.getCurrentUser = function(){
+			$restservices.getCurrentUser()
+			.then(function success(response){
+				vm.currentUser = response.data;
+				console.log(vm.currentUser);
+			})
+			.catch(function(response){
+				$restservices.handleErrors(response, callback=$scope.updateLoggedIn);
+			});
+		}
+
+		vm.sortRoles = function() {
+			vm.tanks = vm.signups.filter(su => {
+				return su.primary_role == "TANK";
+			});
+
+			vm.healers = vm.signups.filter(su => {
+				return su.primary_role == "HEALER";
+			});
+
+			vm.melee = vm.signups.filter(su => {
+				return su.primary_role == "MDPS";
+			});
+
+			vm.ranged = vm.signups.filter(su => {
+				return su.primary_role == "RDPS";
+			});
+		}
+
+		vm.refreshData = function(){
+			vm.getEvent();
+			vm.getEventUsers();
+	    vm.getEventSignups();
+			vm.getCurrentUser();
+		}
+
+		vm.refreshData();
+
+
 	}]);

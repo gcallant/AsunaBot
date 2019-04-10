@@ -47,6 +47,14 @@
    border-bottom: 2px solid #1976D2;
 }
 
+.timestamp {
+  font-size: 1rem;
+}
+
+.card {
+  height: 100%;
+}
+
 .fadein, .fadeout {
   -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.33s;
   -moz-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.33s;

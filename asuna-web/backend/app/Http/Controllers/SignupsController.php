@@ -64,7 +64,7 @@ class SignupsController extends Controller
       if($request->input('primary_role') != 'RESERVE') {
 
         // Enforce minimum rank requirement (unless overridden by admin).
-        if(!$request->input('admin_override') && $this->guildRanks[$event->min_rank] > $this->guildRanks[$user->guild_rank])
+        if(!$request->input('admin_override') && $this->guildRanks[$event->min_rank] < $this->guildRanks[$user->guild_rank])
         {
           $switchedToReserveMessage = "Minimum rank requirement not satisfied. Player signed up as RESERVE.";
         }
