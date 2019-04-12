@@ -121,6 +121,15 @@ angular.module('AsunaWeb')
 			vm.getCurrentUser();
 		}
 
+		vm.populateEvent = function(){
+			for(prop in Object.keys($routeParams)){
+				if(vm.event[prop]){
+					vm.event[prop] = $routeParams[prop];
+				}
+			}
+		}
+
+		vm.populateEvent();
 		vm.refreshData();
 
 

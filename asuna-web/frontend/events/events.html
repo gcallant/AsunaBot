@@ -1,0 +1,38 @@
+<div class="container">
+  <h1>Upcoming Events</h1>
+  <hr>
+
+    <div class="card mb-3 hoverable" data-ng-repeat="event in vm.events">
+
+      <div class="card-body row" data-ng-click="vm.viewEvent(event)">
+
+        <div class="col col-4">
+          <div class="card-title">
+            <h3 class="event-title">
+              {{event.event_name | limitTo: 20}}{{event.event_name.length > 20 ? '...' : ''}}
+            </h3>
+          </div>
+          <div class="card-subtitle ">
+            <em class="text-muted">{{event.trial_name}} with {{event.event_leader}}</em>
+          </div>
+        </div>
+
+        <div class="col col-6 align-self-center role-section">
+          <h4 class="role-icon"><i class="fa fa-shield"></i>
+            <span data-ng-class="event.TANK-0 > 0 ? 'text-success' : 'text-danger'">{{event.TANK-0}}</span></h4>
+          <h4 class="role-icon"><i class="fa fa-medkit"></i>
+            <span data-ng-class="event.HEALER-0 > 0 ? 'text-success' : 'text-danger'">{{event.HEALER-0}}</span></h4>
+          <h4 class="role-icon"><i class="ra ra-crossed-swords"></i>
+            <span data-ng-class="event.MDPS-0 > 0 ? 'text-success' : 'text-danger'">{{event.MDPS-0}}</span></h4>
+          <h4 class="role-icon"><i class="ra ra-arrow-cluster"></i>
+            <span data-ng-class="event.RDPS-0 > 0 ? 'text-success' : 'text-danger'">{{event.RDPS-0}}</span></h4>
+        </div>
+
+        <div class="col text-right">
+          <em class="timestamp text-muted">{{event.event_time}}</em>
+        </div>
+
+      </div>
+
+    </div>
+</div>

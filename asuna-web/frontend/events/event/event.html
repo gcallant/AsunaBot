@@ -1,9 +1,16 @@
 <div class="container">
-  <h1>{{vm.event.event_name}} <em class="timestamp text-muted">{{vm.event.event_time}}</em></h1>
+  <div class="row justify-content-between" ng-animate-ref="{{vm.eventId}}">
+    <div class="col">
+      <h1 class="event-title" ng-animate-ref="{{event.id}}">{{vm.event.event_name}}</h1>
+      <h2 class="event-subtitle"><small>{{vm.event.trial_name}} <i>with</i> {{vm.event.event_leader}}</small></h2>
+    </div>
+    <div class="col align-self-start text-right">
+      <em class="timestamp text-muted" ng-animate-ref="{{event.id}}">{{vm.event.event_time}}</em>
+    </div>
+  </div>
   <hr>
-  <h2 class="font-weight-light"><small>{{vm.event.trial_name}} <i>with</i> {{vm.event.event_leader}}</small></h2>
   <p class="lead">{{vm.event.description}}</p>
-  
+
   <div class="card-deck">
 
     <rolecard event="vm.event" current-user="vm.currentUser" icon="vm.tankIcon" role-name="vm.tankRole" open-slots="vm.event.TANK-0"

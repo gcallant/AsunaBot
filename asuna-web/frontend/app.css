@@ -2,6 +2,34 @@
   outline: none;
 }
 
+.view-container {
+  position: relative;
+  margin-top: 5rem;
+}
+
+.view-container > .main-view.ng-animate {
+  position: absolute;
+  top: 0;
+  left:0;
+  width:100%;
+  min-height:500px;
+}
+
+@keyframes fadeIn {
+  0%    { opacity: 0; }
+  50%   { opacity: 0; }
+  100%  { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  0%    { opacity: 1; }
+  50%   { opacity: 0; }
+  100%  { opacity: 0; }
+}
+
+.main-view.ng-enter           { animation: fadeIn 0.7s both linear; z-index: 888888;}
+.main-view.ng-leave           { animation: fadeOut 0.7s both linear; z-index: 999999;}
+
 .bg-transparent {
   background-color: transparent;
 }
@@ -55,19 +83,16 @@
   height: 100%;
 }
 
-.fadein, .fadeout {
-  -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.33s;
-  -moz-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.33s;
-  -o-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.33s;
-  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.33s;
+.role-icon {
+  display: inline-block;
+  padding: 2px 7px 1px 7px;
+  margin-left: 25px;
+  margin-right: 25px;
+  border: 1px solid gray;
+  border-radius: 5px;
 }
 
-.fadein.ng-hide-remove,
-.fadeout.ng-hide-add.ng-hide-add-active {
-  opacity: 0;
-}
-
-.fadeout.ng-hide-add,
-.fadein.ng-hide-remove.ng-hide-remove-active {
-  opacity: 1;
+.hoverable:hover {
+    background-color: #FAFAFA;
+    cursor: pointer;
 }
