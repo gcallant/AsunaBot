@@ -16,6 +16,10 @@ angular.module('AsunaWeb')
     return $http.get(API_URI+'/user');
   }
 
+	restServices.getUsers = function(filter){
+		return $http.get(API_URI+'/users', filter);
+	}
+
 	restServices.getEvents = function(filter){
 		return $http.get(API_URI+'/events', filter);
 	}
@@ -23,6 +27,10 @@ angular.module('AsunaWeb')
   restServices.getEvent = function(event_id){
     return $http.get(API_URI+'/events/'+event_id);
   }
+
+	restServices.createEvent = function(new_event){
+		return $http.post(API_URI+'/events', new_event);
+	}
 
   restServices.getEventSignups = function(event_id){
     return $http.get(API_URI+'/events/'+event_id+'/signups');

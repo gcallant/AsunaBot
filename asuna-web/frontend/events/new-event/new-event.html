@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="row justify-content-between">
+    <div class="col col-auto">
+      <h1 class="event-title"><input class="inpage-input" type="text" placeholder="New Event" data-ng-model="vm.newEvent.event_name"></h1>
+      <small class="text-danger" data-ng-repeat="errormsg in vm.errorMessages.event_name">{{errormsg}}</small>
+      <h2 class="event-subtitle form-row">
+        <small class="event-subtitle">
+          <input class="inpage-input" style="width:45%;" type="text" placeholder="nCR, vAA, vHRC" data-ng-model="vm.newEvent.trial_name">
+          <i class="mr-2">with</i>
+          <select class="inpage-input text-center" data-ng-model="vm.newEvent.event_leader">
+            <option data-ng-repeat="user in vm.users" selected="">{{user.discord_name}}</option>
+          </select>
+        </small>
+      </h2>
+      <small class="text-danger" data-ng-repeat="errormsg in vm.errorMessages.event_leader">{{errormsg}}</small>
+    </div>
+    <div class="col align-self-start text-right">
+      <input type="date" class="text-muted timestamp inpage-input" style="width:fit-content;" data-ng-model="vm.newEvent.eventDate"></input>
+      <input type="time" class="text-muted timestamp inpage-input" style="width:fit-content;" value="10:37" data-ng-model="vm.newEvent.eventTime"></input>
+      <br>
+      <small class="text-danger" data-ng-repeat="errormsg in vm.errorMessages.event_time">{{errormsg}}</small>
+    </div>
+  </div>
+  <hr>
+  <em>
+    Minimum Rank:&nbsp;
+    <select class="inpage-input text-center timestamp" data-ng-model="vm.newEvent.min_rank">
+      <option data-ng-repeat="rank in vm.ranks" selected="">{{rank}}</option>
+    </select>
+  </em>
+  <p class="lead mb-0 mt-2"><textarea ng-keyup="vm.autogrow($event.target)" rows="1" style="overflow:hidden; resize:none;" class="inpage-input" placeholder="A short description of the event..." data-ng-model="vm.newEvent.description"></textarea></p>
+  <small class="text-danger mb-2" style="display:inline-block;" data-ng-repeat="errormsg in vm.errorMessages.description">{{errormsg}}</small>
+
+  <div class="card-deck text-center row justify-content-center">
+
+    <slotcard icon="vm.tankIcon" role-name="vm.tankRoleName" open-slots="vm.newEvent.TANK"></slotcard>
+    <slotcard icon="vm.healerIcon" role-name="vm.healerRoleName" open-slots="vm.newEvent.HEALER"></slotcard>
+    <slotcard icon="vm.meleeIcon" role-name="vm.mdpsRoleName" open-slots="vm.newEvent.MDPS"></slotcard>
+    <slotcard icon="vm.rangedIcon" role-name="vm.rdpsRoleName" open-slots="vm.newEvent.RDPS"></slotcard>
+
+  </div>
+
+  <br>
+  <button type="button" class="btn btn-success btn-lg btn-block" data-ng-click="vm.createEvent()">Create!</button>
+
+</div>

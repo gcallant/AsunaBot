@@ -42,6 +42,10 @@ class EventsController extends Controller
           $request->request->set('created_by_id', $user->discord_id);
         }
 
+        $datetime = gmdate("m/d/Y H:i", $request->event_time);
+
+        $request->request->set('event_time', $datetime);
+
         $validator = Validator::make($request->all(), [
           'event_name' => ['required', 'max:20'],
           'trial_name' => ['nullable', 'max:20'],

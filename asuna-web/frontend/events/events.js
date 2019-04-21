@@ -42,6 +42,10 @@ angular.module('AsunaWeb')
       $location.path('/events/'+event.id).search(event);
     }
 
+    vm.createEvent = function() {
+      $location.path('/events/create/new');
+    }
+
     vm.getEvents({});
     vm.getCurrentUser();
 	}]);

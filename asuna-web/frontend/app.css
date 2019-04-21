@@ -2,6 +2,14 @@
   outline: none;
 }
 
+body {
+  transition: 0.7s linear all;
+}
+
+.nav {
+  transition: 0.7 linear all;
+}
+
 .view-container {
   position: relative;
   margin-top: 5rem;
@@ -77,6 +85,7 @@
 
 .timestamp {
   font-size: 1rem;
+  font-style: italic;
 }
 
 .card {
@@ -90,6 +99,23 @@
   margin-right: 25px;
   border: 1px solid gray;
   border-radius: 5px;
+}
+
+.inpage-input {
+  margin: 0px 3px;
+  display: inline-block;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+}
+
+select.inpage-input {
+  width: fit-content;
+}
+
+.event-subtitle {
+  display: flex;
+  flex-direction: row;
 }
 
 .hoverable:hover {
