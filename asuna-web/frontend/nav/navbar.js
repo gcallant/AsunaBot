@@ -5,7 +5,7 @@ angular.module('AsunaWeb')
 	controllerAs: 'vm',
 	bindings: {
 		signedIn: '<',
-		username: '<',
+		user: '<',
 	}
 })
 .controller('NavController', [ '$scope', '$location', '$restservices', function($scope, $location, $restservices){

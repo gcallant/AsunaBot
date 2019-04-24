@@ -47,7 +47,7 @@ class EventsController extends Controller
         $request->request->set('event_time', $datetime);
 
         $validator = Validator::make($request->all(), [
-          'event_name' => ['required', 'max:20'],
+          'event_name' => ['required', 'min:3', 'max:100'],
           'trial_name' => ['nullable', 'max:20'],
           'event_time' => ['required', 'date', 'after:now'],
           'created_by_id' => ['required'],

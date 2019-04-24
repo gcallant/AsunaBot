@@ -12,7 +12,7 @@
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#!/me"><i class="fa fa-user-circle fa-lg"></i>&nbsp;{{ vm.username }}</a>
+        <a class="nav-link" href="#!/users/{{vm.user.id}}"><i class="fa fa-user-circle fa-lg"></i>&nbsp;{{ vm.user.discord_name }}</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#" data-ng-click="vm.logout()">Logout</a>

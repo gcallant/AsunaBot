@@ -29,7 +29,7 @@
 
 <body data-ng-class="vm.signedIn ? 'bg-light' : 'bg-dark'" data-ng-controller="AppController as vm">
 
-	<navbar class="fadein fadeout" data-ng-hide="!vm.signedIn" signed-in="vm.signedIn" username="vm.discord_name"></navbar>
+	<navbar class="fadein fadeout" data-ng-hide="!vm.signedIn" signed-in="vm.signedIn" user="vm.user"></navbar>
 
 	<div class="view-container">
 		<div data-ng-view class="main-view"></div>
@@ -46,6 +46,7 @@
   <script type="text/javascript" src="./events/event/rolecard.js"></script>
   <script type="text/javascript" src="./events/new-event/new-event.js"></script>
   <script type="text/javascript" src="./events/new-event/slotcard.js"></script>
+  <script type="text/javascript" src="./users/user/user.js"></script>
 
 
 	<!-- Latest compiled and minified JavaScript for Bootstrap-->

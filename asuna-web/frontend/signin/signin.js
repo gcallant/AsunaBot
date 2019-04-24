@@ -28,7 +28,7 @@ angular.module('AsunaWeb')
           $restservices.setApiToken(response.data.api_token);
           $restservices.getCurrentUser()
           .then(function success(response){
-            $localstorage.set('discord_name', response.data.discord_name);
+            $localstorage.setObject('user', response.data);
             console.log("Login success.");
             console.log(response);
             $scope.updateLoggedIn();

@@ -23,7 +23,7 @@ Route::post('logout', 'Auth\LoginController@logout');
 
 Route::group(['middleware' => 'auth:api'], function() {
     Route::resource('events', 'EventsController');
-    
+
     Route::resource('users', 'UsersController');
     Route::get('events/{id}/users', 'UsersController@getByEvent');
 
@@ -32,4 +32,5 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::delete('signups/{id}', 'SignupsController@destroy');
     Route::post('events/{id}/signups', 'SignupsController@store');
     Route::get('events/{id}/signups', 'SignupsController@getByEvent');
+    Route::get('users/{id}/signups', 'SignupsController@getByUser');
 });

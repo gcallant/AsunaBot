@@ -1,0 +1,62 @@
+<div class="container">
+
+  <div class="row justify-content-center text-center">
+    <div class="col">
+      <h1>{{vm.user.discord_name}}</h1>
+    </div>
+  </div>
+  <div class="row justify-content-center text-center">
+    <div class="col text-dark">
+      <i class="fa fa-gamepad fa-md"></i> <span class="timestamp">{{vm.user.eso_name}}</span>
+      |
+      <i class="fa fa-ticket fa-md"></i> <span class="timestamp">{{vm.user.guild_rank}}</span>
+      |
+      <i class="fa fa-trophy fa-md"></i> <span>{{vm.signups.length}}</span>
+    </div>
+  </div>
+  <hr>
+
+  <div class="card mb-3 hoverable w-75 mx-auto" data-ng-repeat="signup in vm.signups | orderBy: '-event.event_time' ">
+
+    <div class="card-body row" data-ng-click="vm.viewEvent(signup.event_id)">
+
+      <div class="col col-4">
+        <div class="card-title">
+          <h5 class="event-title">
+            {{signup.event.event_name | limitTo: 20}}{{signup.event.event_name.length > 20 ? '...' : ''}}
+          </h5>
+        </div>
+        <div class="card-subtitle ">
+          <em class="text-muted">{{signup.event.trial_name}} with {{signup.event.event_leader}}</em>
+        </div>
+      </div>
+
+      <div class="col col-6 align-self-center role-section">
+
+        <h4 class="role-icon" data-ng-class="{'bg-success': (signup.primary_role == 'TANK'), 'bg-warning': (signup.flex_roles.split(',').includes('TANK'))}">
+          <i class="fa fa-shield"></i>
+        </h4>
+
+        <h4 class="role-icon" data-ng-class="{'bg-success': (signup.primary_role == 'HEALER'), 'bg-warning': (signup.flex_roles.split(',').includes('HEALER'))}">
+          <i class="fa fa-medkit"></i>
+        </h4>
+
+        <h4 class="role-icon" data-ng-class="{'bg-success': (signup.primary_role == 'MDPS'), 'bg-warning': (signup.flex_roles.split(',').includes('MDPS'))}">
+          <i class="ra ra-crossed-swords"></i>
+        </h4>
+
+        <h4 class="role-icon" data-ng-class="{'bg-success': (signup.primary_role == 'RDPS'), 'bg-warning': (signup.flex_roles.split(',').includes('RDPS'))}">
+          <i class="ra ra-arrow-cluster"></i>
+        </h4>
+
+      </div>
+
+      <div class="col text-right">
+        <em class="timestamp text-muted">{{signup.event.event_time}}</em>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

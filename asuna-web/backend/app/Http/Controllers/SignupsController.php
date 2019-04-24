@@ -35,6 +35,24 @@ class SignupsController extends Controller
     }
 
     /**
+    * Get a list of signups for a particular user.
+    *
+    * @param int $id User ID.
+    * @return Illuminate\Https\Response
+    */
+    public function getByUser($id)
+    {
+      $signups = Signup::where(['player_id' => $id])->get()->all();
+
+      foreach($signups as $signup)
+      {
+        $signup->event = Event::find($signup->event_id);
+      }
+
+      return response()->json(['signups' => $signups], 200);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
