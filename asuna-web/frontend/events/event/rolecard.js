@@ -8,9 +8,7 @@ angular.module('AsunaWeb')
 		icon: '<',
     roleName: '<',
     openSlots: '<',
-    users: '<',
     roleSignups: '<',
-    allSignups: '<',
     currentUser: '<',
     refreshData: '<'
 	}

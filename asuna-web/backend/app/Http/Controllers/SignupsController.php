@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Signup;
 use App\Event;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -30,6 +31,11 @@ class SignupsController extends Controller
     public function getByEvent($id)
     {
       $signups = Signup::where(['event_id' => $id])->get()->all();
+
+      foreach($signups as $signup)
+      {
+        $signup->user = User::find($signup->player_id);
+      }
 
       return response()->json(['signups' => $signups], 200);
     }

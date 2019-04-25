@@ -29,7 +29,6 @@ angular.module('AsunaWeb')
 
 		vm.currentUser = {};
     vm.signups = [];
-		vm.users = [];
 		vm.tanks = [];
 		vm.healers = [];
 		vm.melee = [];
@@ -56,17 +55,6 @@ angular.module('AsunaWeb')
 				$restservices.handleErrors(response, $scope.updateLoggedIn);
 			});
     }
-
-		vm.getEventUsers = function(){
-			$restservices.getEventUsers(vm.eventId)
-			.then(function success(response){
-				vm.users = response.data.users;
-				console.log(vm.users);
-			})
-			.catch(function(response){
-				$restservices.handleErrors(response, callback=$scope.updateLoggedIn);
-			});
-		}
 
     vm.getEvent = function(){
       $restservices.getEvent(vm.eventId)
@@ -116,7 +104,6 @@ angular.module('AsunaWeb')
 
 		vm.refreshData = function(){
 			vm.getEvent();
-			vm.getEventUsers();
 	    vm.getEventSignups();
 			vm.getCurrentUser();
 		}
