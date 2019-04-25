@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="./users/users.css">
+<div class="container">
+
+  <div class="row justify-content-between">
+    <div class="col col-4">
+      <h1 class="mb-0" style="line-height:1;">Members</h1>
+    </div>
+
+     <div class="search col-4">
+        <input type="text" class="searchTerm" placeholder="Enter a keyword..." data-ng-model="vm.keyword">
+        <button type="button" class="searchButton" disabled="disabled">
+          <i class="fa fa-search"></i>
+       </button>
+     </div>
+  </div>
+
+  <hr>
+
+  <div class="card-deck results">
+    <div class="card hoverable mx-auto" style="" data-ng-repeat="user in vm.users | filter: vm.keyword">
+
+      <div class="card-body text-center" data-ng-click="vm.viewUser(user)">
+          <div class="card-title">
+            <h3>{{user.discord_name}}</h3>
+          </div>
+          <div class="card-subtitle ">
+            <div class="text-dark">
+              <i class="fa fa-gamepad fa-md"></i> <span class="timestamp">{{user.eso_name}}</span>
+              |
+              <i class="fa fa-ticket fa-md"></i> <span class="timestamp">{{user.guild_rank}}</span>
+            </div>
+          </div>
+      </div>
+    </div>
+    <h1 class="text-center mx-auto display-4 no-results">No Results :(</h1>
+  </div>
+</div>

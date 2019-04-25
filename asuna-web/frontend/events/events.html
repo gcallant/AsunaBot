@@ -4,7 +4,10 @@
       <h1 class="mb-0" style="line-height:1;">Upcoming Events</h1>
     </div>
     <div class="col text-right">
-      <button class="btn btn-success font-weight-bold" data-ng-click="vm.createEvent()">Create Event <i class="fa fa-plus"></i></button>
+      <button class="btn btn-success font-weight-bold"
+        data-ng-show="vm.currentUser.role != 'MEMBER'" data-ng-click="vm.createEvent()">
+        Create Event <i class="fa fa-plus"></i>
+      </button>
     </div>
   </div>
   <hr>
