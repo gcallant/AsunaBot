@@ -195,15 +195,6 @@ class SignupsController extends Controller
         {
           $request = $this->switchToReserve($request);
         }
-
-        elseif($request->input('primary_role') != $signup->primary_role)
-        {
-          // Update open role slots in event.
-          $event->{$request->input('primary_role')} -= 1;
-          if($signup->primary_role != 'RESERVE'){
-            $event->{$signup->primary_role} += 1;
-          }
-        }
       }
 
       // Validate the user input
@@ -212,8 +203,21 @@ class SignupsController extends Controller
         'flex_roles' => ['nullable', config('rules.allValidSignupRoles')],
       ]);
 
+
       if($validator->fails()) {
         return response($validator->errors(), 400);
+      }
+
+      if($request->input('primary_role') != $signup->primary_role)
+      {
+        // Update open role slots in event.
+        if($request->input('primary_role') != 'RESERVE'){
+          $event->{$request->input('primary_role')} -= 1;
+        }
+        
+        if($signup->primary_role != 'RESERVE'){
+          $event->{$signup->primary_role} += 1;
+        }
       }
 
       $updatedSignup = $signup->update($validator->validated());
