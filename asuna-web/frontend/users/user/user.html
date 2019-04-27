@@ -16,7 +16,7 @@
   </div>
   <hr>
 
-  <div class="card mb-3 hoverable w-75 mx-auto" data-ng-repeat="signup in vm.signups | orderBy: '-event.event_time' ">
+  <div class="card-hoverable mb-3 w-75 mx-auto" data-ng-repeat="signup in vm.signups | orderBy: '-event.event_time' ">
 
     <div class="card-body row" data-ng-click="vm.viewEvent(signup.event_id)">
 

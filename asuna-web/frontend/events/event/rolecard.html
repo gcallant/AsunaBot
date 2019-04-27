@@ -1,18 +1,35 @@
-<div class="card ">
+<div class="card mx-1">
   <div class="card-body">
     <h2 class="card-title"><i data-ng-class="vm.icon"></i> {{vm.roleName}}</h2>
     <h6 class="card-subtitle mb-2 text-muted">
-      <em data-ng-class="vm.openSlots ? 'text-success' : 'text-danger'">{{vm.openSlots}} Open Slot{{vm.openSlots == 1 ? '' : 's'}}</em>
+      <em data-ng-class="vm.openSlots ? 'text-success' : 'text-danger'">
+        {{vm.openSlots}} Open Slot{{vm.openSlots == 1 ? '' : 's'}}
+      </em>
     </h6>
     <div class="card-text">
       <h5 data-ng-repeat="signup in vm.roleSignups">
-        <a data-ng-href="#!/users/{{signup.player_id}}">@{{signup.user.discord_name}}</a>
-        <small class="text-muted">({{signup.user.guild_rank}})</small>
+        <a data-ng-href="#!/users/{{signup.player_id}}">{{signup.user.discord_name}}</a>
+        <small class="text-muted"><i class="fa fa-ticket"></i> {{signup.user.guild_rank}}</small>
       </h5>
     </div>
   </div>
-  <div class="card-footer">
-    <a data-ng-click="vm.signUp(vm.roleName, [])" class="card-link btn btn-primary">Sign up</a>
-    <a data-ng-click="vm.signUp('RESERVE', [vm.roleName])" class="card-link btn btn-secondary">Reserve</a>
+  <div class="card-footer text-center">
+    <a data-ng-click="(vm.mySignup.primary_role == vm.role) ? vm.drop() : vm.signUp(vm.role, [])" class="card-link hoverable btn"
+      data-ng-class="(vm.mySignup && vm.mySignup.primary_role == vm.role) ? 'btn-danger' : 'btn-success'">
+      <i class="fa" data-ng-class="{ 'fa-refresh': (vm.mySignup && vm.mySignup.primary_role != vm.role && vm.mySignup.primary_role != 'RESERVE'),
+        'fa-check': (!vm.mySignup || vm.mySignup.primary_role == 'RESERVE'),
+        'fa-times': (vm.mySignup.primary_role == vm.role) }">
+      </i>
+      <span ng-if="vm.mySignup.primary_role == vm.role">Drop</span>
+      <span ng-if="vm.mySignup && vm.mySignup.primary_role != vm.role && vm.mySignup.primary_role != 'RESERVE' ">Switch</span>
+      <span ng-if="!vm.mySignup || vm.mySignup.primary_role == 'RESERVE'">Sign Up</span>
+    </a>
+    <a data-ng-click="vm.mySignup && vm.mySignup.flex_roles.split(',').includes(vm.role) ? vm.dropFlex(vm.role) : vm.signUp('RESERVE', [vm.role])" class="card-link hoverable btn btn-warning">
+      <i data-ng-class="{ 'ra ra-scroll-unfurled': !(vm.mySignup && vm.mySignup.primary_role != 'RESERVE' && vm.mySignup.primary_role != vm.role || vm.mySignup.flex_roles.split(',').includes(vm.role)),
+        'fa fa-exchange': (vm.mySignup && vm.mySignup.primary_role != 'RESERVE' && vm.mySignup.primary_role != vm.role && !(vm.mySignup.flex_roles.split(',').includes(vm.role))),
+        'fa fa-times': vm.mySignup.flex_roles.split(',').includes(vm.role) }">
+      </i>
+      {{vm.mySignup && vm.mySignup.primary_role != 'RESERVE' && vm.mySignup.primary_role != vm.role ? 'Flex' : 'Waitlist'}}
+    </a>
   </div>
 </div>

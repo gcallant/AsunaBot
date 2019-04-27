@@ -52,6 +52,14 @@ angular.module('AsunaWeb')
 		return $http.post(API_URI+'/events/'+signup.event_id+'/signups', signup);
 	}
 
+	restServices.updateSignup = function(signup){
+		return $http.patch(API_URI+'/signups/'+signup.id, signup);
+	}
+
+	restServices.deleteSignup = function(id){
+		return $http.delete(API_URI+'/signups/'+id);
+	}
+
   restServices.setApiToken = function(token){
     $localstorage.set('api_token', token);
     $http.defaults.headers.common.Authorization = "Bearer " + token;

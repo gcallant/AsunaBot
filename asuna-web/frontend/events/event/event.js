@@ -10,7 +10,7 @@ angular.module('AsunaWeb')
 		 })
 }])
 
-.controller('EventController', ['$routeParams', '$scope', '$restservices', function($routeParams, $scope, $restservices) {
+.controller('EventController', ['$routeParams', '$scope', '$restservices', '$localstorage', function($routeParams, $scope, $restservices, $localstorage) {
 		var vm = this;
 
 		vm.eventId = $routeParams.id;
@@ -27,17 +27,26 @@ angular.module('AsunaWeb')
       RDPS : 4,
     };
 
-		vm.currentUser = {};
+		vm.currentUser = $localstorage.getObject('user');
+		vm.alreadySignedUp = false;
+		vm.mySignup = null;
+
     vm.signups = [];
 		vm.tanks = [];
 		vm.healers = [];
 		vm.melee = [];
 		vm.ranged = [];
+		vm.reserve = [];
 
-		vm.tankRole = "Tanks";
-		vm.healRole = "Healers";
-		vm.meleeRole = "Melee";
-		vm.rangedRole = "Ranged";
+		vm.tankRoleName = "Tanks";
+		vm.healRoleName = "Healers";
+		vm.meleeRoleName = "Melee";
+		vm.rangedRoleName = "Ranged";
+
+		vm.tankRole = "TANK";
+		vm.healRole = "HEALER";
+		vm.meleeRole = "MDPS";
+		vm.rangedRole = "RDPS";
 
 		vm.tankIcon = "fa fa-shield";
 		vm.healIcon = "fa fa-medkit";
@@ -50,6 +59,14 @@ angular.module('AsunaWeb')
 				vm.signups = response.data.signups;
 	      console.log(vm.signups);
 				vm.sortRoles();
+				vm.mySignup = null;
+				vm.signups.forEach(function(signup){
+					if(signup.user.id == vm.currentUser.id){
+						vm.alreadySignedUp = true;
+						vm.mySignup = signup;
+						return;
+					}
+				});
       })
 			.catch(function(response){
 				$restservices.handleErrors(response, $scope.updateLoggedIn);
@@ -73,17 +90,6 @@ angular.module('AsunaWeb')
 			});
 		}
 
-		vm.getCurrentUser = function(){
-			$restservices.getCurrentUser()
-			.then(function success(response){
-				vm.currentUser = response.data;
-				console.log(vm.currentUser);
-			})
-			.catch(function(response){
-				$restservices.handleErrors(response, callback=$scope.updateLoggedIn);
-			});
-		}
-
 		vm.sortRoles = function() {
 			vm.tanks = vm.signups.filter(su => {
 				return su.primary_role == "TANK";
@@ -100,12 +106,15 @@ angular.module('AsunaWeb')
 			vm.ranged = vm.signups.filter(su => {
 				return su.primary_role == "RDPS";
 			});
+
+			vm.reserve = vm.signups.filter(su => {
+				return su.primary_role == "RESERVE";
+			});
 		}
 
 		vm.refreshData = function(){
 			vm.getEvent();
 	    vm.getEventSignups();
-			vm.getCurrentUser();
 		}
 
 		vm.populateEvent = function(){

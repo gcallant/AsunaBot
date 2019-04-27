@@ -30,6 +30,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('signups', 'SignupsController@index');
     Route::get('signups/{id}', 'SignupsController@show');
     Route::delete('signups/{id}', 'SignupsController@destroy');
+    Route::patch('signups/{id}', 'SignupsController@update');
     Route::post('events/{id}/signups', 'SignupsController@store');
     Route::get('events/{id}/signups', 'SignupsController@getByEvent');
     Route::get('users/{id}/signups', 'SignupsController@getByUser');

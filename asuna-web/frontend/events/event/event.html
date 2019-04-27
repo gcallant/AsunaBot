@@ -12,27 +12,80 @@
   <em>Minimum Rank: {{vm.event.min_rank}}</em>
   <p class="lead">{{vm.event.description}}</p>
 
-  <div class="card-deck">
+  <div class="card-deck row justify-content-center mb-3">
 
     <rolecard event="vm.event" current-user="vm.currentUser" icon="vm.tankIcon"
-      role-name="vm.tankRole" open-slots="vm.event.TANK-0"
+      role-name="vm.tankRoleName" role="vm.tankRole" open-slots="vm.event.TANK-0" my-signup="vm.mySignup"
       role-signups="vm.tanks" refresh-data="vm.refreshData">
     </rolecard>
 
     <rolecard event="vm.event" current-user="vm.currentUser" icon="vm.healIcon"
-      role-name="vm.healRole" open-slots="vm.event.HEALER-0"
+      role-name="vm.healRoleName" role="vm.healRole" open-slots="vm.event.HEALER-0" my-signup="vm.mySignup"
       role-signups="vm.healers" refresh-data="vm.refreshData">
     </rolecard>
 
     <rolecard event="vm.event" current-user="vm.currentUser" icon="vm.meleeIcon"
-      role-name="vm.meleeRole" open-slots="vm.event.MDPS-0"
+      role-name="vm.meleeRoleName" role="vm.meleeRole" open-slots="vm.event.MDPS-0" my-signup="vm.mySignup"
       role-signups="vm.melee" refresh-data="vm.refreshData">
     </rolecard>
 
     <rolecard event="vm.event" current-user="vm.currentUser" icon="vm.rangedIcon"
-      role-name="vm.rangedRole" open-slots="vm.event.RDPS-0"
+      role-name="vm.rangedRoleName" role="vm.rangedRole" open-slots="vm.event.RDPS-0" my-signup="vm.mySignup"
       role-signups="vm.ranged" refresh-data="vm.refreshData">
     </rolecard>
+
+  </div>
+
+  <div class="row">
+
+    <div class="col-lg-6 mb-3">
+
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title text-center">Waitlist</h3>
+          <hr>
+          <div class="row justify-content-center">
+            <div class="col col-auto">
+              <h5 class="card-text" data-ng-repeat="signup in vm.reserve">
+                <a data-ng-href="#!/users/{{signup.user.id}}">{{signup.user.discord_name}}</a>
+                <small class="text-muted">
+                  <i class="fa fa-ticket"></i>&nbsp;{{signup.user.guild_rank}}
+                  |
+                  <i class="ra ra-scroll-unfurled"></i>&nbsp;{{signup.flex_roles}}
+                </small>
+              </h5>
+              <h4 class="no-results">It's empty!</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-lg-6 mb-3">
+
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title text-center">Flex Roles</h3>
+          <hr>
+          <div class="row justify-content-center">
+            <div class="col col-auto">
+              <h5 class="card-text" data-ng-repeat="signup in vm.signups"
+              data-ng-if="signup.primary_role != 'RESERVE' && signup.flex_roles">
+                <a data-ng-href="#!/users/{{signup.user.id}}">{{signup.user.discord_name}}</a>
+                <small class="text-muted">
+                  <i class="fa fa-ticket"></i>&nbsp;{{signup.user.guild_rank}}
+                  |
+                  <i class="ra ra-scroll-unfurled"></i>&nbsp;{{signup.flex_roles}}
+                </small>
+              </h5>
+              <h4 class="no-results">It's empty!</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
 
   </div>
 

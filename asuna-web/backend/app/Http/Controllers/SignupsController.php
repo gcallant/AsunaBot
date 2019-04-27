@@ -123,7 +123,6 @@ class SignupsController extends Controller
         return response($validator->errors(), 400);
       }
 
-      //
       $signup = Signup::create($validator->validated());
       $event->save();
 
@@ -157,12 +156,71 @@ class SignupsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Signup  $signup
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Signup $signup)
+    public function update(Request $request, int $id)
     {
-        //
+      $signup = Signup::findOrFail($id);
+      $event = Event::findOrFail($request->input('event_id'));
+
+      if(!$event->active){
+        return response()->json(['error' => 'The event is inactive and does not allow signups.'], 403);
+      }
+
+      $user = Auth::guard('api')->user();
+
+      // Only admins can signup on another user's behalf or override min_rank requirement.
+      if (Gate::denies('is-admin')) {
+        $request->request->set('admin_override', 0);
+      }
+
+      $switchedToReserveMessage = "";
+
+      if($request->input('primary_role') != 'RESERVE') {
+
+        // Enforce minimum rank requirement (unless overridden by admin).
+        if(!$request->input('admin_override') && $this->guildRanks[$event->min_rank] < $this->guildRanks[$user->guild_rank])
+        {
+          $switchedToReserveMessage = "Minimum rank requirement not satisfied. Player signed up as RESERVE.";
+        }
+
+        // Enforce maximum role slots limit.
+        elseif($event->getAttribute($request->input('primary_role')) == 0)
+        {
+          $switchedToReserveMessage = "Primary role is full. Player signed up as RESERVE.";
+        }
+
+        if($switchedToReserveMessage)
+        {
+          $request = $this->switchToReserve($request);
+        }
+
+        elseif($request->input('primary_role') != $signup->primary_role)
+        {
+          // Update open role slots in event.
+          $event->{$request->input('primary_role')} -= 1;
+          if($signup->primary_role != 'RESERVE'){
+            $event->{$signup->primary_role} += 1;
+          }
+        }
+      }
+
+      // Validate the user input
+      $validator = Validator::make($request->all(), [
+        'primary_role' => ['required', config('rules.isValidSignupRole')],
+        'flex_roles' => ['nullable', config('rules.allValidSignupRoles')],
+      ]);
+
+      if($validator->fails()) {
+        return response($validator->errors(), 400);
+      }
+
+      $updatedSignup = $signup->update($validator->validated());
+      $event->save();
+
+      return response()->json(['signup' => $updatedSignup, 'event' => $event, 'info' => $switchedToReserveMessage], 200);
+
     }
 
     /**
