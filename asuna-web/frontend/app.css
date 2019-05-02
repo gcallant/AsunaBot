@@ -2,6 +2,10 @@
   outline: none;
 }
 
+html {
+  margin-left: calc(100vw - 100%);
+}
+
 body {
   transition: 0.7s linear all;
 }
@@ -166,7 +170,6 @@ button[disabled="disabled"]:hover {
 
 .no-results:only-child {
   display: inline-block !important;
-  font-family: "Helvetica Neue";
   color: #AAAAAA;
   padding: 5px;
 }
@@ -200,4 +203,16 @@ button[disabled="disabled"]:hover {
 .card-hoverable:hover::after,
 .card-hoverable:focus::after {
   opacity: 1;
+}
+
+.bg-shade {
+  background-color: #F5F5F5;
+}
+
+.nav-link.bg-shade{
+  border-color: #dee2e6 #dee2e6 #f5f5f5;
+}
+
+.nav-link {
+  color: inherit;
 }

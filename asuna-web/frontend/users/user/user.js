@@ -13,6 +13,8 @@ angular.module('AsunaWeb')
 .controller('UserController', ['$routeParams', '$location', '$scope', '$restservices', function($routeParams, $location, $scope, $restservices) {
 		var vm = this;
 
+		vm.now = new Date();
+
 		vm.userId = $routeParams.id;
 
 		vm.currentUser = {};
@@ -20,6 +22,9 @@ angular.module('AsunaWeb')
     vm.user = {};
 
     vm.signups = [];
+		vm.completedSignups = [];
+		vm.upcomingSignups = [];
+		vm.activeTab = "upcoming-tab";
 
 		vm.getUser = function(user_id) {
       $restservices.getUser(user_id)
@@ -49,7 +54,16 @@ angular.module('AsunaWeb')
     vm.getSignups = function(user_id){
       $restservices.getUserSignups(user_id)
 			.then(function success(response){
-				vm.signups = response.data.signups;
+				response.data.signups.forEach(function(signup){
+					signup.event.completed = vm.now >= new Date(signup.event.event_time);
+					if(signup.event.completed){
+						vm.completedSignups.push(signup);
+					}
+					else{
+						vm.upcomingSignups.push(signup);
+					}
+				});
+				vm.signups = vm.upcomingSignups;
 				console.log(vm.signups);
 			})
 			.catch(function(response){
@@ -60,6 +74,18 @@ angular.module('AsunaWeb')
     vm.viewEvent = function(event_id){
       $location.path('/events/'+event_id);
     }
+
+		vm.viewSignups = function($event){
+			vm.activeTab = $event.target.attributes.id.value;
+			switch(vm.activeTab){
+				case 'upcoming-tab':
+					vm.signups = vm.upcomingSignups;
+					break;
+				case 'completed-tab':
+					vm.signups = vm.completedSignups;
+					break;
+			}
+		}
 
     vm.getCurrentUser();
     vm.getUser(vm.userId);
