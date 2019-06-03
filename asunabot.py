@@ -16,6 +16,7 @@ from asunabot_declative import Event, PlayerSignup, Reminder, Roster, Base
 # CONSTANTS
 haveRun = False
 creationevent = False
+isEditing = False
 
 #Are we on our local dev machine?
 if platform.system() == 'Windows':
@@ -187,8 +188,6 @@ async def disappearingMessage(message, timeToWait=20):
                 pass_context=True)
 async def edit_event(context):
    deleteMessageAfter = 5
-   client.say("ごめんなさい, functionality has not yet been implemented for this feature.",
-              delete_after=deleteMessageAfter)
    author = await check_permissions(context)
    if not author:
       return
@@ -203,17 +202,43 @@ async def edit_event(context):
    event_id = channel.id
    event = session.query(Event).get(event_id)
    if event:
+      await editSelector(event, author)
+      session.commit()
       await update_channel_info_message(event_id, context)
    else:
       await client.say("せみません, it looks like there wasn't an event created for this channel.",
                        delete_after=deleteMessageAfter)
 
+async def editSelector(event, author):
+   continueEdit = True
+   while continueEdit:
+      await displayEditMenu(author)
+      await askUserCh
+
+async def displayEditMenu(author):
+    await client.send_message(author, "Please type the number you would like to edit\n"
+                                      "1: Name of the event\n"
+                                      "2: Time of the event\n"
+                                      "3: What trials you plan to run\n"
+                                      "4: Event leader\n"
+                                      "5: Number of tanks\n"
+                                      "6: Number of healers\n"
+                                      "7: Number of mDPS\n"
+                                      "8: Number of rDPS\n"
+                                      "9: Event description\n"
+                                      "10: Minimum event rank\n"
+                                      "11: Cancel editing\n")
 
 async def check_permissions(context):
-   if not context.message.author.server_permissions.administrator:
+   def officer(author: object) -> bool:
+    if DISCORD_ROLES_RANKED[author.top_role.name] > DISCORD_ROLES_RANKED['Aesir']:
+        return False
+    else:
+        return True
+   if not (context.message.author.server_permissions.administrator or officer(context.message.author)):
       await client.send_message(context.message.author,
-                                "ごめんなさい, I don't seem to have you on my list of admins. If this is an error "
-                                "please contact a Thane and let them know you need admin permissions.")
+                                "ごめんなさい, I don't seem to have you on my list of officers. If this is an error "
+                                "please contact an officer and let them know you need the proper role setup.")
    else:
       return context.message.author
 
@@ -229,6 +254,25 @@ async def ask_user(question, author, client):
 def check(msg):
    return true
 
+async def askUserChecked(message, author, client, function, format, exceptionMessage):
+   valid = False
+   while not valid:
+      try:
+         raw_data = await ask_user(message, author, client)
+         data = function(raw_data, format)
+         return data
+      except ValueError:
+         await client.send_message(author, exceptionMessage)
+
+
+#Tries rank in dictionary, if rank doesn't exist, throws and rethrows exception
+def validateMinRank(rank, format=None):
+   try:
+      possibleRank = DISCORD_ROLES_RANKED[rank]
+      return rank
+   except KeyError: #Keeps our function with only one exception
+      raise ValueError
+
 @client.command(name='event',
                 aliases=['event-create'],
                 description='Creates an event, and a new channel for that event.',
@@ -241,23 +285,6 @@ async def create_event(context):
 
    SERVER_ID = context.message.server.id
 
-   async def askUserChecked(message, author, client, function, format, exceptionMessage):
-      valid = False
-      while not valid:
-         try:
-            raw_data = await ask_user(message, author, client)
-            data = function(raw_data, format)
-            return data
-         except ValueError:
-            await client.send_message(author, exceptionMessage)
-
-   #Tries rank in dictionary, if rank doesn't exist, throws and rethrows exception
-   def validateMinRank(rank, format=None):
-      try:
-         possibleRank = DISCORD_ROLES_RANKED[rank]
-         return rank
-      except KeyError: #Keeps our function with only one exception
-         raise ValueError
    try:
       global creationevent
       creationevent = True
@@ -337,35 +364,6 @@ async def update_channel_info_message(event_id, context):
    channel_info_message = await client.edit_message(channel_message, new_content=new_message_content)
    event.channel_info_message = channel_info_message.id
    session.commit()
-
-def set_reminders():
-   print()
-   #48 hours, 24 hours, 2hours, 15minutes- canned reminders requested for now
-   # eventNumReminders = await askUserChecked("How many reminders would you like to make (specify a number 0-3)\n"
-   #                                          "You'll be asked when you'd like to set them in the follow question.",
-   #                                          author, client, int, 10,
-   #                                          "ごめんなさい, you entered the number in an unrecognized format, try again with 0-3\n")
-   #
-   # def numberOrdinal(number):
-   #    if number == 1:
-   #       return "1st"
-   #    elif number == 2:
-   #       return "2nd"
-   #    elif number == 3:
-   #       return "3rd"
-   #    else:
-   #       return "It's over 9000!"
-   #
-   # if eventNumReminders > 0:
-   #    eventReminders = range(eventNumReminders)
-   #    for event in eventReminders:
-   #       eventReminders[event] = await askUserChecked("Enter the day and time you'd like the {} reminder to be sent in 24H time CST\n"
-   #                                                    "For example: 12/07/2018/1600/0 would send a reminder to all users "
-   #                                                    "signed up for the event at 4:00PMCST on 12/07/2018)".format(numberOrdinal(event + 1)),
-   #                                                    author, client, datetime.datetime.strptime,
-   #                                                    "%m/%d/%Y/%H/%M",
-   #                                                    "ごめんなさい, you entered the date in an unrecognized format, try again with MM/DD/YYYY/HHHH/MM\n")
-
 
 def get_highest_discord_role(player_id, context):
    discord_role = client.get_server(context.message.server.id).get_member(player_id).top_role
@@ -523,7 +521,7 @@ async def on_message(message):
       if message.content == "echo":
          await echo(message)
          return
-      if creationevent == False:
+      if (creationevent or isEditing) == False:
          lowercase = message.content.upper().lower()
          if lowercase == "hey asuna":
           await client.send_message(author, " What do you want, Don't I already do enough for you people?")
