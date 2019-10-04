@@ -684,7 +684,12 @@ async def echo(message):
 
 @client.event
 async def on_message(message):
-    if message.content.startswith("?"):
+    if message.content.lower().startswith("? x"):
+        await message.channel.send(f"{message.author.mention} Try it again, but without a space between the ? and the "
+                                   f"x (e.g. ?x rdps)", delete_after=10)
+        await disappearing_message(message)
+        return
+    elif message.content.startswith("?"):
         await client.process_commands(message)
         return
     if isinstance(message.channel, PrivateChannel):
@@ -765,10 +770,14 @@ async def on_member_join(member):
 
 @client.event
 async def on_ready():
-    print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
-    print('------')
+    while not client.is_closed():
+        print("Current servers:")
+        await check_reminders()
+        await check_promotions()
+        for server in client.guilds:
+            print(server.name)
+        print('------')
+        await asyncio.sleep(300)
 
 
 def default_message(event, player, time):
@@ -977,17 +986,4 @@ async def check_promotions():
     have_run = True
 
 
-async def run_client():
-    await client.wait_until_ready()
-    while not client.is_closed:
-        print("Current servers:")
-        await check_reminders()
-        await check_promotions()
-        for server in client.guilds:
-            print(server.name)
-        print('------')
-        await asyncio.sleep(600)
-
-
-client.loop.create_task(run_client())
 client.run(BOT_TOKEN)

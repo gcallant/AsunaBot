@@ -3,7 +3,7 @@ Description=asunabot
 After=multi-user.target
 
 [Service]
-ExecStart=/usr/local/bin/python3.6 /home/ec2-user/asunabot.py --no-prompt
+ExecStart=/usr/local/bin/python3.7 /home/ec2-user/asunabot.py --no-prompt
 User=ec2-user
 Group=ec2-user
 Type=idle
