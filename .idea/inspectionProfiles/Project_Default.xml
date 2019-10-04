@@ -1,0 +1,13 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="ERROR" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="object.top_role" />
+          <option value="asunabot_declative.Event.has" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
