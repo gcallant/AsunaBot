@@ -7,7 +7,7 @@ discord.py==1.2.3
 idna==2.8
 multidict==4.5.2
 numpy==1.17.2
-Pillow==6.1.0
+Pillow==6.2.0
 pypng==0.0.20
 pyzbar==0.1.8
 qrtools==0.0.2
