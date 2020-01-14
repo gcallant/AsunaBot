@@ -16,52 +16,26 @@ from discord.ext.commands import Bot
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import true
+from builtins import client
 
-from asunabot_declative import Event, PlayerSignup, Reminder, Roster, Base
+
 
 # CONSTANTS
-AERIANA_ID = 289942088596979713
+
+
+
 have_run = False
 is_toy = False
 is_creation_event = False
 is_editing = False
 
-# Are we on our local dev machine?
-if platform.system() == 'Windows':
-    DEBUG = True
-elif platform.system() == 'Linux':
-    DEBUG = False
-else:  # I don't know what the hell is going on
-    sys.exit("This is an unsupported system")
 
-if DEBUG:
-    engine = create_engine('sqlite:///asunabot.db')
-    BOT_TOKEN = 'NTE5NzA2ODQ4NTg1MTg3MzMy.DujPDg.5kr_-LfnCUeRLTR23yaqFY97OWo'
-    # Testing Discord
-    SERVER_ID = 373782910010130442
-    # bot-test channel
-    SIGNUP_LOG_CHANNEL_ID = 518513396484800512
-    OFFICER_CHANNEL_ID = 543925704358756352
-    logging.basicConfig(filename='Asuna.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s',
-                        level=logging.DEBUG)
-else:
-    engine = create_engine('sqlite:////home/ec2-user/asunabot.db')
-    BOT_TOKEN = 'NTE4NTUzNTcyNDI2NjQ1NTA0.DuShbw.TwNTD0i5vvgjbM27QtHCYG3vY44'
-    # Incurable Insanity Discord
-    SERVER_ID = 269224197299896320
-    # botspam channel
-    SIGNUP_LOG_CHANNEL_ID = 480506881237057566
-    # Asuna-communications channel
-    OFFICER_CHANNEL_ID = 544214746249822209
-    logging.basicConfig(filename='Asuna.log', format='%(asctime)s - %(levelname)s - %(message)s',
-                        level=logging.INFO)
 
-Base.metadata.bind = engine
-logging.getLogger('sqlalchemy.engine').setLevel(logging.WARN)
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
 
-BOT_PREFIX = ('?')
+
+
+
+
 PLAYER_ROLES = {
     'tank',
     'healer',
@@ -106,7 +80,7 @@ DISCORD_ROLES_RANKED = {
     'Follower': 10
 }
 
-client = Bot(command_prefix=BOT_PREFIX)
+
 
 
 @client.command(name='x',
@@ -203,20 +177,7 @@ async def player_signup(context, player_role, *flex_roles_args):
         await disappearing_message(context.message, delete_message_after)
 
 
-async def disappearing_message(message, time_to_wait=20):
-    """
-    Waits specified amount of seconds (default 20), then makes specified message "disappear" (deletes it)
 
-    :param message: The message to delete
-    :param time_to_wait: The time to wait before deleting the specified message
-    """
-    await asyncio.sleep(time_to_wait)
-    try:
-        await message.delete()
-    except Forbidden as fb:
-        logging.debug(f'Tried to delete message, but it was likely a DM {fb}')
-    except:
-        logging.info('Attempted to delete a message, but it was not found- it was probably already deleted.')
 
 
 @client.command(name='edit',
@@ -276,79 +237,10 @@ async def display_edit_menu(author):
                                        "11: Cancel editing\n")
 
 
-async def check_permissions(context):
-    """
-    Checks if a user can perform an action for a given group
-
-    :param context: The context of the current function
-    :return: The author if permissions match lowest officer rank, otherwise None
-    :raises KeyError: If user has a rank not in the roles dictionary
-    """
-
-    def officer(author: discord.user) -> bool:
-        lowest_officer_rank = 'Aesir'
-        try:
-            if DISCORD_ROLES_RANKED[author.top_role.name] > DISCORD_ROLES_RANKED[lowest_officer_rank]:
-                return False
-            else:
-                return True
-        except KeyError as Key:
-            logging.exception(f'Unknown rank {Key} tried to perform admin function')
-            return False
-
-    try:
-        if not (context.message.author.guild_permissions.administrator or officer(context.message.author)):
-            await send_message_to_user(context.message.author,
-                                       "すみません This function requires a Moderator, or Admin.")
-            await disappearing_message(context.message, time_to_wait=5)
-        else:
-            return context.message.author
-    except AttributeError as error:
-        await send_message_to_user(context.message.author, f'すみません you can\'t do that operation '
-                                                           f'from a private message (it\'s a Discord limitation)')
 
 
-async def ask_user(question, author):
-    await send_message_to_user(author, question)
-    msg = await client.wait_for('message', check=lambda message: message.author == author, timeout=300)
-    data = msg.content.strip()
-    # This allows you to cancel creating an event
-    if data == '?cec':
-        raise InterruptedError
-    return data
 
 
-async def send_message_to_user(user, message):
-    try:
-        await user.send(message)
-    except Forbidden as forbiddenError:
-        logging.error(f'{user}, blocked Asuna \n{forbiddenError}')
-    except NotFound as nfError:
-        logging.error(f'{user} was not found.\n{nfError}')
-    except HTTPException as httpError:
-        logging.error(f'Global problem sending message to {user}\n{httpError}')
-    except InvalidArgument as iaError:
-        logging.error(f'Some kind of invalid argument error sending message to {user}\n{iaError}')
-
-
-async def ask_user_checked(message, author, function, format, exception_message):
-    valid = False
-    while not valid:
-        try:
-            raw_data = await ask_user(message, author)
-            data = function(raw_data, format)
-            return data
-        except ValueError:
-            await send_message_to_user(author, exception_message)
-
-
-# Tries rank in dictionary, if rank doesn't exist, throws and rethrows exception
-def validate_min_rank(rank, format=None):
-    try:
-        possible_rank = DISCORD_ROLES_RANKED[rank]
-        return rank
-    except KeyError:  # Keeps our function with only one exception
-        raise ValueError
 
 
 @client.command(name='event',
@@ -500,10 +392,7 @@ async def update_channel_info_message(event_id, context):
     session.commit()
 
 
-def get_highest_discord_role(player_id, context):
-    member = context.message.guild.get_member(player_id)
-    discord_role = member.top_role
-    return discord_role
+
 
 
 @client.command(name='event-details',
@@ -626,23 +515,7 @@ async def cancel_signup_execution(context):
         await disappearing_message(context.message, delete_message_after)
 
 
-@client.event
-async def on_guild_channel_delete(channel):
-    existing_event = session.query(Event).get(channel.id)
-    if existing_event:
-        existing_event.active = False
-        try:
-            session.commit()
-        except:
-            session.rollback()
-            aeriana = client.get_user(AERIANA_ID)
-            aeriana.send(f'Had a problem deactivating deleted channel {channel.name} to DB')
-            logging.exception(f'Problem committing channel deactivation with channel {channel.name}')
-            return
 
-        channel = client.get_channel(SIGNUP_LOG_CHANNEL_ID)
-        await channel.send(f'The following event was marked inactive due to channel removal: '
-                           f'{channel.name}.', delete_after=30)
 
 
 def welcome_message():
@@ -682,102 +555,7 @@ async def echo(message):
     is_toy = False
 
 
-@client.event
-async def on_message(message):
-    if message.content.lower().startswith("? x"):
-        await message.channel.send(f"{message.author.mention} Try it again, but without a space between the ? and the "
-                                   f"x (e.g. ?x rdps)", delete_after=10)
-        await disappearing_message(message)
-        return
-    elif message.content.startswith("?"):
-        await client.process_commands(message)
-        return
-    if isinstance(message.channel, PrivateChannel):
-        author = message.author
-        # we do not want the bot to reply to itself
-        if message.author == client.user:
-            return
-        if message.content == "echo":
-            await echo(message)
-            return
-        if not (is_creation_event or is_editing or is_toy):
-            lowercase = message.content.upper().lower()
-            if lowercase == "hey asuna":
-                await send_message_to_user(author, "What do you want?? :unamused: "
-                                                   "Don't I already do enough for you people? :rage:")
-            elif lowercase == "stfu":
-                await send_message_to_user(author, "I am confused, fuck does not go up! :confused:")
-            elif re.match(r".*fuck.*", lowercase):
-                await send_message_to_user(author, ":open_mouth: You kiss your mother with that mouth?!")
-            elif lowercase == "thank you" or lowercase == 'thanks':
-                await send_message_to_user(author, "WOW!  You are the first person to thank me for the services I "
-                                                   "provide for free.\n"
-                                                   "You know, you are very, very welcome kind one.\n"
-                                                   "Live long and prosper! :vulcan:")
-            elif lowercase == "captain":
-                await send_message_to_user(author, "Has anyone ever told you that Cap is the best Magicka "
-                                                   "DragonKnight I know? Well she is! :dragon_face:\nTell her to keep "
-                                                   "that shit up! Perhaps she and I can spar one day.")
-            elif lowercase == "duel":
-                await send_message_to_user(author, "Some Roshambo?\nFisticuffs?\nA Battle of the wits?\n"
-                                                   "Perhaps jousting... I like jousting...\n"
-                                                   "I jest, I mean I wish I could fight, but alas, I am but a mere "
-                                                   "administrative assistant with aspirations of great adventures. "
-                                                   "Perhaps you could "
-                                                   "send me a post card, and I can live bi-curiously through you?")
-            elif lowercase == "treb":
-                await send_message_to_user(author, "これは一体何！:scream: Why does everyone keep asking me about Trebusan?! "
-                                                   ":flushed: I mean, I think he's a good looking guy, I do... but, "
-                                                   "he's just not my type. ごめんなさい Trebusan! :cow:")
-            elif lowercase == "no":
-                await send_message_to_user(author,
-                                           "Well fine then! I will go play go play the reboot of the 1978 Space "
-                                           "Invaders by myself! :stuck_out_tongue: :robot: "
-                                           "You on the other hand should avoid those arrows to the knee! "
-                                           ":bow_and_arrow: "
-                                           "I hear it hurts, and in the end you turn into a guard. What a boring life "
-                                           "that is!")
-            elif lowercase == "hammer":
-                await send_message_to_user(author,
-                                           "Captain Hammer huh? Well, you're no Nathan Fillion, but...\n```'You got a "
-                                           "job, we can do it, "
-                                           "don't much care what it is.'```\nSorry I could not resist a juicy movie "
-                                           "quote. :squid: :movie_camera: ")
-            elif lowercase == "hi" or lowercase == "hello" or lowercase == "hey":
-                await send_message_to_user(author, "Hi to you too! Or as I would say in Japan, こんにちわ! :smiley:")
-            elif lowercase == "help":
-                await send_message_to_user(author,
-                                           "So you want help? Try typing **hey asuna** or **captain**. **Hammer** "
-                                           "might work too... :stuck_out_tongue_winking_eye:\nI was coded with a "
-                                           "decent amount of lines but my memory is kinda poor (because Aeriana has "
-                                           "to pay for my resources :sob:). You might have to just try random shit, "
-                                           "that is what my friend Blitz does. :scream_cat:.\nIf you really want "
-                                           "*actual* help, try typing **?help**  for a better list of my command "
-                                           "functions!")
-            else:
-                await send_message_to_user(author, "Take your toys and go home, I do not want to play anymore\n(i.e. "
-                                                   "I don't know what you mean by that, try something else! "
-                                                   ":stuck_out_tongue_winking_eye:)")
 
-
-@client.event
-async def on_member_join(member):
-    roles = member.guild.roles
-    role = discord.utils.get(roles, name="Follower")
-    await member.add_roles(role, reason='Because they\'re a new member of our discord!')
-    await send_message_to_user(member, welcome_message())
-
-
-@client.event
-async def on_ready():
-    while not client.is_closed():
-        print("Current servers:")
-        await check_reminders()
-        await check_promotions()
-        for server in client.guilds:
-            print(server.name)
-        print('------')
-        await asyncio.sleep(300)
 
 
 def default_message(event, player, time):
@@ -986,4 +764,4 @@ async def check_promotions():
     have_run = True
 
 
-client.run(BOT_TOKEN)
+
