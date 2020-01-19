@@ -2,13 +2,14 @@ import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from main import DEBUG
-from asunabot_declative import Event, PlayerSignup, Reminder, Roster, Base
+
+from config.asunabot_declative import Base
+from config.config import DEBUG
 
 if DEBUG:
     engine = create_engine('sqlite:///asunabot.db')
 else:
-    engine = create_engine('sqlite:////home/ec2-user/asunabot.db')
+    engine = create_engine('sqlite:////home/cgrantlliiant/Asuna/asunabot.db')
 
 
 Base.metadata.bind = engine
