@@ -62,7 +62,7 @@ else:  # I don't know what the hell is going on
     sys.exit("This is an unsupported system")
 
 if DEBUG:
-    logging.basicConfig(filename='../Asuna.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s',
+    logging.basicConfig(filename='Asuna.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s',
                         level=logging.DEBUG)
 else:
     # Setup Proper Time Zone
