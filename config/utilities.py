@@ -24,6 +24,15 @@ async def disappearing_message(message, time_to_wait=20):
         logging.info('Attempted to delete a message, but it was not found- it was probably already deleted.')
 
 
+async def get_menu_option_in_range(menu, author, first_option, last_option):
+    while True:
+        message: str = await ask_user(menu, author)
+        if message.isdigit() and first_option <= int(message) <= last_option:
+            return int(message)
+        else:
+            await send_message_to_user(author, exception_messages.incorrect_menu_option_exception)
+
+
 async def check_permissions(context):
     """
     Checks if a user can perform an action for a given group
@@ -59,9 +68,12 @@ async def ask_user(question, author):
     msg = await client.wait_for('message', check=lambda message: message.author == author and message.channel.type
                                                                  is discord.ChannelType.private, timeout=300)
     data = msg.content.strip()
-    # This allows you to cancel creating an event
-    if data == '?cec':
+    # This allows you to cancel creating or editing an event
+    if data == '?cec' or data == '?cancel':
         raise InterruptedError
+    # Allows for returning to a previous edit menu
+    elif data == '?return':
+        raise UserWarning
     return data
 
 
@@ -77,7 +89,7 @@ async def send_message_to_user(user, message):
     except InvalidArgument as iaError:
         logging.error(f'Some kind of invalid argument error sending message to {user}\n{iaError}')
     except:
-        logging.error(f'More Bullshit from some dipshit {user}')
+        logging.exception(f'More Bullshit from some dipshit {user}')
 
 
 async def ask_user_checked(message, author, function, format, exception_message):

@@ -3,6 +3,7 @@ import logging
 import asunadiscord
 import config
 from config import asunabot_declative, database, config
+from config.config import PLAYER_ROLES
 from config.database import session
 from config.asunabot_declative import Event, PlayerSignup
 from config.utilities import disappearing_message
