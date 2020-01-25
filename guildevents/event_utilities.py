@@ -42,7 +42,7 @@ async def get_event_details(event_id, context, extra=None):
 
 async def perform_show_event_details(context, extra):
     author = context.message.author
-    event_details = get_event_details(context.message.channel.id, context, extra)
+    event_details = await get_event_details(context.message.channel.id, context, extra)
     await disappearing_message(context.message, time_to_wait=5)
     await send_message_to_user(author, event_details)
 
