@@ -77,5 +77,5 @@ class Reminder(Base):
 if DEBUG:
    engine = create_engine('sqlite:///asunabot.db')
 else:
-   engine = create_engine('sqlite:////home/ec2-user/asunabot.db')
+   engine = create_engine('sqlite:////home/cgrantlliiant/Asuna/asunabot.db')
 Base.metadata.create_all(engine)
