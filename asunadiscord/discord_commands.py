@@ -1,5 +1,6 @@
 from discord.abc import PrivateChannel
 
+from admin.reporting import perform_report
 from asunadiscord.discord_client import client
 from config.utilities import disappearing_message, check_permissions
 from guildevents.edit_event import perform_event_edit, edit_selector_menu
@@ -57,6 +58,24 @@ async def create_event(context):
     delete_message_after = 5
 
     await perform_event_creation(context, officer, delete_message_after)
+
+
+@client.command(name='report', description='Creates a report based on specified parameters that you define. For example '
+                                           '?report user <userid> will create a report for user with an id of <userid>. '
+                                           'Allowed types are: user, audit',
+                brief='Runs a report', pass_context=True)
+async def run_report(context, report_to_run='', user_id: int = None, report_format='csv'):
+    officer = await check_permissions(context)
+    if not officer:
+        return
+
+    delete_message_after = 5
+    report_to_run = str(report_to_run).lower().strip()
+    report_format = str(report_format).lower().strip()
+
+    await disappearing_message(context.message, delete_message_after)
+
+    await perform_report(context, report_to_run, user_id, officer, report_format)
 
 
 @client.command(name='event-details',
