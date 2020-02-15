@@ -77,9 +77,12 @@ async def ask_user(question, author):
     return data
 
 
-async def send_message_to_user(user, message):
+async def send_message_to_user(user, message, file=None):
     try:
-        await user.send(message)
+        if file is not None:
+            await user.send(message, file=file)
+        else:
+            await user.send(message)
     except Forbidden as forbiddenError:
         logging.error(f'{user}, blocked Asuna \n{forbiddenError}')
     except NotFound as nfError:
