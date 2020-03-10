@@ -53,15 +53,17 @@ PLAYER_ROLES_DATA = {
 DISCORD_ROLES_RANKED = {
     'High Queen': 1,
     'The Hand': 2,
-    'Thane': 3,
-    'Aesir': 4,
-    'Valkyrie': 5,
-    'Shieldbreaker': 6,
-    'Marauder': 7,
-    'Citizen': 8,
-    'Thrall': 9,
-    'Follower': 10,
-    '@everyone': 11
+    'Owner': 3,
+    'Thane': 4,
+    'officers': 5,
+    'Aesir': 6,
+    'Valkyrie': 7,
+    'Shieldbreaker': 8,
+    'Marauder': 9,
+    'Citizen': 10,
+    'Thrall': 11,
+    'Follower': 12,
+    '@everyone': 13
 }
 
 if platform.system() == 'Windows':
