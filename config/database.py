@@ -9,7 +9,7 @@ from config.config import DEBUG
 if DEBUG:
     engine = create_engine('sqlite:///asunabot.db')
 else:
-    engine = create_engine('sqlite:////home/cgrantlliiant/Asuna/asunabot.db')
+    engine = create_engine('sqlite:///./asunabot.db')
 
 
 Base.metadata.bind = engine

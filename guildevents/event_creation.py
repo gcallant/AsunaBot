@@ -5,21 +5,20 @@ import logging
 import discord
 from discord import InvalidArgument, HTTPException
 
-from asunadiscord.discord_client import client, SERVER_ID
 from config import config
-from resourcestrings import exception_messages, event_creation_messages
 from config.asunabot_declative import Event, Roster
 from config.database import session
 from config.utilities import ask_user, ask_user_checked, send_message_to_user, disappearing_message
-from guildevents.event_utilities import validate_min_rank, get_event_details
+from guildevents.event_utilities import validate_min_rank, get_event_details, convert_to_proper_timezone
+from resourcestrings import exception_messages, event_creation_messages
 
 
 async def perform_event_creation(context, author, delete_message_after):
     event_day, event_description, event_leader, event_name, event_rank, event_time, event_trial_name, \
     number_of_heals, number_of_mdps, number_of_rdps, number_of_tanks \
-    = await get_event_info_from_user(author, context, delete_message_after)
+        = await get_event_info_from_user(author, context, delete_message_after)
 
-    success, new_channel = await create_event_channel(author, event_name)
+    success, new_channel = await create_event_channel(context.message, event_name)
     if not success:
         return
 
@@ -28,16 +27,19 @@ async def perform_event_creation(context, author, delete_message_after):
                                        event_leader, event_description, event_rank)
     if not success:
         return
+    time = convert_to_proper_timezone(event_time, new_channel)
 
     event_channel_message = f"""@everyone
 Date: {str(event_day).split()[0]}
-Time: {str(event_time).split()[1]} Central
+Time: {time}
 {event_description}
 
 Raid Leader:{event_leader} 
 
 
 {await get_event_details(new_channel.id, context)}
+
+Trials: {event_trial_name}
 
 Minimum Rank: {event_rank}
 If you are not this rank, you may still signup, but you will be listed as reserve."""
@@ -97,13 +99,18 @@ async def save_event_details(number_of_tanks, number_of_heals, number_of_mdps, n
         return False
 
 
-async def create_event_channel(author, event_name):
-    server = client.get_guild(SERVER_ID)
+async def create_event_channel(message: discord.message, event_name):
+    author = message.author
+    server = message.guild
     new_channel = discord.TextChannel
 
     try:
         categories = server.categories
-        category = discord.utils.get(categories, name='Raid Sign Ups & Events')
+        if server.id == config.INCURABLE_SERVER_ID or server.id == config.TESTING_SERVER_ID:
+            category = discord.utils.get(categories, name='Raid Sign Ups & Events')
+        else:
+            category = discord.utils.get(categories, name='Skeever Trials Info')
+
         new_channel = await server.create_text_channel(name=event_name, category=category, position=0)
     except InvalidArgument:
         await send_message_to_user(author, 'Could not create the event, the overwrite information was not correct!')

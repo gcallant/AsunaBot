@@ -2,8 +2,9 @@ import datetime
 
 import discord
 from config import config
-from asunadiscord.discord_client import client, OFFICER_CHANNEL_ID, SERVER_ID
+from asunadiscord.discord_client import client
 from config.asunabot_declative import PlayerSignup, Event
+from config.config import COMMUNICATION_CHANNEL_ID, INCURABLE_SERVER_ID
 from config.database import session
 
 
@@ -19,7 +20,7 @@ async def check_citizen_promotions(thrall_list):
             message += member.name
             message += "\n"
         message += "```"
-        channel = client.get_channel(OFFICER_CHANNEL_ID)
+        channel = client.get_channel(COMMUNICATION_CHANNEL_ID)
         await channel.send(message)
 
 
@@ -37,12 +38,12 @@ async def check_marauder_promotions(marauder_list):
             message += member.name
             message += "\n"
         message += "```"
-        channel = client.get_channel(OFFICER_CHANNEL_ID)
+        channel = client.get_channel(COMMUNICATION_CHANNEL_ID)
         await channel.send(message)
 
 
 def compile_members(citizen_list, thrall_list):
-    server = client.get_guild(SERVER_ID)
+    server = client.get_guild(INCURABLE_SERVER_ID)
     members = server.members
     for member in members:
         if member.top_role.name == 'Thrall' and not discord.utils.get(member.roles, name="Inactive"):
