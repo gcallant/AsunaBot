@@ -8,7 +8,7 @@ from discord.abc import PrivateChannel
 from config import config
 from config.asunabot_declative import Event
 from config.database import session
-from asunadiscord.discord_client import client, SIGNUP_LOG_CHANNEL_ID
+from asunadiscord.discord_client import client
 from config.utilities import disappearing_message, echo, send_message_to_user
 from guildevents.easter_eggs import process_easter_egg
 from guildevents.promotions import check_promotions
@@ -29,11 +29,6 @@ async def on_guild_channel_delete(channel):
             aeriana.send(f'Had a problem deactivating deleted channel {channel.name} to DB')
             logging.exception(f'Problem committing channel deactivation with channel {channel.name}')
             return
-
-        channel = client.get_channel(SIGNUP_LOG_CHANNEL_ID)
-        await channel.send(non_descript_messages.channel_deleted,
-                           f' {channel.name}.', delete_after=30)
-
 
 @client.event
 async def on_message(message):
@@ -59,21 +54,23 @@ async def on_message(message):
 
 @client.event
 async def on_member_join(member):
-    roles = member.guild.roles
-    role = discord.utils.get(roles, name="Follower")
-    await member.add_roles(role, reason=non_descript_messages.role_assign_reason)
-    await send_message_to_user(member, non_descript_messages.member_join_welcome)
+    if member.guild.id == config.INCURABLE_SERVER_ID:
+        roles = member.guild.roles
+        role = discord.utils.get(roles, name="Follower")
+        await member.add_roles(role, reason=non_descript_messages.role_assign_reason)
+        await send_message_to_user(member, non_descript_messages.member_join_welcome)
 
 
 @client.event
 async def on_ready():
-    while not client.is_closed():
+    if not client.is_closed():
         print("Current servers:")
-        await check_reminders()
-        await check_promotions()
         for server in client.guilds:
             print(server.name)
         print('------')
+    while not client.is_closed():
+        await check_reminders()
+        await check_promotions()
         await asyncio.sleep(300)
 
 
