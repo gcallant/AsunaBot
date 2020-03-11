@@ -1,6 +1,6 @@
 import logging
 
-import asunadiscord
+import discord
 import config
 from config import asunabot_declative, database, config
 from config.config import PLAYER_ROLES
@@ -64,7 +64,7 @@ async def perform_player_signup(message, context, player_role, *flex_roles_args)
                                    f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
                 flex_roles = cleaned_player_role
                 cleaned_player_role = "reserve"
-            elif event.min_rank == "Shieldbreaker" and asunadiscord.utils.get(message.author.roles,
+            elif event.min_rank == "Shieldbreaker" and discord.utils.get(message.author.roles,
                                                                               name=cleaned_player_role) is None:
                 await channel.send(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
                                    f"as a {cleaned_player_role}. You'll be signed up as a reserve.\nIf you are "
