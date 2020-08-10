@@ -6,7 +6,7 @@ member_join_welcome = """**Welcome to _Incurable Insanity_!**
 
 We are pleased to have you here and want to take this opportunity to lay out the next steps in your journey with us.
 
-Firstly, most of who and what we are can be found in <#458793337558663178>. 
+Firstly, most of who and what we are can be found in <#704472519461044265>. 
 There you will find our ranking system clearly laid out. 
 If you are a player that needs some advice on your toon(s), we have class captains of every role and toon type. 
 Please reach out to any officer *(Aesir or above)* about hooking you up with the right mentor. 

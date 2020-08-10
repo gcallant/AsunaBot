@@ -85,7 +85,7 @@ async def update_channel_info_message(event_id, context):
     channel = client.get_channel(event_id)
     time = convert_to_proper_timezone(event.event_time, channel)
     channel_message = await channel.fetch_message(event.channel_info_message)
-    new_message_content = f'@everyone\nDate: {str(event.event_day).split()[0]}\nTime: {time}\n{event.event_description}\n\nRaid Leader:{event.event_leader}\n\nTrials: {event.trial_name}\n\n\n{await get_event_details(event_id, context)}\n\nMinimum Rank: {event.min_rank}\nIf you are not this rank, you may still signup, but you will be listed as reserve.'
+    new_message_content = f'@everyone\nDate: {str(event.event_day).split()[0]}\nTime: {time}\n{event.event_description}\n\nRaid Leader:{event.event_leader}\n\nTrials: {event.trial_name}\n\n\n{await get_event_details(event_id, context)}**Reserve does not mean "maybe"- please show up if you sign up**\n\n\nMinimum Rank: {event.min_rank}\nIf you are not this rank, you may still signup, but you will be listed as reserve.'
     await channel_message.edit(content=new_message_content)
     event.channel_info_message = channel_message.id
     session.commit()
@@ -93,7 +93,7 @@ async def update_channel_info_message(event_id, context):
 
 def convert_to_proper_timezone(event_time, new_channel):
     time = None
-    if new_channel.guild.id == config.SKEEVERS_SERVER_ID:
+    if new_channel.guild.id != config.INCURABLE_SERVER_ID:
         time = str(event_time + datetime.timedelta(hours=1)).split()[1] + " Eastern"  # Convert to EST
     else:
         time = str(event_time).split()[1] + " Central"

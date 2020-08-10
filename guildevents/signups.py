@@ -39,7 +39,7 @@ async def perform_player_signup(message, context, player_role, *flex_roles_args)
     event = session.query(Event).get(event_id)
     if event:
         cleaned_player_role = player_role.strip().lower()
-        if cleaned_player_role == 'flex':
+        if cleaned_player_role == 'flex':  # This is because people are stupid, and try to flex everything!
             await channel.send(
                 'If you wish to flex a role, signup for your preferred role with additional specifiers '
                 '(eg. ?x rdps mdps, tank)', delete_after=10)
@@ -56,23 +56,8 @@ async def perform_player_signup(message, context, player_role, *flex_roles_args)
             cleaned_player_role = 'healer'
 
         if cleaned_player_role in config.PLAYER_ROLES:
-            if not cleaned_player_role == 'reserve' and \
-                    (config.DISCORD_ROLES_RANKED[message.author.top_role.name] > config.DISCORD_ROLES_RANKED[event.min_rank]):
-                await channel.send(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
-                                   f"as a {message.author.top_role.name}. You'll be signed up as reserve.\nIf this is "
-                                   f"an error, "
-                                   f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
-                flex_roles = cleaned_player_role
-                cleaned_player_role = "reserve"
-            elif event.min_rank == "Shieldbreaker" and discord.utils.get(message.author.roles,
-                                                                              name=cleaned_player_role) is None:
-                await channel.send(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
-                                   f"as a {cleaned_player_role}. You'll be signed up as a reserve.\nIf you are "
-                                   f"certified as a different role, "
-                                   f"please signup with a role you are certified for.\nIf this is an error, "
-                                   f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
-                flex_roles = cleaned_player_role
-                cleaned_player_role = "reserve"
+            cleaned_player_role, flex_roles = await do_signups_meet_minimum_standards(channel, cleaned_player_role,
+                                                                                      event, flex_roles, message)
 
             if flex_roles_args:
                 flex_roles = ' '.join(flex_roles_args).strip().lower() + ' ' + flex_roles
@@ -112,3 +97,26 @@ async def perform_player_signup(message, context, player_role, *flex_roles_args)
                            f"channel.",
                            delete_after=10)
         await disappearing_message(context.message, delete_message_after)
+
+
+async def do_signups_meet_minimum_standards(channel, cleaned_player_role, event, flex_roles, message):
+    if not cleaned_player_role == 'reserve' and \
+            (config.DISCORD_ROLES_RANKED[message.author.top_role.name] > config.DISCORD_ROLES_RANKED[event.min_rank]):
+        await channel.send(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
+                           f"as a {message.author.top_role.name}. You'll be signed up as reserve.\nIf this is "
+                           f"an error, "
+                           f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
+        flex_roles = cleaned_player_role
+        cleaned_player_role = "reserve"
+
+        # More performance intensive search only for needed runs
+    elif event.min_rank == "Shieldbreaker" and discord.utils.get(message.author.roles,
+                                                                 name=cleaned_player_role) is None:
+        await channel.send(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
+                           f"as a {cleaned_player_role}. You'll be signed up as a reserve.\nIf you are "
+                           f"certified as a different role, "
+                           f"please signup with a role you are certified for.\nIf this is an error, "
+                           f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
+        flex_roles = cleaned_player_role
+        cleaned_player_role = "reserve"
+    return cleaned_player_role, flex_roles

@@ -43,7 +43,7 @@ async def check_permissions(context):
     """
 
     def officer(author: discord.user) -> bool:
-        lowest_officer_rank = 'Aesir'
+        lowest_officer_rank = 'Trial Captain'
         try:
             if config.DISCORD_ROLES_RANKED[author.top_role.name] > config.DISCORD_ROLES_RANKED[lowest_officer_rank]:
                 return False
