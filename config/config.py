@@ -15,14 +15,10 @@ is_editing = False
 TESTING_SERVER_ID = 373782910010130442
 INCURABLE_SERVER_ID = 269224197299896320
 SKEEVERS_SERVER_ID = 260640164618043392
-CAL_SERVER_ID = 645316892671737867
-CAL_TEST_SERVER_ID = 742135106340388868
 
 INCURABLE_BOT_SPAM_ID = 480506881237057566
 SKEEVERS_BOT_SPAM_ID = 394250756183687169
 TESTING_BOT_SPAM_ID = 518513396484800512
-CAL_BOT_SPAM_ID = 742159925634924746
-CAL_TEST_BOT_SPAM_ID = 742158718749114429
 
 PLAYER_ROLES = {
     'tank',
@@ -61,23 +57,13 @@ DISCORD_ROLES_RANKED = {
     'Thane': 4,
     'officers': 5,
     'Aesir': 6,
-    'Khaleesia': 7,
-    'Admin': 8,
-    'Officer': 9,
-    'Trial Captain': 10,
-    'Valkyrie': 11,
-    'Shieldbreaker': 12,
-    'Marauder': 13,
-    'Citizen': 14,
-    'Thrall': 15,
-    'Follower': 16,
-    'PvP Captain': 17,
-    'Mat Runs': 18,
-    'Development': 19,
-    'Member': 20,
-    'Exempt': 21,
-    'Unverified': 22,
-    '@everyone': 23
+    'Valkyrie': 7,
+    'Shieldbreaker': 8,
+    'Marauder': 9,
+    'Citizen': 10,
+    'Thrall': 11,
+    'Follower': 12,
+    '@everyone': 13
 }
 
 if platform.system() == 'Windows':

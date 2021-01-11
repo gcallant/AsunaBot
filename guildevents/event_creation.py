@@ -110,10 +110,6 @@ async def create_event_channel(message: discord.message, event_name):
             category = discord.utils.get(categories, name='Raid Sign Ups & Events')
         elif server.id == config.SKEEVERS_SERVER_ID:
             category = discord.utils.get(categories, name='Skeever Trials Info')
-        elif server.id == config.CAL_TEST_SERVER_ID:
-            category = discord.utils.get(categories, id=742135106910814299)
-        elif server.id == config.CAL_SERVER_ID:
-            category = discord.utils.get(categories, id=742239708230451272)
         else:
             await send_message_to_user(author, 'I have no idea where I am- please let Aeriana know where to find me')
             return
