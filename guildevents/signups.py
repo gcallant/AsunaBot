@@ -1,11 +1,12 @@
 import logging
 
 import discord
+
 import config
-from config import asunabot_declative, database, config
+from config import config
+from config.asunabot_declative import Event, PlayerSignup
 from config.config import PLAYER_ROLES
 from config.database import session
-from config.asunabot_declative import Event, PlayerSignup
 from config.utilities import disappearing_message
 from guildevents.event_utilities import update_channel_info_message
 
@@ -100,23 +101,26 @@ async def perform_player_signup(message, context, player_role, *flex_roles_args)
 
 
 async def do_signups_meet_minimum_standards(channel, cleaned_player_role, event, flex_roles, message):
-    if not cleaned_player_role == 'reserve' and \
-            (config.DISCORD_ROLES_RANKED[message.author.top_role.name] > config.DISCORD_ROLES_RANKED[event.min_rank]):
-        await channel.send(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
-                           f"as a {message.author.top_role.name}. You'll be signed up as reserve.\nIf this is "
-                           f"an error, "
-                           f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
-        flex_roles = cleaned_player_role
-        cleaned_player_role = "reserve"
+    if channel.guild.id == config.INCURABLE_SERVER_ID:  # Ignore all other servers
+        if not cleaned_player_role == 'reserve' and \
+                (config.DISCORD_ROLES_RANKED[message.author.top_role.name] > config.DISCORD_ROLES_RANKED[
+                    event.min_rank]):
+            await channel.send(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
+                               f"as a {message.author.top_role.name}. You'll be signed up as reserve.\nIf this is "
+                               f"an error, "
+                               f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
+            flex_roles = cleaned_player_role
+            cleaned_player_role = "reserve"
 
-        # More performance intensive search only for needed runs
-    elif event.min_rank == "Shieldbreaker" and discord.utils.get(message.author.roles,
-                                                                 name=cleaned_player_role) is None:
-        await channel.send(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
-                           f"as a {cleaned_player_role}. You'll be signed up as a reserve.\nIf you are "
-                           f"certified as a different role, "
-                           f"please signup with a role you are certified for.\nIf this is an error, "
-                           f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
-        flex_roles = cleaned_player_role
-        cleaned_player_role = "reserve"
+            # More performance intensive search only for needed runs
+        elif event.min_rank == "Shieldbreaker" and discord.utils.get(message.author.roles,
+                                                                     name=cleaned_player_role) is None:
+            await channel.send(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
+                               f"as a {cleaned_player_role}. You'll be signed up as a reserve.\nIf you are "
+                               f"certified as a different role, "
+                               f"please signup with a role you are certified for.\nIf this is an error, "
+                               f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
+            flex_roles = cleaned_player_role
+            cleaned_player_role = "reserve"
+            
     return cleaned_player_role, flex_roles
