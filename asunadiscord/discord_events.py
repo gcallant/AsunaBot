@@ -5,6 +5,7 @@ import logging
 import discord
 from discord.abc import PrivateChannel
 
+import config.utilities
 from config import config
 from config.asunabot_declative import Event
 from config.database import session
@@ -25,7 +26,7 @@ async def on_guild_channel_delete(channel):
             session.commit()
         except:
             session.rollback()
-            aeriana = client.get_user(config.AERIANA_ID)
+            aeriana = config.utilities.get_user(config.AERIANA_ID)
             aeriana.send(f'Had a problem deactivating deleted channel {channel.name} to DB')
             logging.exception(f'Problem committing channel deactivation with channel {channel.name}')
             return

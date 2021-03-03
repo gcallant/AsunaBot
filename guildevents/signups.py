@@ -11,28 +11,30 @@ from config.utilities import disappearing_message
 from guildevents.event_utilities import update_channel_info_message
 
 
-async def perform_cancel_signup(context):
+async def perform_cancel_signup(context, user: discord.user, admin_edit=False):
     event_id = context.message.channel.id
-    player_id = context.message.author.id
+    player_id = user.id
     delete_message_after = 5
     event = session.query(Event).get(event_id)
     existing_player_signup = session.query(PlayerSignup).get((player_id, event_id))
     if existing_player_signup:
         session.delete(existing_player_signup)
         session.commit()
-        await context.message.channel.send(
-            f'{context.message.author.mention}, you are no longer signed up for this event.',
-            delete_after=10)
-        await update_channel_info_message(event_id, context)
-        await disappearing_message(context.message, delete_message_after)
+        if not admin_edit:
+            await context.message.channel.send(
+                f'{user.mention}, you are no longer signed up for this event.',
+                delete_after=10)
+            await update_channel_info_message(event_id, context)
+            await disappearing_message(context.message, delete_message_after)
     else:
-        await context.message.channel.send(f'{context.message.author.mention}, my records show you never signed up '
-                                           f'for this event.',
+        await context.message.channel.send(f'{context.message.author.mention}, you, or the user you entered are not '
+                                           f'signed up for this event.',
                                            delete_after=10)
         await disappearing_message(context.message, delete_message_after)
 
 
-async def perform_player_signup(message, context, player_role, *flex_roles_args):
+async def perform_player_signup(message, user: discord.user, context, player_role, *flex_roles_args,
+                                proxy_signup=False, admin_edit=False):
     channel = context.message.channel
     delete_message_after = 5
     event_id = channel.id
@@ -49,7 +51,7 @@ async def perform_player_signup(message, context, player_role, *flex_roles_args)
 
         # Allows users to use ?x cancel
         if cleaned_player_role == 'cancel':
-            await perform_cancel_signup(context)
+            await perform_cancel_signup(context, user)
             return
 
         # Allows users to also type heals or healer without adding an additional dictionary entry
@@ -58,19 +60,20 @@ async def perform_player_signup(message, context, player_role, *flex_roles_args)
 
         if cleaned_player_role in config.PLAYER_ROLES:
             cleaned_player_role, flex_roles = await do_signups_meet_minimum_standards(channel, cleaned_player_role,
-                                                                                      event, flex_roles, message)
+                                                                                      event, flex_roles, message,
+                                                                                      proxy_signup, admin_edit)
 
             if flex_roles_args:
                 flex_roles = ' '.join(flex_roles_args).strip().lower() + ' ' + flex_roles
-            existing_player_signup = session.query(PlayerSignup).get((context.message.author.id, event.channel_id))
+            existing_player_signup = session.query(PlayerSignup).get((user.id, event.channel_id))
             if existing_player_signup:
                 existing_player_signup.player_roles = cleaned_player_role
                 existing_player_signup.flex_roles = flex_roles
             else:
                 new_player_signup = PlayerSignup(
-                    id=context.message.author.id,
-                    player_name=context.message.author.display_name,
-                    player_mention=context.message.author.mention,
+                    id=user.id,
+                    player_name=user.display_name,
+                    player_mention=user.mention,
                     player_roles=cleaned_player_role,
                     flex_roles=flex_roles,
                     event=event,
@@ -80,14 +83,15 @@ async def perform_player_signup(message, context, player_role, *flex_roles_args)
                 session.commit()
             except:
                 session.rollback()
-                logging.exception(f'We had an error trying to add {message.author.name} to the roster')
+                logging.exception(f'We had an error trying to add {user.name} to the roster')
                 await channel.send(f'ごめんなさい, {message.author.mention} '
                                    f'There was an error, please try again!', delete_after=10)
-            await message.add_reaction('✅')
-            await channel.send(f'{message.author.mention} You are now signed up as ' + player_role.lower(),
-                               delete_after=10)
-            await update_channel_info_message(event_id, context)
-            await disappearing_message(context.message)
+            if not admin_edit:
+                await message.add_reaction('✅')
+                await channel.send(f'{user.mention} You are now signed up as ' + cleaned_player_role.lower(),
+                                   delete_after=10)
+                await update_channel_info_message(event_id, context)
+                await disappearing_message(context.message)
         else:
             await channel.send(f'ごめんなさい, {message.author.mention} I do not recognize that role. Please try one of the '
                                f'following roles: '
@@ -100,8 +104,10 @@ async def perform_player_signup(message, context, player_role, *flex_roles_args)
         await disappearing_message(context.message, delete_message_after)
 
 
-async def do_signups_meet_minimum_standards(channel, cleaned_player_role, event, flex_roles, message):
-    if channel.guild.id == config.INCURABLE_SERVER_ID:  # Ignore all other servers
+async def do_signups_meet_minimum_standards(channel, cleaned_player_role, event, flex_roles, message,
+                                            proxy_signup=False, admin_edit=False):
+    if channel.guild.id == config.INCURABLE_SERVER_ID or channel.guild.id == config.TESTING_SERVER_ID \
+            and not (proxy_signup or admin_edit):  # Ignore all other servers
         if not cleaned_player_role == 'reserve' and \
                 (config.DISCORD_ROLES_RANKED[message.author.top_role.name] > config.DISCORD_ROLES_RANKED[
                     event.min_rank]):
@@ -122,5 +128,5 @@ async def do_signups_meet_minimum_standards(channel, cleaned_player_role, event,
                                f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
             flex_roles = cleaned_player_role
             cleaned_player_role = "reserve"
-            
+
     return cleaned_player_role, flex_roles

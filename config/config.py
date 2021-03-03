@@ -11,6 +11,8 @@ have_run = False
 is_toy = False
 is_creation_event = False
 is_editing = False
+message_user_timeout = 600
+signups_enabled = {}
 
 TESTING_SERVER_ID = 373782910010130442
 INCURABLE_SERVER_ID = 269224197299896320

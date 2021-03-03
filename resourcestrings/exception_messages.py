@@ -38,3 +38,7 @@ While I've saved your edited event information, when attempting to post the new 
 
 Please re-open the edit menu, and reduce the amount of information in the event message. The typical culprit is the description, you might want to start there.
 If after cutting down on the information, and you're still having issues, let Aeriana know, otherwise, good luck!"""
+
+unknown_proxy_command = "せみません, I don't recognize that command. Currently I can only support signups or removals."
+
+invalid_user = "せみません, I cannot find that user in this server, or that is not a valid user."

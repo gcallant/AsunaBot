@@ -3,8 +3,9 @@ import logging
 
 import discord
 from discord import Forbidden, NotFound, HTTPException, InvalidArgument
-from config import config
+
 from asunadiscord.discord_client import client
+from config import config
 from resourcestrings import easter_egg_messages, exception_messages
 
 
@@ -63,10 +64,19 @@ async def check_permissions(context):
         await send_message_to_user(context.message.author, exception_messages.operation_not_permitted_in_dm_exception)
 
 
+def get_user_from_mention(userid: str):
+    left_half = userid.rpartition(">")
+    left_half = left_half[0]
+    left_half = left_half.rpartition("<@!")
+    return client.fetch_user(int(left_half[2]))
+
+
 async def ask_user(question, author):
     await send_message_to_user(author, question)
-    msg = await client.wait_for('message', check=lambda message: message.author == author and message.channel.type
-                                                                 is discord.ChannelType.private, timeout=300)
+    msg = await client.wait_for('message', check=lambda message:
+    message.author == author and message.channel.type
+    is discord.ChannelType.private,
+                                timeout=config.message_user_timeout)
     data = msg.content.strip()
     # This allows you to cancel creating or editing an event
     if data == '?cec' or data == '?cancel':
@@ -132,3 +142,14 @@ async def get_highest_discord_role(player_id, context):
     except:
         logging.exception(f'Could not get a member from that player id, they might have left the server.')
         return "Follower"
+
+
+async def get_user(context, user_id):
+    user: discord.user = None
+    if user_id.startswith("<@!"):
+        user = context.message.mentions[0]
+    elif user_id.isdigit():
+        user = await client.fetch_user(int(user_id))
+    if user is None:
+        await context.message.channel.send(exception_messages.invalid_user)
+    return user
