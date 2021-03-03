@@ -19,7 +19,7 @@ else: #I don't know what the hell is going on
 Base = declarative_base()
 
 class Roster(Base):
-    __tablename__ = 'roster'
+    __tablename__ = 'player_roster'
     id = Column(Integer, primary_key=True)
     max_tanks = Column(Integer, default=2)
     max_heal = Column(Integer, default=2)
@@ -46,7 +46,7 @@ class Event(Base):
     event_leader = Column(String(250), nullable=False)
     active = Column(Boolean, default=True)
     roster = relationship(Roster)
-    roster_id = Column(Integer, ForeignKey('roster.id'), nullable=False)
+    roster_id = Column(Integer, ForeignKey('player_roster.id'), nullable=False)
     event_description = Column(String, nullable=False)
     min_rank = Column(String, nullable=False)
     channel_info_message = Column(String, nullable=True)

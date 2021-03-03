@@ -4,13 +4,16 @@ import logging
 
 from discord import HTTPException
 
+import config.utilities
 from asunadiscord.discord_client import client
 from config import config
-from config.asunabot_declative import Event, Roster
+from config.asunabot_declative import Event, Roster, PlayerSignup
+from config.config import signups_enabled
 from config.database import session
 from config.utilities import disappearing_message, get_menu_option_in_range, send_message_to_user, ask_user, \
-    ask_user_checked
-from guildevents.event_utilities import update_channel_info_message, validate_min_rank
+    ask_user_checked, get_user
+from guildevents.event_utilities import update_channel_info_message, validate_min_rank, get_event_details
+from guildevents.signups import perform_player_signup, perform_cancel_signup
 from resourcestrings import edit_event_messages, exception_messages
 
 
@@ -23,14 +26,14 @@ async def perform_event_edit(author, context, delete_message_after, message):
         try:
             roster = session.query(Roster).get(event.roster_id)
             config.is_editing = True
-            await edit_selector_menu(author, event, roster)
+            await edit_selector_menu(context, author, event, roster)
         except asyncio.TimeoutError:
             await send_message_to_user(author, exception_messages.edit_event_timeout_exception)
         except InterruptedError:
             await send_message_to_user(author, edit_event_messages.cancel_edit)
         except:
             logging.info(f"There was an error editing {event.event_name}")
-            aeriana = client.get_user(config.AERIANA_ID)
+            aeriana = await client.fetch_user(config.AERIANA_ID)
             await send_message_to_user(aeriana, f"{author} had a problem editing {event.event_name}!")
         finally:
             config.is_editing = False
@@ -56,9 +59,9 @@ async def save_event(author, event):
                      delete_after=10)
 
 
-async def edit_selector_menu(author, event, roster):
+async def edit_selector_menu(context, author, event, roster):
     while True:
-        selection = await get_menu_option_in_range(edit_event_messages.menu, author, first_option=1, last_option=12)
+        selection = await get_menu_option_in_range(edit_event_messages.menu, author, first_option=1, last_option=13)
 
         try:
             if selection == 1:
@@ -83,6 +86,8 @@ async def edit_selector_menu(author, event, roster):
                 await edit_event_description(author, event)
             elif selection == 11:
                 await edit_event_rank(author, event)
+            elif selection == 12:
+                await edit_event_roster(context, author, event)
             else:
                 await send_message_to_user(author, edit_event_messages.goodbye)
                 break
@@ -191,9 +196,116 @@ async def edit_event_rdps(author, event, roster):
 
 
 async def edit_event_description(author, event):
-    description = await ask_user(edit_event_messages.description + f"\nThe current description is:```{event.event_description}```", author)
+    description = await ask_user(
+        edit_event_messages.description + f"\nThe current description is:```{event.event_description}```", author)
     old_description = event.event_description
     event.event_description = description
     await save_event(author, event)
     await send_message_to_user(author, edit_event_messages.event_description_edited + f"\nOld:```{old_description}```")
     await send_message_to_user(author, f"Was updated to:```{description}```")
+
+
+async def add_user_to_roster(context, author):
+    user_to_signup = await ask_user(edit_event_messages.user_to_signup, author)
+    user = await get_user(context, user_to_signup)
+    if user is None:
+        return
+    role = await ask_user(edit_event_messages.user_roles_to_signup, author)
+    await perform_player_signup(context.message, user, context, role, admin_edit=True)
+    await send_message_to_user(author, f'Added {user.display_name} as {role}!')
+
+
+def get_roster(event):
+    return session.query(PlayerSignup).filter(PlayerSignup.event_id == event.channel_id) \
+        .order_by(PlayerSignup.date_created.asc()).all()
+
+
+def compile_names_from_list(user_list):
+    count = 0
+    names = ""
+    for user in user_list:
+        count += 1
+        names += f'**{count}**. {user.player_name}\n'
+    count += 1
+    names += f'**{count}**. **Cancel** and return\n'
+    return names
+
+
+async def remove_user_from_roster(context, author, event):
+    user_list = get_roster(event)
+    cancel = user_list.__len__() + 1
+    if user_list is None:
+        await send_message_to_user(author, "No users to remove!")
+        return
+    user_string = compile_names_from_list(user_list)
+    index = await get_menu_option_in_range(f'Which person do you want to **remove**?\n\n{user_string}', author,
+                                           first_option=1,
+                                           last_option=cancel)
+    if index == cancel:
+        return
+
+    user = await get_user(context, user_list[index - 1].id)
+    if not user:
+        return
+
+    await perform_cancel_signup(context, user, admin_edit=True)
+    await send_message_to_user(author, f'Removed {user.display_name} from event!\n\n')
+
+
+def toggle_signup(event, option: bool):
+    signups_enabled[int(event.channel_id)] = option
+
+
+async def toggle_signups_enabled(author, event):
+    option = await get_menu_option_in_range(edit_event_messages.toggle_signup_option, author,
+                                            first_option=1,
+                                            last_option=3)
+    if option == 1:
+        toggle_signup(event, True)
+        await send_message_to_user(author, "Signups are now enabled\n\n")
+    elif option == 2:
+        toggle_signup(event, False)
+        await send_message_to_user(author, "Signups are now disabled\n\n")
+    elif option == 3:
+        return
+
+
+async def edit_user_on_roster(context, author, event):
+    user_list = get_roster(event)
+    cancel = user_list.__len__() + 1
+    if user_list is None:
+        await send_message_to_user(author, "No users to edit!\n\n")
+        return
+    user_string = compile_names_from_list(user_list)
+    index = await get_menu_option_in_range(f'Which person do you want to **edit**?\n\n{user_string}', author,
+                                           first_option=1,
+                                           last_option=cancel)
+    if index == cancel:
+        return
+
+    user = await get_user(context, user_list[index - 1].id)
+    if not user:
+        return
+
+    role = await ask_user(edit_event_messages.user_roles_to_signup, author)
+    await perform_player_signup(context.message, user, context, role, admin_edit=True)
+    await send_message_to_user(author, f'Changed {user.display_name} to {role}!\n\n')
+
+
+async def edit_event_roster(context, author, event):
+    while True:
+        selection = await get_menu_option_in_range(edit_event_messages.edit_roster_menu, author, first_option=1,
+                                                   last_option=5)
+        try:
+            if selection == 1:
+                await add_user_to_roster(context, author)
+            elif selection == 2:
+                await remove_user_from_roster(context, author, event)
+            elif selection == 3:
+                await edit_user_on_roster(context, author, event)
+            elif selection == 4:
+                await toggle_signups_enabled(author, event)
+            elif selection == 5:
+                return
+        except UserWarning:
+            await edit_event_roster(context, author, event)

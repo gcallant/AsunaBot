@@ -2,13 +2,15 @@ from discord.abc import PrivateChannel
 
 from admin.reporting import perform_report
 from asunadiscord.discord_client import client
-from config.utilities import disappearing_message, check_permissions
-from guildevents.edit_event import perform_event_edit, edit_selector_menu
+from config.config import signups_enabled
+from config.utilities import disappearing_message, check_permissions, get_user
+from guildevents.edit_event import perform_event_edit
 from guildevents.event_creation import perform_event_creation
 from guildevents.event_utilities import perform_show_event_details, perform_show_player_events
 from guildevents.promotions import check_promotions
 from guildevents.reminders import check_reminders
 from guildevents.signups import perform_cancel_signup, perform_player_signup
+from resourcestrings import exception_messages
 
 
 @client.command(name='x',
@@ -23,7 +25,15 @@ async def player_signup(context, player_role, *flex_roles_args):
     if message.author == client.user:
         return
 
-    await perform_player_signup(message, context, player_role, *flex_roles_args)
+    try:
+        signup_enabled = signups_enabled[context.message.channel.id]
+        if signup_enabled is False:
+            await message.channel.send("すみません, signups are not enabled for this run. If you believe this is an error, "
+                                 "please contact the raid lead.")
+            return
+        await perform_player_signup(message, message.author, context, player_role, *flex_roles_args)
+    except:
+        await perform_player_signup(message, message.author, context, player_role, *flex_roles_args)
 
 
 @client.command(name='edit',
@@ -64,10 +74,12 @@ async def create_event(context):
                                            '?report user <userid> will create a report for user with an id of <userid>. '
                                            'Allowed types are: user, audit',
                 brief='Runs a report', pass_context=True)
-async def run_report(context, report_to_run='', user_id: int = None, report_format='csv'):
+async def run_report(context, report_to_run='', user_id: str = None, report_format='csv'):
     officer = await check_permissions(context)
     if not officer:
         return
+
+    user = await get_user(context, user_id)
 
     delete_message_after = 5
     report_to_run = str(report_to_run).lower().strip()
@@ -75,7 +87,7 @@ async def run_report(context, report_to_run='', user_id: int = None, report_form
 
     await disappearing_message(context.message, delete_message_after)
 
-    await perform_report(context, report_to_run, user_id, officer, report_format)
+    await perform_report(context, report_to_run, user.id, officer, report_format)
 
 
 @client.command(name='event-details',
@@ -112,6 +124,26 @@ async def run_reminders_now(context):
     await disappearing_message(context.message, delete_message_after)
     await check_reminders()
 
+@client.command(name='proxy',
+                description='Proxy performs a command for another user- can be used to quickly signup or remove '
+                            'someone from player_roster. Usage- ?proxy <command> <user> [<signup role> [flex roles]]',
+                brief='Performs a command for another user- **ADMIN use only**',
+                pass_context=True)
+async def proxy_command(context, command_to_run: str, user_id: str, role='', *player_flex_args):
+    officer = await check_permissions(context)
+    if not officer:
+        return
+    delete_message_after = 5
+
+    user = await get_user(context, user_id)
+
+    if command_to_run.lower().strip() in ["signup", "x", "X"]:
+        await perform_player_signup(context.message, user, context, role, *player_flex_args, proxy_signup=True)
+    elif command_to_run.lower().strip() in ["remove", "cancel"]:
+        await perform_cancel_signup(context, user)
+    else:
+        await context.message.channel.send(exception_messages.unknown_proxy_command)
+
 
 @client.command(name='myevents',
                 description='Shows events you signed up for.',
@@ -126,7 +158,7 @@ async def show_player_events(context):
                 brief='Cancel signup',
                 pass_context=True)
 async def cancel_signup(context):
-    await perform_cancel_signup(context)
+    await perform_cancel_signup(context, context.message.author)
 
 
 @client.command(name='promotionCheck',

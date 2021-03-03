@@ -3,6 +3,7 @@ import logging
 
 from sqlalchemy import text
 
+import config.utilities
 from config.asunabot_declative import Event, Reminder, PlayerSignup
 from config.database import session
 from asunadiscord.discord_client import client
@@ -100,7 +101,7 @@ async def send_reminder(reminder, event):
     players = session.query(PlayerSignup).filter(PlayerSignup.event_id == event.channel_id)
 
     for player in players:
-        user = client.get_user(int(player.id))
+        user = config.utilities.get_user(int(player.id))
         await send_message_to_user(user, get_message_for_time_interval(reminder, event, player))
 
     await mark_reminder_sent(reminder, event.channel_id)
