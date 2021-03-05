@@ -26,7 +26,7 @@ async def on_guild_channel_delete(channel):
             session.commit()
         except:
             session.rollback()
-            aeriana = config.utilities.get_user(config.AERIANA_ID)
+            aeriana = client.fetch_user(config.AERIANA_ID)
             aeriana.send(f'Had a problem deactivating deleted channel {channel.name} to DB')
             logging.exception(f'Problem committing channel deactivation with channel {channel.name}')
             return
