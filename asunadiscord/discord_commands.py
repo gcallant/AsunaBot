@@ -80,6 +80,8 @@ async def run_report(context, report_to_run='', user_id: str = None, report_form
         return
 
     user = await get_user(context, user_id)
+    if not user:
+        return
 
     delete_message_after = 5
     report_to_run = str(report_to_run).lower().strip()
@@ -136,6 +138,8 @@ async def proxy_command(context, command_to_run: str, user_id: str, role='', *pl
     delete_message_after = 5
 
     user = await get_user(context, user_id)
+    if not user:
+        return
 
     if command_to_run.lower().strip() in ["signup", "x", "X"]:
         await perform_player_signup(context.message, user, context, role, *player_flex_args, proxy_signup=True)

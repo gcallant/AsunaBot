@@ -101,7 +101,7 @@ async def send_reminder(reminder, event):
     players = session.query(PlayerSignup).filter(PlayerSignup.event_id == event.channel_id)
 
     for player in players:
-        user = config.utilities.get_user(int(player.id))
+        user = await client.fetch_user(int(player.id))
         await send_message_to_user(user, get_message_for_time_interval(reminder, event, player))
 
     await mark_reminder_sent(reminder, event.channel_id)
