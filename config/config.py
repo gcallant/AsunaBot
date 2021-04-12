@@ -64,8 +64,7 @@ DISCORD_ROLES_RANKED = {
     'Marauder': 9,
     'Citizen': 10,
     'Thrall': 11,
-    'Follower': 12,
-    '@everyone': 13
+    '@everyone': 12
 }
 
 if platform.system() == 'Windows':

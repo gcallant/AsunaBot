@@ -56,9 +56,6 @@ async def on_message(message):
 @client.event
 async def on_member_join(member):
     if member.guild.id == config.INCURABLE_SERVER_ID:
-        roles = member.guild.roles
-        role = discord.utils.get(roles, name="Follower")
-        await member.add_roles(role, reason=non_descript_messages.role_assign_reason)
         await send_message_to_user(member, non_descript_messages.member_join_welcome)
 
 

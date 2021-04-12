@@ -141,7 +141,7 @@ async def get_highest_discord_role(player_id, context):
         return member.top_role
     except:
         logging.exception(f'Could not get a member from that player id, they might have left the server.')
-        return "Follower"
+        return "@everyone"
 
 
 async def get_user(context, user_id):
