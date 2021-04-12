@@ -3,7 +3,7 @@ creation_event_day_exception = "ごめんなさい, you entered the date in an u
 creation_event_time_exception = "ごめんなさい, you entered the time in an unrecognized format, try again with HHHH (24 Hour)"
 
 creation_rank_exception = """ごめんなさい, you entered an unrecognized minimum rank, please enter one of the following **exactly** as written:
-Valkyrie, Shieldbreaker, Marauder, Citizen, Thrall, Follower, Mat Runs, Development, Member, Exempt, @everyone"""
+Valkyrie, Shieldbreaker, Marauder, Citizen, Thrall, @everyone"""
 
 creation_canceled_exception = "Event creation has been canceled."
 
