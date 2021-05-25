@@ -106,8 +106,7 @@ async def perform_player_signup(message, user: discord.user, context, player_rol
 
 async def do_signups_meet_minimum_standards(channel, cleaned_player_role, event, flex_roles, message,
                                             proxy_signup=False, admin_edit=False):
-    if channel.guild.id == config.INCURABLE_SERVER_ID or channel.guild.id == config.TESTING_SERVER_ID \
-            and not (proxy_signup or admin_edit):  # Ignore all other servers
+    if (channel.guild.id == config.TESTING_SERVER_ID or channel.guild.id == config.INCURABLE_SERVER_ID) and not (proxy_signup or admin_edit):  # Ignore all other servers
         if not cleaned_player_role == 'reserve' and \
                 (config.DISCORD_ROLES_RANKED[message.author.top_role.name] > config.DISCORD_ROLES_RANKED[
                     event.min_rank]):
