@@ -13,15 +13,20 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+        Schema::create('users', function (Blueprint $table)
+        {
+            $table->id('userID')->primary();
             $table->timestamps();
+            $table->foreignID('guildMemberID');
+            $table->string('locale', 10);
+            $table->string('timeZone', 20);
+            $table->foreignId('themeID');
+            $table->boolean('isAdmin')->default(false);
+
+            $table->foreign('guildMemberID')->references('guildMemberID')->on('guildMembers');
+            $table->foreign('themeID')->references('themeID')->on('themes');
         });
+
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,33 +10,28 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    protected $primaryKey = 'userID';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'guildMemberID',
+        'locale',
+        'timeZone',
+        'themeID'
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
+    /** The model's default values for attributes.
      *
      * @var array
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
+    protected $attributes = [
+        'locale' => 'en_US',
+        'timeZone' => 'UTC',
+        'themeID' => 2,
+        'isAdmin' => false
     ];
 }
