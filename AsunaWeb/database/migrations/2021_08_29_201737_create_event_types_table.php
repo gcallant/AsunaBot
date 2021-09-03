@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGuildsTable extends Migration
+class CreateEventTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,11 @@ class CreateGuildsTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('guilds', function (Blueprint $table)
+        Schema::create('event_types', function (Blueprint $table)
         {
-            $table->id('guildID')->primary();
+            $table->id('eventTypeID')->primary();
             $table->timestamps();
-            $table->string('guildName', 100);
-            $table->string('timeZone', 20)->default('UTC');
-            $table->id('createEventRole');
-            $table->id('adminRole');
+            $table->string('eventTypeName', 20);
         });
     }
 
@@ -31,6 +28,6 @@ class CreateGuildsTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('guilds');
+        Schema::dropIfExists('event_types');
     }
 }

@@ -11,9 +11,10 @@ class CreateParsesTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('parses', function (Blueprint $table) {
+        Schema::create('parses', function (Blueprint $table)
+        {
             $table->id('parseID')->primary();
             $table->timestamps();
             $table->unsignedInteger('dps');
@@ -26,7 +27,7 @@ class CreateParsesTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('parses');
     }

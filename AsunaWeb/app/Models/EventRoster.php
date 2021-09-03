@@ -5,13 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CharacterType extends Model
+class EventRoster extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'characterTypeID';
+    protected $primaryKey = 'eventRosterID';
 
     protected $fillable = [
-        'typeName'
+        'maxTanks',
+        'maxHeals',
+        'maxRangedDPS',
+        'maxMeleeDPS'
     ];
 }

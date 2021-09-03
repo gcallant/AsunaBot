@@ -11,7 +11,7 @@ class CreateESOCharactersTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('e_s_o_characters', function (Blueprint $table)
         {
@@ -36,7 +36,7 @@ class CreateESOCharactersTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('e_s_o_characters');
     }

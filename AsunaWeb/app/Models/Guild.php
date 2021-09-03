@@ -9,9 +9,8 @@ class Guild extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'guildID';
     public $incrementing = false;
-
+    protected $primaryKey = 'guildID';
     protected $attributes = [
         'timeZone' => 'UTC'
     ];

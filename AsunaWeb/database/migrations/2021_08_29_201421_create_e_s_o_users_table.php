@@ -11,7 +11,7 @@ class CreateESOUsersTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('e_s_o_users', function (Blueprint $table)
         {
@@ -29,7 +29,7 @@ class CreateESOUsersTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('e_s_o_users');
     }

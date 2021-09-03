@@ -11,7 +11,7 @@ class CreateGuildsGuildMembersTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('guilds_guild_members', function (Blueprint $table)
         {
@@ -30,7 +30,7 @@ class CreateGuildsGuildMembersTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('guilds_guild_members');
     }

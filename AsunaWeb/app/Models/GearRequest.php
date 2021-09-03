@@ -5,16 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GuildMember extends Model
+class GearRequest extends Model
 {
     use HasFactory;
 
-    public $incrementing = false;
-    protected $primaryKey = 'guildMemberID';
+    protected $primaryKey = 'gearRequestedID';
+
     protected $fillable = [
         'guildMemberID',
-        'name',
-        'discordUserID',
-        'discordRoleIDs'
+        'gearSetID'
     ];
 }

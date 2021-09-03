@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGuildsTable extends Migration
+class CreateLocationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateGuildsTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('guilds', function (Blueprint $table)
+        Schema::create('locations', function (Blueprint $table)
         {
-            $table->id('guildID')->primary();
+            $table->id('locationID')->primary();
             $table->timestamps();
-            $table->string('guildName', 100);
-            $table->string('timeZone', 20)->default('UTC');
-            $table->id('createEventRole');
-            $table->id('adminRole');
+            $table->string('locationName', 100);
+            $table->foreignId('locationTypeID');
+
+            $table->foreign('locationTypeID')->references('locationTypeID')->on('locations')->cascadeOnUpdate();
         });
     }
 
@@ -31,6 +31,6 @@ class CreateGuildsTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('guilds');
+        Schema::dropIfExists('locations');
     }
 }
