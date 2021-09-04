@@ -15,9 +15,9 @@ class CreateGearPiecesTable extends Migration
     {
         Schema::create('gear_pieces', function (Blueprint $table)
         {
-            $table->id('gearPieceID');
+            $table->id();
             $table->timestamps();
-            $table->string('gearPieceName', 20);
+            $table->string('gear_piece_name', 20);
         });
     }
 

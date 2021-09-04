@@ -9,11 +9,9 @@ class Event extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'eventID';
-
     protected $fillable = [
-        'eventName',
-        'eventTypeID',
-        'guildID'
+        'event_name',
+        'event_type_id',
+        'guild_id'
     ];
 }

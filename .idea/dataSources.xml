@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
     <data-source source="LOCAL" name="asunabot" uuid="01f07da8-97fd-4262-b00b-2002614aed36">
-      <driver-ref>sqlite.xerial</driver-ref>
+      <driver-ref>048511ff-fff4-44b3-b0d7-2dd65e80e2cb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:C:\Users\Grantley\Documents\AsunaBot\asunabot.db</jdbc-url>
@@ -26,6 +26,13 @@
       <driver-properties>
         <property name="enable_load_extension" value="true" />
       </driver-properties>
+    </data-source>
+    <data-source source="LOCAL" name="AsunaWeb" uuid="666327fe-c3bd-43f5-9dc4-677084251f7a">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/asunaweb</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
 </project>

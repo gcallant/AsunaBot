@@ -15,18 +15,18 @@ class CreateEventSignupsTable extends Migration
     {
         Schema::create('event_signups', function (Blueprint $table)
         {
-            $table->id('eventSignupID');
+            $table->id();
             $table->timestamps();
-            $table->foreignId('eventID')->unique();
-            $table->foreignId('guildMemberID');
-            $table->foreignId('roleID');
-            $table->foreignId('esoCharacterID');
-            $table->boolean('noCallNoShow')->default(false);
-            $table->string('guildMemberNotes', 1000)->nullable();
+            $table->foreignId('event_id')->unique();
+            $table->foreignId('guild_member_id');
+            $table->foreignId('role_id');
+            $table->foreignId('eso_character_id');
+            $table->boolean('no_call_no_show')->default(false);
+            $table->string('guild_member_notes', 1000)->nullable();
 
-            $table->foreign('eventID')->references('eventID')->on('events');
-            $table->foreign('guildMemberID')->references('guildMemberID')->on('guild_members')->cascadeOnDelete();
-            $table->foreign('roleID')->references('roleID')->on('roles')->cascadeOnUpdate();
+            $table->foreign('event_id')->references('id')->on('events');
+            $table->foreign('guild_member_id')->references('id')->on('guild_members')->cascadeOnDelete();
+            $table->foreign('role_id')->references('id')->on('roles')->cascadeOnUpdate();
         });
     }
 

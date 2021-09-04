@@ -15,19 +15,19 @@ class CreateESOCharactersTable extends Migration
     {
         Schema::create('e_s_o_characters', function (Blueprint $table)
         {
-            $table->id('esoCharacterID');
+            $table->id();
             $table->timestamps();
-            $table->foreignId('esoUserID');
-            $table->string('characterName', 20);
-            $table->foreignId('roleID');
-            $table->string('characterClass');
-            $table->foreignId('characterRaceID');
-            $table->unsignedInteger('highestDPS')->nullable();
-            $table->boolean('isCertified')->default(false);
+            $table->foreignId('eso_user_id');
+            $table->string('character_name', 20);
+            $table->foreignId('role_id');
+            $table->string('character_class');
+            $table->foreignId('character_race_id');
+            $table->unsignedInteger('highest_dps')->nullable();
+            $table->boolean('is_certified')->default(false);
 
-            $table->foreign('esoUserID')->references('esoUserID')->on('e_s_o_users');
-            $table->foreign('roleID')->references('roleID')->on('roles');
-            $table->foreign('characterRaceID')->references('characterRaceID')->on('character_races');
+            $table->foreign('eso_user_id')->references('id')->on('e_s_o_users');
+            $table->foreign('role_id')->references('id')->on('roles');
+            $table->foreign('character_race_id')->references('id')->on('character_races');
         });
     }
 

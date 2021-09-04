@@ -15,16 +15,16 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table)
         {
-            $table->id('userID');
+            $table->id();
             $table->timestamps();
-            $table->foreignID('guildMemberID');
+            $table->foreignID('guild_member_id');
             $table->string('locale', 10);
-            $table->string('timeZone', 20);
-            $table->foreignId('themeID');
-            $table->boolean('isAdmin')->default(false);
+            $table->string('time_zone', 20);
+            $table->foreignId('theme_id');
+            $table->boolean('is_admin')->default(false);
 
-            $table->foreign('guildMemberID')->references('guildMemberID')->on('guild_members');
-            $table->foreign('themeID')->references('themeID')->on('themes');
+            $table->foreign('guild_member_id')->references('id')->on('guild_members');
+            $table->foreign('theme_id')->references('id')->on('themes');
         });
 
     }

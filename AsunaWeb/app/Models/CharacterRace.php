@@ -9,9 +9,12 @@ class CharacterRace extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'characterRaceID';
-
     protected $fillable = [
-        'raceName'
+        'race_name'
     ];
+
+    public function esoCharacter(): void
+    {
+        $this->hasMany(ESOCharacter::class);
+    }
 }

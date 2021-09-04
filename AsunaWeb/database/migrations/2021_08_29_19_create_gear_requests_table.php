@@ -15,15 +15,15 @@ class CreateGearRequestsTable extends Migration
     {
         Schema::create('gear_requests', function (Blueprint $table)
         {
-            $table->id('gearRequestID');
+            $table->id();
             $table->timestamps();
-            $table->foreignId('guildMemberID');
-            $table->foreignId('gearSetID');
+            $table->foreignId('guild_member_id');
+            $table->foreignId('gear_set_id');
 
-            $table->foreign('guildMemberID')->references('guildMemberID')->on('guild_members');
-            $table->foreign('gearSetID')->references('gearSetID')->on('gear_sets')->cascadeOnUpdate();
+            $table->foreign('guild_member_id')->references('id')->on('guild_members');
+            $table->foreign('gear_set_id')->references('id')->on('gear_sets')->cascadeOnUpdate();
 
-            $table->unique(['guildMemberID', 'gearSetID']);
+            $table->unique(['guild_member_id', 'gear_set_id']);
         });
     }
 

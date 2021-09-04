@@ -15,14 +15,14 @@ class CreateEventsTable extends Migration
     {
         Schema::create('events', function (Blueprint $table)
         {
-            $table->id('eventID');
+            $table->id();
             $table->timestamps();
-            $table->string('eventName', 200);
-            $table->foreignId('eventTypeID');
-            $table->foreignId('guildID');
+            $table->string('event_name', 200);
+            $table->foreignId('event_type_id');
+            $table->foreignId('guild_id');
 
-            $table->foreign('guildID')->references('guildID')->on('guilds')->cascadeOnDelete();
-            $table->foreign('eventTypeID')->references('eventTypeID')->on('event_types')->cascadeOnUpdate();
+            $table->foreign('guild_id')->references('id')->on('guilds')->cascadeOnDelete();
+            $table->foreign('event_type_id')->references('id')->on('event_types')->cascadeOnUpdate();
         });
     }
 

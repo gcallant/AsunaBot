@@ -9,10 +9,8 @@ class GearRequest extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'gearRequestedID';
-
     protected $fillable = [
-        'guildMemberID',
-        'gearSetID'
+        'guild_member_id',
+        'gear_set_id'
     ];
 }

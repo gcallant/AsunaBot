@@ -9,19 +9,17 @@ class EventData extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'eventDataID';
-
     protected $fillable = [
-        'eventID',
-        'eventDay',
-        'eventTime',
-        'eventDescription',
-        'eventLeader',
-        'requireMinimumRole',
-        'minimumRoleID'
+        'event_id',
+        'event_day',
+        'event_time',
+        'event_description',
+        'event_leader',
+        'require_minimum_role',
+        'minimum_role_id'
     ];
 
     protected $attributes = [
-        'requireMinimumRole' => false
+        'require_minimum_role' => false
     ];
 }

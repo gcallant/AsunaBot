@@ -4,19 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Guild extends Model
 {
     use HasFactory;
 
     public $incrementing = false;
-    protected $primaryKey = 'guildID';
     protected $attributes = [
-        'timeZone' => 'UTC'
+        'time_zone' => 'UTC'
     ];
 
     protected $fillable = [
-        'timeZone',
-        'guildName'
+        'guild_id',
+        'time_zone',
+        'guild_name'
     ];
+
+    public function guildMember(): BelongsToMany
+    {
+        return $this->belongsToMany(GuildMember::class);
+    }
 }

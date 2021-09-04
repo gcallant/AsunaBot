@@ -9,9 +9,7 @@ class GearPiece extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'gearPieceID';
-
     protected $fillable = [
-        'gearPieceName'
+        'gear_piece_name'
     ];
 }

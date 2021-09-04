@@ -10,18 +10,16 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $primaryKey = 'userID';
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'guildMemberID',
+        'guild_member_id',
         'locale',
-        'timeZone',
-        'themeID'
+        'time_zone',
+        'theme_id'
     ];
 
     /** The model's default values for attributes.
@@ -30,8 +28,8 @@ class User extends Authenticatable
      */
     protected $attributes = [
         'locale' => 'en_US',
-        'timeZone' => 'UTC',
-        'themeID' => 2,
-        'isAdmin' => false
+        'time_zone' => 'UTC',
+        'theme_id' => 2,
+        'is_admin' => false
     ];
 }

@@ -15,10 +15,10 @@ class CreateParsesTable extends Migration
     {
         Schema::create('parses', function (Blueprint $table)
         {
-            $table->id('parseID');
+            $table->id();
             $table->timestamps();
             $table->unsignedInteger('dps');
-            $table->string('parseFilePath', 100);
+            $table->string('parse_file_path', 100);
         });
     }
 

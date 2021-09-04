@@ -15,12 +15,12 @@ class CreateESOUsersTable extends Migration
     {
         Schema::create('e_s_o_users', function (Blueprint $table)
         {
-            $table->id('esoUserID');
+            $table->id();
             $table->timestamps();
-            $table->string('familyName', 100);
-            $table->foreignId('guilds_membersID');
+            $table->string('family_name', 100);
+            $table->foreignId('guild_guild_member_id');
 
-            $table->foreign('guilds_membersID')->references('id')->on('guilds_guild_members');
+            $table->foreign('guild_guild_member_id')->references('id')->on('guild_guild_member');
         });
     }
 

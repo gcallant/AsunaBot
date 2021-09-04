@@ -9,9 +9,7 @@ class ESOUser extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'esoUserID';
-
     protected $fillable = [
-        'familyName'
+        'family_name'
     ];
 }

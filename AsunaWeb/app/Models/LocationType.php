@@ -9,9 +9,7 @@ class LocationType extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'locationTypeID';
-
     protected $fillable = [
-        'typeName',
+        'type_name',
     ];
 }

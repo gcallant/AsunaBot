@@ -15,11 +15,11 @@ class CreateGuildMembersTable extends Migration
     {
         Schema::create('guild_members', function (Blueprint $table)
         {
-            $table->id('guildMemberID');
+            $table->id();
             $table->timestamps();
             $table->string('name', 100);
-            $table->unsignedBigInteger('discordUserID');
-            $table->json('discordRoleIDs');
+            $table->unsignedBigInteger('discord_user_id');
+            $table->json('discord_role_ids');
         });
     }
 

@@ -9,10 +9,8 @@ class Parse extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'parseID';
-
     protected $fillable = [
         'dps',
-        'parseFilePath'
+        'parse_file_path'
     ];
 }

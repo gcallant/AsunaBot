@@ -15,18 +15,18 @@ class CreateEventDataTable extends Migration
     {
         Schema::create('event_data', function (Blueprint $table)
         {
-            $table->id('eventDataID');
+            $table->id();
             $table->timestamps();
-            $table->foreignId('eventID')->index()->unique();
-            $table->date('eventDay');
-            $table->timeTz('eventTime');
-            $table->string('eventDescription', 2000);
-            $table->foreignId('eventLeader');
-            $table->boolean('requireMinimumRole')->default(false);
-            $table->unsignedInteger('minimumRoleID')->nullable();
+            $table->foreignId('event_id')->index()->unique();
+            $table->date('event_day');
+            $table->timeTz('event_time');
+            $table->string('event_description', 2000);
+            $table->foreignId('event_leader');
+            $table->boolean('require_minimum_role')->default(false);
+            $table->unsignedInteger('minimum_role_id')->nullable();
 
-            $table->foreign('eventID')->references('eventID')->on('events')->cascadeOnUpdate();
-            $table->foreign('eventLeader')->references('guildMemberID')->on('guild_members')->cascadeOnUpdate();
+            $table->foreign('event_id')->references('id')->on('events')->cascadeOnUpdate();
+            $table->foreign('event_leader')->references('id')->on('guild_members')->cascadeOnUpdate();
         });
     }
 

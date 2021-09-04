@@ -15,12 +15,12 @@ class CreateLocationsTable extends Migration
     {
         Schema::create('locations', function (Blueprint $table)
         {
-            $table->id('locationID');
+            $table->id();
             $table->timestamps();
-            $table->string('locationName', 100);
-            $table->foreignId('locationTypeID');
+            $table->string('location_name', 100);
+            $table->foreignId('location_type_id');
 
-            $table->foreign('locationTypeID')->references('locationTypeID')->on('location_types')->cascadeOnUpdate();
+            $table->foreign('location_type_id')->references('id')->on('location_types')->cascadeOnUpdate();
         });
     }
 

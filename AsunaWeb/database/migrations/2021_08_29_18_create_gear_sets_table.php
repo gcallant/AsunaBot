@@ -15,12 +15,12 @@ class CreateGearSetsTable extends Migration
     {
         Schema::create('gear_sets', function (Blueprint $table)
         {
-            $table->id('gearSetID');
+            $table->id();
             $table->timestamps();
-            $table->string('gearSetName', 100);
-            $table->foreignId('locationID');
+            $table->string('gear_set_name', 100);
+            $table->foreignId('location_id');
 
-            $table->foreign('locationID')->references('locationID')->on('locations')->cascadeOnUpdate();
+            $table->foreign('location_id')->references('id')->on('locations')->cascadeOnUpdate();
         });
     }
 

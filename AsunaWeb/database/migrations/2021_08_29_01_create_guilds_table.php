@@ -15,12 +15,12 @@ class CreateGuildsTable extends Migration
     {
         Schema::create('guilds', function (Blueprint $table)
         {
-            $table->id('guildID');
+            $table->id();
             $table->timestamps();
-            $table->string('guildName', 100);
-            $table->string('timeZone', 20)->default('UTC');
-            $table->unsignedBigInteger('createEventRole');
-            $table->unsignedBigInteger('adminRole');
+            $table->string('guild_name', 100);
+            $table->string('time_zone', 20)->default('UTC');
+            $table->unsignedBigInteger('create_event_role');
+            $table->unsignedBigInteger('admin_role');
         });
     }
 

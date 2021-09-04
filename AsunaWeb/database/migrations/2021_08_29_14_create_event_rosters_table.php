@@ -15,19 +15,19 @@ class CreateEventRostersTable extends Migration
     {
         Schema::create('event_rosters', function (Blueprint $table)
         {
-            $table->id('eventRosterID');
+            $table->id();
             $table->timestamps();
-            $table->foreignId('eventID')->unique();
-            $table->unsignedTinyInteger('maxTanks')->nullable();
-            $table->unsignedTinyInteger('maxHeals')->nullable();
-            $table->unsignedTinyInteger('maxRangedDPS')->nullable();
-            $table->unsignedTinyInteger('maxMeleeDPS')->nullable();
-            $table->unsignedTinyInteger('signedUpTanks');
-            $table->unsignedTinyInteger('signedUpHeals');
-            $table->unsignedTinyInteger('signedUpRangedDPS');
-            $table->unsignedTinyInteger('signedUpMeleeDPS');
+            $table->foreignId('event_id')->unique();
+            $table->unsignedTinyInteger('max_tanks')->nullable();
+            $table->unsignedTinyInteger('max_heals')->nullable();
+            $table->unsignedTinyInteger('max_ranged_dps')->nullable();
+            $table->unsignedTinyInteger('max_melee_dps')->nullable();
+            $table->unsignedTinyInteger('signed_up_tanks');
+            $table->unsignedTinyInteger('signed_up_heals');
+            $table->unsignedTinyInteger('signed_up_ranged_dps');
+            $table->unsignedTinyInteger('signed_up_melee_dps');
 
-            $table->foreign('eventID')->references('eventID')->on('events');
+            $table->foreign('event_id')->references('id')->on('events');
         });
     }
 

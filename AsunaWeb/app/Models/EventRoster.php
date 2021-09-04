@@ -9,12 +9,10 @@ class EventRoster extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'eventRosterID';
-
     protected $fillable = [
-        'maxTanks',
-        'maxHeals',
-        'maxRangedDPS',
-        'maxMeleeDPS'
+        'max_tanks',
+        'max_heals',
+        'max_ranged_dps',
+        'max_melee_dps'
     ];
 }

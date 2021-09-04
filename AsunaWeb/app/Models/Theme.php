@@ -9,12 +9,10 @@ class Theme extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'themeID';
-
     /** Mass assignable attributes
      * @var array
      */
     protected $fillable = [
-        'themeName'
+        'theme_name'
     ];
 }

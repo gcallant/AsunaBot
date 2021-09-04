@@ -9,18 +9,16 @@ class EventSignup extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'eventSignupID';
-
     protected $fillable = [
-        'guildMemberID',
-        'roleID',
-        'eventID',
-        'esoCharacterID',
-        'noCallNoShow',
-        'guildMemberNotes'
+        'guild_member_id',
+        'role_id',
+        'event_id',
+        'eso_character_id',
+        'no_call_no_show',
+        'guild_member_notes'
     ];
 
     protected $attributes = [
-        'noCallNoShow' => false
+        'no_call_no_show' => false
     ];
 }

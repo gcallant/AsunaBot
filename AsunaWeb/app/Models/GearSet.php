@@ -9,10 +9,8 @@ class GearSet extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'gearSetID';
-
     protected $fillable = [
-        'gearSetName',
-        'locationID'
+        'gear_set_name',
+        'location_id'
     ];
 }

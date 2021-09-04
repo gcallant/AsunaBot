@@ -15,9 +15,9 @@ class CreateCharacterRacesTable extends Migration
     {
         Schema::create('character_races', function (Blueprint $table)
         {
-            $table->id('characterRaceID');
+            $table->id();
             $table->timestamps();
-            $table->string('raceName', 20);
+            $table->string('race_name', 20);
         });
     }
 
