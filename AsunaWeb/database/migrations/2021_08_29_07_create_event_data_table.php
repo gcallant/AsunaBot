@@ -17,7 +17,7 @@ class CreateEventDataTable extends Migration
         {
             $table->id('eventDataID');
             $table->timestamps();
-            $table->foreignId('eventID')->primary()->unique();
+            $table->foreignId('eventID')->index()->unique();
             $table->date('eventDay');
             $table->timeTz('eventTime');
             $table->string('eventDescription', 2000);

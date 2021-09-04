@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGearPiecesTable extends Migration
+class CreateRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateGearPiecesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('gear_pieces', function (Blueprint $table)
+        Schema::create('roles', function (Blueprint $table)
         {
-            $table->id('gearPieceID')->primary();
+            $table->id('roleID');
             $table->timestamps();
-            $table->string('gearPieceName', 20);
+            $table->string('roleName', 20);
         });
     }
 
@@ -28,6 +28,6 @@ class CreateGearPiecesTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gear_pieces');
+        Schema::dropIfExists('roles');
     }
 }

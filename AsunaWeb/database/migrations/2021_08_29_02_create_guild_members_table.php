@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateThemesTable extends Migration
+class CreateGuildMembersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateThemesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('themes', function (Blueprint $table)
+        Schema::create('guild_members', function (Blueprint $table)
         {
-            $table->id('themeID')->primary();
+            $table->id('guildMemberID');
             $table->timestamps();
-            $table->string('themeName', 50);
+            $table->string('name', 100);
+            $table->unsignedBigInteger('discordUserID');
+            $table->json('discordRoleIDs');
         });
     }
 
@@ -28,6 +30,6 @@ class CreateThemesTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('themes');
+        Schema::dropIfExists('guild_members');
     }
 }

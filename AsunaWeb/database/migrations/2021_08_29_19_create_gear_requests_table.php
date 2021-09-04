@@ -15,7 +15,7 @@ class CreateGearRequestsTable extends Migration
     {
         Schema::create('gear_requests', function (Blueprint $table)
         {
-            $table->id('gearRequestID')->primary();
+            $table->id('gearRequestID');
             $table->timestamps();
             $table->foreignId('guildMemberID');
             $table->foreignId('gearSetID');

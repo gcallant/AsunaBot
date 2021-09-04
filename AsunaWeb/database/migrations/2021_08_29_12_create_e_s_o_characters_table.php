@@ -15,18 +15,18 @@ class CreateESOCharactersTable extends Migration
     {
         Schema::create('e_s_o_characters', function (Blueprint $table)
         {
-            $table->id('esoCharacterID')->primary();
+            $table->id('esoCharacterID');
             $table->timestamps();
             $table->foreignId('esoUserID');
             $table->string('characterName', 20);
-            $table->foreignId('characterTypeID');
+            $table->foreignId('roleID');
             $table->string('characterClass');
             $table->foreignId('characterRaceID');
             $table->unsignedInteger('highestDPS')->nullable();
             $table->boolean('isCertified')->default(false);
 
             $table->foreign('esoUserID')->references('esoUserID')->on('e_s_o_users');
-            $table->foreign('characterTypeID')->references('characterTypeID')->on('character_types');
+            $table->foreign('roleID')->references('roleID')->on('roles');
             $table->foreign('characterRaceID')->references('characterRaceID')->on('character_races');
         });
     }

@@ -17,7 +17,7 @@ class CreateEventRostersTable extends Migration
         {
             $table->id('eventRosterID');
             $table->timestamps();
-            $table->foreignId('eventID')->primary()->unique();
+            $table->foreignId('eventID')->unique();
             $table->unsignedTinyInteger('maxTanks')->nullable();
             $table->unsignedTinyInteger('maxHeals')->nullable();
             $table->unsignedTinyInteger('maxRangedDPS')->nullable();

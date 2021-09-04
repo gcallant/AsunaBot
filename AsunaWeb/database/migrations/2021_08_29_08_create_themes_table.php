@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLocationTypesTable extends Migration
+class CreateThemesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateLocationTypesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('location_types', function (Blueprint $table)
+        Schema::create('themes', function (Blueprint $table)
         {
-            $table->id('locationTypeID')->primary();
+            $table->id('themeID');
             $table->timestamps();
-            $table->string('typeName', 50);
+            $table->string('themeName', 50);
         });
     }
 
@@ -28,6 +28,6 @@ class CreateLocationTypesTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('location_types');
+        Schema::dropIfExists('themes');
     }
 }

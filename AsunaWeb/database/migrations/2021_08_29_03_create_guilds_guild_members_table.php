@@ -15,13 +15,13 @@ class CreateGuildsGuildMembersTable extends Migration
     {
         Schema::create('guilds_guild_members', function (Blueprint $table)
         {
-            $table->id()->primary();
+            $table->id();
             $table->timestamps();
             $table->foreignId('guildID');
             $table->foreignId('guildMemberID');
 
-            $table->foreign('guildID')->references('guildID')->on('Guilds')->cascadeOnDelete();
-            $table->foreign('guildMemberID')->references('guildMemberID')->on('GuildMembers')->cascadeOnDelete();
+            $table->foreign('guildID')->references('guildID')->on('guilds')->cascadeOnDelete();
+            $table->foreign('guildMemberID')->references('guildMemberID')->on('guild_members')->cascadeOnDelete();
         });
     }
 

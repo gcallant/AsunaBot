@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateESOUsersTable extends Migration
+class CreateGearPiecesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,11 @@ class CreateESOUsersTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('e_s_o_users', function (Blueprint $table)
+        Schema::create('gear_pieces', function (Blueprint $table)
         {
-            $table->id('esoUserID')->primary();
+            $table->id('gearPieceID');
             $table->timestamps();
-            $table->string('familyName', 100);
-            $table->foreignId('guilds_membersID');
-
-            $table->foreign('guilds_membersID')->references('id')->on('guilds_guild_members');
+            $table->string('gearPieceName', 20);
         });
     }
 
@@ -31,6 +28,6 @@ class CreateESOUsersTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('e_s_o_users');
+        Schema::dropIfExists('gear_pieces');
     }
 }

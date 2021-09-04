@@ -17,7 +17,7 @@ class CreateEventSignupsTable extends Migration
         {
             $table->id('eventSignupID');
             $table->timestamps();
-            $table->foreignId('eventID')->primary()->unique();
+            $table->foreignId('eventID')->unique();
             $table->foreignId('guildMemberID');
             $table->foreignId('roleID');
             $table->foreignId('esoCharacterID');

@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table)
         {
-            $table->id('userID')->primary();
+            $table->id('userID');
             $table->timestamps();
             $table->foreignID('guildMemberID');
             $table->string('locale', 10);
@@ -23,7 +23,7 @@ class CreateUsersTable extends Migration
             $table->foreignId('themeID');
             $table->boolean('isAdmin')->default(false);
 
-            $table->foreign('guildMemberID')->references('guildMemberID')->on('guildMembers');
+            $table->foreign('guildMemberID')->references('guildMemberID')->on('guild_members');
             $table->foreign('themeID')->references('themeID')->on('themes');
         });
 

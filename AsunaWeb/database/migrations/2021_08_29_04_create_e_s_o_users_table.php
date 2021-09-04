@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCharacterRacesTable extends Migration
+class CreateESOUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,14 @@ class CreateCharacterRacesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('character_races', function (Blueprint $table)
+        Schema::create('e_s_o_users', function (Blueprint $table)
         {
-            $table->id('characterRaceID')->primary();
+            $table->id('esoUserID');
             $table->timestamps();
-            $table->string('raceName');
+            $table->string('familyName', 100);
+            $table->foreignId('guilds_membersID');
+
+            $table->foreign('guilds_membersID')->references('id')->on('guilds_guild_members');
         });
     }
 
@@ -28,6 +31,6 @@ class CreateCharacterRacesTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('character_races');
+        Schema::dropIfExists('e_s_o_users');
     }
 }
