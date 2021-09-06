@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EventRoster extends Model
 {
@@ -15,4 +16,9 @@ class EventRoster extends Model
         'max_ranged_dps',
         'max_melee_dps'
     ];
+
+    public function event() : BelongsTo
+    {
+        return $this->belongsTo(Event::class);
+    }
 }

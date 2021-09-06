@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -32,4 +34,14 @@ class User extends Authenticatable
         'theme_id' => 2,
         'is_admin' => false
     ];
+
+    public function guildMember() : HasOne
+    {
+        return $this->hasOne(GuildMember::class);
+    }
+
+    public function theme() : BelongsTo
+    {
+        return $this->belongsTo(Theme::class);
+    }
 }

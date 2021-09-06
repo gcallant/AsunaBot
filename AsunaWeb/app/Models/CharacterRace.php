@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CharacterRace extends Model
 {
@@ -13,8 +14,8 @@ class CharacterRace extends Model
         'race_name'
     ];
 
-    public function esoCharacter(): void
+    public function esoCharacter() : HasMany
     {
-        $this->hasMany(ESOCharacter::class);
+        return $this->hasMany(ESOCharacter::class);
     }
 }

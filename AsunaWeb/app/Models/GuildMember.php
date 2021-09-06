@@ -18,7 +18,7 @@ class GuildMember extends Model
         'discord_role_ids'
     ];
 
-    public function guild(): BelongsToMany
+    public function guild() : BelongsToMany
     {
         return $this->belongsToMany(Guild::class);
     }

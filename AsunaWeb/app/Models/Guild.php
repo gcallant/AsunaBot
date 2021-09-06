@@ -21,7 +21,7 @@ class Guild extends Model
         'guild_name'
     ];
 
-    public function guildMember(): BelongsToMany
+    public function guildMember() : BelongsToMany
     {
         return $this->belongsToMany(GuildMember::class);
     }

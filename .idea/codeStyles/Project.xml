@@ -3,6 +3,7 @@
     <PHPCodeStyleSettings>
       <option name="ANONYMOUS_BRACE_STYLE" value="2" />
       <option name="VARIABLE_NAMING_STYLE" value="CAMEL_CASE" />
+      <option name="SPACE_BEFORE_COLON_IN_RETURN_TYPE" value="true" />
       <option name="MULTILINE_CHAINED_CALLS_SEMICOLON_ON_NEW_LINE" value="true" />
       <option name="NAMESPACE_BRACE_STYLE" value="2" />
     </PHPCodeStyleSettings>

@@ -19,6 +19,7 @@ class CreateGearPieceGearRequestTable extends Migration
             $table->timestamps();
             $table->foreignId('gear_request_id');
             $table->foreignId('gear_piece_id');
+            $table->boolean('is_active');
 
             $table->foreign('gear_request_id')->references('id')->on('gear_requests');
             $table->foreign('gear_piece_id')->references('id')->on('gear_pieces')->cascadeOnUpdate();

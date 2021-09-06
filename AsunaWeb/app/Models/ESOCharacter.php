@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ESOCharacter extends Model
 {
@@ -21,8 +22,8 @@ class ESOCharacter extends Model
         'isCertified' => false
     ];
 
-    public function characterRace()
+    public function characterRace() : BelongsToMany
     {
-        $this->belongsToMany(CharacterRace::class);
+        return $this->belongsToMany(CharacterRace::class);
     }
 }

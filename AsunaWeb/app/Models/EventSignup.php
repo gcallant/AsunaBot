@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EventSignup extends Model
 {
@@ -21,4 +22,24 @@ class EventSignup extends Model
     protected $attributes = [
         'no_call_no_show' => false
     ];
+
+    public function guildMember() : BelongsTo
+    {
+        return $this->belongsTo(GuildMember::class);
+    }
+
+    public function role() : BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function event() : BelongsTo
+    {
+        return $this->belongsTo(Event::class);
+    }
+
+    public function esoCharacter() : BelongsTo
+    {
+        return $this->belongsTo(ESOCharacter::class);
+    }
 }
