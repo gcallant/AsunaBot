@@ -21,6 +21,7 @@ class CreateLocationsTable extends Migration
             $table->foreignId('location_type_id');
 
             $table->foreign('location_type_id')->references('id')->on('location_types')->cascadeOnUpdate();
+            $table->unique(['location_name', 'location_type_id']);
         });
     }
 
