@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Location;
 use App\Models\LocationType;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\Seeder;
 use SimpleXLSX;
 
@@ -62,16 +63,25 @@ class LocationSeeder extends Seeder
     }
 
     /**
-     * @param array $uniqueLocations
+     * Creates a new location for each UQ(Location, typeID), eats UQ integrity violation
+     * @param array $uniqueLocations A unique <K,V> pair array of locations and type ids
      */
     private function insertLocations(array $uniqueLocations) : void
     {
         foreach ($uniqueLocations as $location)
         {
-            Location::create([
-                                 'location_name' => $location['location_name'],
-                                 'location_type_id' => $location['location_type_id'],
-                             ]);
+            try
+            {
+                // We're using create here to populate the audit columns, as insert bypasses audit columns
+                Location::create([
+                                     'location_name' => $location['location_name'],
+                                     'location_type_id' => $location['location_type_id'],
+                                 ]);
+            }
+            catch (QueryException $ignore)
+            {
+                // We don't want to insert duplicate data, but we want process to continue
+            }
         }
     }
 }
