@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
                         GuildBridgeMemberSeeder::class,
                         LocationTypeSeeder::class,
                         LocationSeeder::class,
+                        GearPieceSeeder::class,
                         GearSetSeeder::class
                     ]);
     }
