@@ -10,9 +10,7 @@ class GuildMember extends Model
 {
     use HasFactory;
 
-    public $incrementing = false;
     protected $fillable = [
-        'id',
         'name',
         'discord_user_id',
         'discord_role_ids'
