@@ -29,7 +29,7 @@ async def player_signup(context, player_role, *flex_roles_args):
         signup_enabled = signups_enabled[context.message.channel.id]
         if signup_enabled is False:
             await message.channel.send("すみません, signups are not enabled for this run. If you believe this is an error, "
-                                 "please contact the raid lead.")
+                                       "please contact the raid lead.")
             return
         await perform_player_signup(message, message.author, context, player_role, *flex_roles_args)
     except:
@@ -70,9 +70,10 @@ async def create_event(context):
     await perform_event_creation(context, officer, delete_message_after)
 
 
-@client.command(name='report', description='Creates a report based on specified parameters that you define. For example '
-                                           '?report user <userid> will create a report for user with an id of <userid>. '
-                                           'Allowed types are: user, audit',
+@client.command(name='report',
+                description='Creates a report based on specified parameters that you define. For example '
+                            '?report user <userid> will create a report for user with an id of <userid>. '
+                            'Allowed types are: user, audit',
                 brief='Runs a report', pass_context=True)
 async def run_report(context, report_to_run='', user_id: str = None, report_format='csv'):
     officer = await check_permissions(context)
@@ -126,6 +127,7 @@ async def run_reminders_now(context):
     await disappearing_message(context.message, delete_message_after)
     await check_reminders()
 
+
 @client.command(name='proxy',
                 description='Proxy performs a command for another user- can be used to quickly signup or remove '
                             'someone from player_roster. Usage- ?proxy <command> <user> [<signup role> [flex roles]]',
@@ -135,7 +137,6 @@ async def proxy_command(context, command_to_run: str, user_id: str, role='', *pl
     officer = await check_permissions(context)
     if not officer:
         return
-    delete_message_after = 5
 
     user = await get_user(context, user_id)
     if not user:

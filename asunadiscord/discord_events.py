@@ -8,6 +8,7 @@ from discord.abc import PrivateChannel
 import config.utilities
 from config import config
 from config.asunabot_declative import Event
+from config.config import DEBUG
 from config.database import session
 from asunadiscord.discord_client import client
 from config.utilities import disappearing_message, echo, send_message_to_user
@@ -68,7 +69,9 @@ async def on_ready():
         print('------')
     while not client.is_closed():
         await check_reminders()
-        await check_promotions()
+
+        if not DEBUG:
+            await check_promotions()
         await asyncio.sleep(300)
 
 

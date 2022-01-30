@@ -92,7 +92,7 @@ async def edit_selector_menu(context, author, event, roster):
                 await send_message_to_user(author, edit_event_messages.goodbye)
                 break
         except UserWarning:
-            await edit_selector_menu(author, event, roster)
+            await edit_selector_menu(context, author, event, roster)
 
 
 async def update_channel_name(name, channel_id, author):
@@ -233,6 +233,8 @@ def compile_names_from_list(user_list):
 
 async def remove_user_from_roster(context, author, event):
     user_list = get_roster(event)
+
+    # This allows us to display a more user-friendly list with our zero-based array.
     cancel = user_list.__len__() + 1
     if user_list is None:
         await send_message_to_user(author, "No users to remove!")
@@ -244,6 +246,7 @@ async def remove_user_from_roster(context, author, event):
     if index == cancel:
         return
 
+    # This allows us to display a more user-friendly list with our zero-based array.
     user = await get_user(context, user_list[index - 1].id)
     if not user:
         return
@@ -272,6 +275,8 @@ async def toggle_signups_enabled(author, event):
 
 async def edit_user_on_roster(context, author, event):
     user_list = get_roster(event)
+
+    # This allows us to display a more user-friendly list with our zero-based array.
     cancel = user_list.__len__() + 1
     if user_list is None:
         await send_message_to_user(author, "No users to edit!\n\n")
@@ -283,6 +288,7 @@ async def edit_user_on_roster(context, author, event):
     if index == cancel:
         return
 
+    # This allows us to display a more user-friendly list with our zero-based array.
     user = await get_user(context, user_list[index - 1].id)
     if not user:
         return
