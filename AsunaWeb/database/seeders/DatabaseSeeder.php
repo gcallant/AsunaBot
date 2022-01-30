@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\GearSet;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,7 +19,9 @@ class DatabaseSeeder extends Seeder
                         GuildMemberSeeder::class,
                         GuildBridgeMemberSeeder::class,
                         LocationTypeSeeder::class,
-                        LocationSeeder::class
+                        LocationSeeder::class,
+                        GearPieceSeeder::class,
+                        GearSetSeeder::class
                     ]);
     }
 }

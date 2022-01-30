@@ -21,6 +21,7 @@ class CreateGearSetsTable extends Migration
             $table->foreignId('location_id');
 
             $table->foreign('location_id')->references('id')->on('locations')->cascadeOnUpdate();
+            $table->unique(['gear_set_name', 'location_id']);
         });
     }
 
