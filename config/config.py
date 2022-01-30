@@ -11,7 +11,7 @@ have_run = False
 is_toy = False
 is_creation_event = False
 is_editing = False
-message_user_timeout = 600
+message_user_timeout = 900
 signups_enabled = {}
 
 TESTING_SERVER_ID = 373782910010130442
@@ -72,13 +72,13 @@ if platform.system() == 'Windows':
     DEBUG = True
 elif platform.system() == 'Linux':
     DEBUG = False
-else:  # I don't know what the hell is going on
+else:
     sys.exit("This is an unsupported system")
 
 if DEBUG:
     logging.basicConfig(filename='Asuna.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s',
                         level=logging.DEBUG)
-    BOT_TOKEN = 'NTE5NzA2ODQ4NTg1MTg3MzMy.DujPDg.5kr_-LfnCUeRLTR23yaqFY97OWo'
+    BOT_TOKEN = os.environ['DEBUG_API_TOKEN']
     COMMUNICATION_CHANNEL_ID = 543925704358756352
 else:
     # Setup Proper Time Zone
@@ -86,7 +86,7 @@ else:
     time.tzset()
     logging.basicConfig(filename='../Asuna.log', format='%(asctime)s - %(levelname)s - %(message)s',
                         level=logging.INFO)
-    BOT_TOKEN = 'NTE4NTUzNTcyNDI2NjQ1NTA0.DuShbw.TwNTD0i5vvgjbM27QtHCYG3vY44'
+    BOT_TOKEN = os.environ['PROD_API_TOKEN']
 
     # Asuna-communications channel
     COMMUNICATION_CHANNEL_ID = 544214746249822209

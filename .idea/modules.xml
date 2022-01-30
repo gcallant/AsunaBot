@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AsunaBot.iml" filepath="$PROJECT_DIR$/AsunaBot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AsunaWeb/AsunaWeb.iml" filepath="$PROJECT_DIR$/AsunaWeb/AsunaWeb.iml" />
     </modules>
   </component>
 </project>

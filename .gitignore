@@ -91,6 +91,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+*.db
+*.csv
+*.bak
 
 # Spyder project settings
 .spyderproject
@@ -122,6 +125,8 @@ venv.bak/
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+.idea/**/runConfigurations.xml
+.idea/**/misc.xml
 
 # Gradle
 .idea/**/gradle.xml
@@ -158,3 +163,5 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 
+/.phpunit.result.cache
+/.idea/sonarlint/issuestore/index.pb

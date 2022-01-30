@@ -9,20 +9,21 @@ from config import config
 from resourcestrings import easter_egg_messages, exception_messages
 
 
-async def disappearing_message(message, time_to_wait=20):
+async def disappearing_message(message: discord.Message, time_to_wait=20):
     """
     Waits specified amount of seconds (default 20), then makes specified message "disappear" (deletes it)
 
     :param message: The message to delete
     :param time_to_wait: The time to wait before deleting the specified message
     """
-    await asyncio.sleep(time_to_wait)
     try:
-        await message.delete()
+        await message.delete(delay=time_to_wait)
     except Forbidden as fb:
         logging.debug(f'Tried to delete message, but it was likely a DM {fb}')
-    except:
+    except NotFound:
         logging.info('Attempted to delete a message, but it was not found- it was probably already deleted.')
+    except HTTPException:
+        logging.info("The message couldn't be deleted- the API call probably failed.")
 
 
 async def get_menu_option_in_range(menu, author, first_option, last_option):
@@ -39,7 +40,7 @@ async def check_permissions(context):
     Checks if a user can perform an action for a given group
 
     :param context: The context of the current function
-    :return: The author if permissions match lowest officer rank, otherwise None
+    :return: The author if permissions match the lowest officer rank, otherwise None
     :raises KeyError: If user has a rank not in the roles dictionary
     """
 
@@ -60,7 +61,7 @@ async def check_permissions(context):
             await disappearing_message(context.message, time_to_wait=5)
         else:
             return context.message.author
-    except AttributeError as error:
+    except AttributeError:
         await send_message_to_user(context.message.author, exception_messages.operation_not_permitted_in_dm_exception)
 
 
@@ -87,7 +88,7 @@ async def ask_user(question, author):
     return data
 
 
-async def send_message_to_user(user, message, file=None):
+async def send_message_to_user(user: discord.User, message: str, file=None):
     try:
         if file is not None:
             await user.send(message, file=file)
@@ -100,9 +101,7 @@ async def send_message_to_user(user, message, file=None):
     except HTTPException as httpError:
         logging.error(f'Global problem sending message to {user}\n{httpError}')
     except InvalidArgument as iaError:
-        logging.error(f'Some kind of invalid argument error sending message to {user}\n{iaError}')
-    except:
-        logging.exception(f'More Bullshit from some dipshit {user}')
+        logging.error(f'Invalid argument error sending {file} to {user}\n{iaError}')
 
 
 async def ask_user_checked(message, author, function, format, exception_message):
@@ -135,21 +134,33 @@ async def echo(message):
     config.is_toy = False
 
 
-async def get_highest_discord_role(player_id, context):
-    member = context.message.guild.get_member(player_id)
-    try:
+async def get_highest_discord_role(player_id, context: discord.client):
+    member: discord.Member = context.message.guild.get_member(player_id)
+    if member is not None:
         return member.top_role
-    except:
-        logging.exception(f'Could not get a member from that player id, they might have left the server.')
-        return "@everyone"
+
+    logging.exception(f'Could not get a member from that player id, they might have left the server.')
+    return "@everyone"
 
 
-async def get_user(context, user_id):
+async def get_user(context, user_id: str):
+    """
+    Convenience method that allows us to resolve a user from a snowflake, or from their username.
+    :param context: The context from the incoming command.
+    :param user_id: A string containing either a username, or their snowflake.
+    :return: The user if it can be resolved, or None.
+    """
+
     user: discord.user = None
-    if user_id.startswith("<@!"):
+
+    # Remove zero-width whitespace characters- Apple is mostly guilty of this.
+    # Needs to account for ascii and strange unicode characters in usernames
+    # @see https://stackoverflow.com/questions/46154561/remove-zero-width-space-unicode-character-from-python-string
+    clean_user_id = user_id.strip().encode('ascii', 'ignore').decode('utf-8', 'ignore').replace(' ', '')
+    if clean_user_id.startswith("<@"):
         user = context.message.mentions[0]
-    elif user_id.isdigit():
-        user = await client.fetch_user(int(user_id))
+    elif clean_user_id.isdigit():
+        user = await client.fetch_user(int(clean_user_id))
     if user is None:
         await context.message.channel.send(exception_messages.invalid_user)
     return user

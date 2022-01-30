@@ -15,7 +15,6 @@ async def perform_cancel_signup(context, user: discord.user, admin_edit=False):
     event_id = context.message.channel.id
     player_id = user.id
     delete_message_after = 5
-    event = session.query(Event).get(event_id)
     existing_player_signup = session.query(PlayerSignup).get((player_id, event_id))
     if existing_player_signup:
         session.delete(existing_player_signup)
@@ -42,7 +41,8 @@ async def perform_player_signup(message, user: discord.user, context, player_rol
     event = session.query(Event).get(event_id)
     if event:
         cleaned_player_role = player_role.strip().lower()
-        if cleaned_player_role == 'flex':  # This is because people are stupid, and try to flex everything!
+
+        if cleaned_player_role == 'flex':
             await channel.send(
                 'If you wish to flex a role, signup for your preferred role with additional specifiers '
                 '(eg. ?x rdps mdps, tank)', delete_after=10)
@@ -113,7 +113,7 @@ async def do_signups_meet_minimum_standards(channel, cleaned_player_role, event,
             await channel.send(f"ごめんなさい, you don't meet the minimum certified rank required for this run "
                                f"as a {message.author.top_role.name}. You'll be signed up as reserve.\nIf this is "
                                f"an error, "
-                               f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
+                               f"please contact an officer.", delete_after=15)
             flex_roles = cleaned_player_role
             cleaned_player_role = "reserve"
 
@@ -124,7 +124,7 @@ async def do_signups_meet_minimum_standards(channel, cleaned_player_role, event,
                                f"as a {cleaned_player_role}. You'll be signed up as a reserve.\nIf you are "
                                f"certified as a different role, "
                                f"please signup with a role you are certified for.\nIf this is an error, "
-                               f"please contact Aeriana Filauria or Blitznacht112.", delete_after=15)
+                               f"please contact an officer.", delete_after=15)
             flex_roles = cleaned_player_role
             cleaned_player_role = "reserve"
 
