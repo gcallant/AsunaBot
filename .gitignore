@@ -142,8 +142,18 @@ cmake-build-release/
 # File-based project format
 *.iws
 
-# IntelliJ
-out/
+### IntelliJ IDEA ###
+# Instead of ignoring the directory entirely, we want to ignore everything under the folder so we can exclude
+# subfolders/files within the directory itself
+!.idea/
+.idea/*
+*.iwsa
+*.iml
+*.ipr
+
+# We want to ignore all the files in .idea, but we want to make sure that the files in codeStyles are commited
+!.idea/codeStyles
+!.idea/codeStyles/**
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -164,4 +174,3 @@ fabric.properties
 .idea/httpRequests
 
 /.phpunit.result.cache
-/.idea/sonarlint/issuestore/index.pb
