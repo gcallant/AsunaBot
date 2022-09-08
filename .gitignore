@@ -174,3 +174,4 @@ fabric.properties
 .idea/httpRequests
 
 /.phpunit.result.cache
+/projectFilesBackup/.idea/workspace.xml
