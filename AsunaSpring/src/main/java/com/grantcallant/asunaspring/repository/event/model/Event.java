@@ -7,7 +7,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
@@ -21,32 +21,33 @@ public class Event
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(nullable = false)
+  @Column(name = "id", nullable = false)
   private UUID id;
 
-  private Instant createdAt;
+  @Column(name = "created_at", nullable = false)
+  private OffsetDateTime createdAt;
 
-  private Instant updatedAt;
+  @Column(name = "updated_at", nullable = false)
+  private OffsetDateTime updatedAt;
 
-  @Column(nullable = false, length = 200)
+  @Column(name = "event_name", nullable = false, length = 200)
   private String eventName;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(nullable = false)
+  @JoinColumn(name = "event_type_id", nullable = false)
   private EventType eventType;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
-  @JoinColumn(nullable = false)
+  @JoinColumn(name = "guild_id", nullable = false)
   private Guild guild;
 
-  @OneToOne(fetch = FetchType.LAZY, mappedBy = "event")
+  @OneToOne(mappedBy = "event")
   private EventRoster eventRoster;
 
-  @OneToOne(fetch = FetchType.LAZY, mappedBy = "event")
+  @OneToOne(mappedBy = "event")
   private EventSignup eventSignup;
 
-  @OneToOne(fetch = FetchType.LAZY, mappedBy = "event")
+  @OneToOne(mappedBy = "event")
   private EventDatum eventDatum;
-
 }

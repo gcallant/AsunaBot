@@ -1,51 +1,49 @@
 package com.grantcallant.asunaspring.repository.event.model;
 
 import com.grantcallant.asunaspring.repository.guild.model.GuildMember;
+import com.grantcallant.asunaspring.repository.guild.model.GuildRole;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "eventData")
+@Table(name = "event_data")
 public class EventDatum
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(nullable = false)
+  @Column(name = "id", nullable = false)
   private UUID id;
 
-  private Instant createdAt;
+  @Column(name = "created_at", nullable = false)
+  private OffsetDateTime createdAt;
 
-  private Instant updatedAt;
+  @Column(name = "updated_at", nullable = false)
+  private OffsetDateTime updatedAt;
 
   @OneToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "eventId", nullable = false)
+  @JoinColumn(name = "event_id", nullable = false)
   private Event event;
 
-  @Column(nullable = false)
-  private LocalDate eventDay;
+  @Column(name = "event_time", nullable = false)
+  private OffsetDateTime eventTime;
 
-  @Column(nullable = false)
-  private LocalTime eventTime;
-
-  @Column(nullable = false, length = 2000)
+  @Column(name = "event_description", nullable = false, length = 2000)
   private String eventDescription;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "eventLeader", nullable = false)
+  @JoinColumn(name = "event_leader", nullable = false)
   private GuildMember eventLeader;
 
-  @Column(nullable = false)
+  @Column(name = "required_minimum_role", nullable = false)
   private Boolean requireMinimumRole = false;
 
-  @Column(columnDefinition = "INT UNSIGNED")
-  private Long minimumRoleId;
-
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "minimum_event_role_id", columnDefinition = "INT UNSIGNED")
+  private GuildRole minimumEventEventRole;
 }

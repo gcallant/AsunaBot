@@ -4,50 +4,51 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "eventRosters")
+@Table(name = "event_rosters")
 public class EventRoster
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(nullable = false)
+  @Column(name = "id", nullable = false)
   private UUID id;
 
-  private Instant createdAt;
+  @Column(name = "created_at", nullable = false)
+  private OffsetDateTime createdAt;
 
-  private Instant updatedAt;
+  @Column(name = "updated_at", nullable = false)
+  private OffsetDateTime updatedAt;
 
   @OneToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "eventId", nullable = false)
+  @JoinColumn(name = "event_id", nullable = false)
   private Event event;
 
-  @Column(columnDefinition = "TINYINT UNSIGNED")
+  @Column(name = "max_tanks", columnDefinition = "TINYINT UNSIGNED")
   private Short maxTanks;
 
-  @Column(columnDefinition = "TINYINT UNSIGNED")
+  @Column(name = "max_heals", columnDefinition = "TINYINT UNSIGNED")
   private Short maxHeals;
 
-  @Column(columnDefinition = "TINYINT UNSIGNED")
+  @Column(name = "max_ranged_dps", columnDefinition = "TINYINT UNSIGNED")
   private Short maxRangedDps;
 
-  @Column(columnDefinition = "TINYINT UNSIGNED")
+  @Column(name = "max_melee_dps", columnDefinition = "TINYINT UNSIGNED")
   private Short maxMeleeDps;
 
-  @Column(columnDefinition = "TINYINT UNSIGNED not null")
+  @Column(name = "signed_up_tanks", columnDefinition = "TINYINT UNSIGNED not null")
   private Short signedUpTanks;
 
-  @Column(columnDefinition = "TINYINT UNSIGNED not null")
+  @Column(name = "signed_up_heals", columnDefinition = "TINYINT UNSIGNED not null")
   private Short signedUpHeals;
 
-  @Column(columnDefinition = "TINYINT UNSIGNED not null")
+  @Column(name = "signed_up_ranged_dps", columnDefinition = "TINYINT UNSIGNED not null")
   private Short signedUpRangedDps;
 
-  @Column(columnDefinition = "TINYINT UNSIGNED not null")
+  @Column(name = "signed_up_melee_dps", columnDefinition = "TINYINT UNSIGNED not null")
   private Short signedUpMeleeDps;
-
 }

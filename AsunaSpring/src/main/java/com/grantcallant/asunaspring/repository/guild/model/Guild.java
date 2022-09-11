@@ -5,9 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.UUID;
 
 @Getter
@@ -18,29 +19,32 @@ public class Guild
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(nullable = false)
+  @Column(name = "id", nullable = false)
   private UUID id;
 
-  private Instant createdAt;
+  @Column(name = "created_at", nullable = false)
+  private OffsetDateTime createdAt;
 
-  private Instant updatedAt;
+  @Column(name = "updated_at", nullable = false)
+  private OffsetDateTime updatedAt;
 
-  @Column(nullable = false, length = 500)
+  @Column(name = "guild_name", nullable = false, length = 500)
   private String guildName;
 
-  @Column(nullable = false, length = 50)
-  private String timeZone;
+  @Column(name = "time_zone", nullable = false, length = 100)
+  private TimeZone timeZone;
 
-  @Column(nullable = false)
-  private Long createEventRole;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "create_event_role_id", nullable = false)
+  private GuildRole createEventRole;
 
-  @Column(nullable = false)
-  private Long adminRole;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "admin_role_id", nullable = false)
+  private GuildRole adminRole;
 
   @OneToMany(mappedBy = "guild")
   private Set<Event> events = new LinkedHashSet<>();
 
   @OneToMany(mappedBy = "guild")
   private Set<GuildGuildMember> guildGuildMembers = new LinkedHashSet<>();
-
 }

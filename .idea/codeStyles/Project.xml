@@ -1,5 +1,8 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
+    <JetCodeStyleSettings>
+      <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
+    </JetCodeStyleSettings>
     <PHPCodeStyleSettings>
       <option name="ANONYMOUS_BRACE_STYLE" value="2" />
       <option name="VARIABLE_NAMING_STYLE" value="CAMEL_CASE" />
@@ -44,6 +47,9 @@
       <option name="WHILE_BRACE_FORCE" value="3" />
       <option name="FOR_BRACE_FORCE" value="3" />
       <option name="WRAP_ON_TYPING" value="1" />
+    </codeStyleSettings>
+    <codeStyleSettings language="kotlin">
+      <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </codeStyleSettings>
   </code_scheme>
 </component>

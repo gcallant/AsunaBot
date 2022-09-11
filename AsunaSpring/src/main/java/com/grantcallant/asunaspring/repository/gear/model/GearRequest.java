@@ -5,9 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,13 +19,13 @@ public class GearRequest
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
-  private Long id;
+  private UUID id;
 
-  @Column(name = "created_at")
-  private Instant createdAt;
+  @Column(name = "created_at", nullable = false)
+  private OffsetDateTime createdAt;
 
-  @Column(name = "updated_at")
-  private Instant updatedAt;
+  @Column(name = "updated_at", nullable = false)
+  private OffsetDateTime updatedAt;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "guild_member_id", nullable = false)
@@ -36,5 +37,4 @@ public class GearRequest
 
   @OneToMany(mappedBy = "gearRequest")
   private Set<GearPieceGearRequest> gearPieceGearRequests = new LinkedHashSet<>();
-
 }

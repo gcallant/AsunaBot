@@ -8,6 +8,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
+import java.util.TimeZone;
+
 /**
  * Initializes the application with all the correct autowiring.
  */
@@ -27,11 +29,11 @@ public class Initialization implements ApplicationRunner
    * Callback used to run the bean.
    *
    * @param args incoming application arguments
-   * @throws Exception on error
    */
   @Override
-  public void run(ApplicationArguments args) throws Exception
+  public void run(ApplicationArguments args)
   {
+    TimeZone.setDefault(TimeZone.getTimeZone("Etc/UTC"));
     Log.info(BAR);
     Log.info(LEFT_FRAME + "STARTING" + RIGHT_FRAME);
     Log.info(BAR);

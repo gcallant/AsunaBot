@@ -1,19 +1,20 @@
-package com.grantcallant.asunaspring.repository.guild.model;
+package com.grantcallant.asunaspring.repository.eso.model;
 
+import com.grantcallant.asunaspring.repository.guild.model.GuildMember;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "guild_guild_members")
-public class GuildGuildMember
+@Table(name = "eso_users")
+public class EsoUser
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,13 +27,13 @@ public class GuildGuildMember
   @Column(name = "updated_at", nullable = false)
   private OffsetDateTime updatedAt;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  @JoinColumn(name = "guild_id", nullable = false)
-  private Guild guild;
+  @Column(name = "family_name", nullable = false, length = 300)
+  private String familyName;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @OnDelete(action = OnDeleteAction.CASCADE)
+  @OneToMany(mappedBy = "esoUser")
+  private Set<EsoCharacter> esoCharacters = new LinkedHashSet<>();
+
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, optional = false)
   @JoinColumn(name = "guild_member_id", nullable = false)
   private GuildMember guildMember;
 }

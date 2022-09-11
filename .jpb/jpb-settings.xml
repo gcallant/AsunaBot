@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="JpaPluginProjectSettings">
-    <option name="entityNameTemplate" />
-    <option name="generateTypeOnEntity" value="true" />
-    <option name="isLombokGetterAndSetter" value="true" />
-    <option name="useLazyOnToOneAssociations" value="true" />
-    <option name="scaffoldingLanguage" />
-  </component>
+    <component name="DatabaseMigrationSettings" isCreateIndexForFk="true">
+        <database-infos>
+            <database-info>
+                <dbms-id>postgres</dbms-id>
+                <mapping-types>
+                    <mapping-type sql-type-parameter="Nothing">
+                        <java-class>java.util.UUID</java-class>
+                        <sql-type>uuid</sql-type>
+                    </mapping-type>
+                </mapping-types>
+            </database-info>
+        </database-infos>
+    </component>
+    <component name="JpaPluginProjectSettings">
+        <option name="entityNameTemplate" value="${className}"/>
+        <option name="tableNameTemplate" value="${className}"/>
+        <option name="columnNameTemplate" value="${fieldName}"/>
+        <option name="generateTypeOnEntity" value="true"/>
+        <option name="isLombokGetterAndSetter" value="true"/>
+        <option name="useLazyOnToOneAssociations" value="true"/>
+        <option name="scaffoldingLanguage"/>
+    </component>
 </project>

@@ -1,5 +1,6 @@
 package com.grantcallant.asunaspring.repository.event.model;
 
+import com.grantcallant.asunaspring.repository.eso.model.EsoCharacter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +13,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "event_types")
-public class EventType
+@Table(name = "event_roles")
+public class EventRole
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +27,15 @@ public class EventType
   @Column(name = "updated_at", nullable = false)
   private OffsetDateTime updatedAt;
 
-  @Column(name = "event_type_name", nullable = false, length = 100)
-  private String eventTypeName;
+  @Column(name = "role_name", nullable = false, length = 50)
+  private String roleName;
 
-  @OneToMany(mappedBy = "eventType")
-  private Set<Event> events = new LinkedHashSet<>();
+  @OneToMany(mappedBy = "eventRole")
+  private Set<EsoCharacter> esoCharacters = new LinkedHashSet<>();
+
+  @OneToMany(mappedBy = "eventRole")
+  private Set<EventSignup> eventSignups = new LinkedHashSet<>();
+
+  @OneToMany(mappedBy = "minimumEventEventRole")
+  private Set<EventDatum> eventData = new LinkedHashSet<>();
 }

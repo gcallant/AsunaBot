@@ -1,44 +1,50 @@
 package com.grantcallant.asunaspring.repository.event.model;
 
+import com.grantcallant.asunaspring.repository.guild.model.GuildMember;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "eventSignups")
+@Table(name = "event_signups")
 public class EventSignup
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(nullable = false)
+  @Column(name = "id", nullable = false)
   private UUID id;
 
-  private Instant createdAt;
+  @Column(name = "created_at", nullable = false)
+  private OffsetDateTime createdAt;
 
-  private Instant updatedAt;
+  @Column(name = "updated_at", nullable = false)
+  private OffsetDateTime updatedAt;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "roleId", nullable = false)
-  private Role role;
+  @JoinColumn(name = "role_id", nullable = false)
+  private EventRole eventRole;
 
-  @Column(nullable = false)
+  @Column(name = "eso_character_id", nullable = false)
   private UUID esoCharacterId;
 
-  @Column(nullable = false)
+  @Column(name = "no_call_no_show", nullable = false)
   private Boolean noCallNoShow = false;
 
-  @Column(length = 4000)
+  @Column(name = "guild_member_notes", length = 4000)
   private String guildMemberNotes;
 
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, optional = false, orphanRemoval = true)
-  @JoinTable(name = "eventSignupsEvent",
-      joinColumns = @JoinColumn(name = "eventSignupId"),
-      inverseJoinColumns = @JoinColumn(name = "eventId"))
+  @JoinTable(name = "event_signups_event",
+      joinColumns = @JoinColumn(name = "event_id"),
+      inverseJoinColumns = @JoinColumn(name = "event_signup_id"))
   private Event event;
 
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, optional = false)
+  @JoinColumn(name = "guild_member_id", nullable = false)
+  private GuildMember guildMember;
 }
