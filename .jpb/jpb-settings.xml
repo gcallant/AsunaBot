@@ -14,12 +14,14 @@
         </database-infos>
     </component>
     <component name="JpaPluginProjectSettings">
-        <option name="entityNameTemplate" value="${className}"/>
+    <option name="entityNameTemplate"value="${className}"/>
         <option name="tableNameTemplate" value="${className}"/>
         <option name="columnNameTemplate" value="${fieldName}"/>
-        <option name="generateTypeOnEntity" value="true"/>
-        <option name="isLombokGetterAndSetter" value="true"/>
-        <option name="useLazyOnToOneAssociations" value="true"/>
-        <option name="scaffoldingLanguage"/>
-    </component>
+        <option name="tableNameTemplate" value="${className}"/>
+    <option name="columnNameTemplate" value="${fieldName}"/>
+    <option name="generateTypeOnEntity" value="true"/>
+    <option name="isLombokGetterAndSetter" value="true"/>
+    <option name="useLazyOnToOneAssociations" value="true"/>
+    <option name="scaffoldingLanguage"/>
+  </component>
 </project>
