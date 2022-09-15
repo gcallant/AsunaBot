@@ -1,6 +1,7 @@
 plugins {
     id("org.springframework.boot") version "2.7.3"
     id("io.spring.dependency-management") version "1.0.13.RELEASE"
+    id("org.flywaydb.flyway") version "9.3.0"
     java
 }
 
@@ -9,6 +10,19 @@ version = "0.0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+/**
+ * This allows us to run Flyway specific Gradle tasks independently of our application at runtime
+ * IE having migrations run each time during application boot is not best practice.
+ */
+flyway {
+    driver = System.getenv("DB_DRIVER")
+    url = System.getenv("DB_URL")
+    user = System.getenv("DB_USER")
+    password = System.getenv("DB_PASSWORD")
+    cleanDisabled = true
+//    locations = arrayOf("filesystem:resources/db/migration")
 }
 
 
@@ -37,6 +51,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+    implementation("org.flywaydb:flyway-core")
     developmentOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
