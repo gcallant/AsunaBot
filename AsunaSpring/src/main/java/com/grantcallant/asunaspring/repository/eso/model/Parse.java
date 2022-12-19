@@ -29,7 +29,7 @@ public class Parse
   private EsoCharacter esoCharacter;
 
   @Column(name = "dps", columnDefinition = "INT UNSIGNED not null")
-  private Long dps;
+  private int dps;
 
   @Column(name = "parse_file_key", nullable = false)
   private UUID parseFileKey;

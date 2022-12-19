@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!--
+    ===========================
+     LOCAL PROFILE
+     DATE, SPACING, AND COLORS
+    ===========================
+    -->
+    <springProfile name="local">
+        <appender name="StdErr" class="ch.qos.logback.core.ConsoleAppender">
+            <target>System.err</target>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>WARN</level>
+            </filter>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>
+                    %gray(%d{ISO8601}) %highlight(%-5level) %yellow(%-40logger) %highlight(%msg%n%throwable)
+                </Pattern>
+            </layout>
+        </appender>
+        <appender name="StdOut" class="ch.qos.logback.core.ConsoleAppender">
+            <target>System.out</target>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>DEBUG</level>
+                <onMatch>ACCEPT</onMatch>
+            </filter>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>INFO</level>
+                <onMatch>ACCEPT</onMatch>
+            </filter>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>TRACE</level>
+                <onMatch>ACCEPT</onMatch>
+            </filter>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>WARN</level>
+                <onMatch>DENY</onMatch>
+            </filter>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>ERROR</level>
+                <onMatch>DENY</onMatch>
+            </filter>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>
+                    %gray(%d{ISO8601}) %highlight(%-5level) %yellow(%-40logger) %msg%n%throwable
+                </Pattern>
+            </layout>
+        </appender>
+    </springProfile>
+
+    <!--
+    ===========================
+     PRODUCTION PROFILE
+     FORMATTED FOR LOG SHIPPING
+    ===========================
+    -->
+    <springProfile name="production">
+        <appender name="StdErr" class="ch.qos.logback.core.ConsoleAppender">
+            <target>System.err</target>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>WARN</level>
+            </filter>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>
+                    %level %logger %msg%n%throwable
+                </Pattern>
+            </layout>
+        </appender>
+        <appender name="StdOut" class="ch.qos.logback.core.ConsoleAppender">
+            <target>System.out</target>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>DEBUG</level>
+                <onMatch>ACCEPT</onMatch>
+            </filter>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>INFO</level>
+                <onMatch>ACCEPT</onMatch>
+            </filter>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>TRACE</level>
+                <onMatch>ACCEPT</onMatch>
+            </filter>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>WARN</level>
+                <onMatch>DENY</onMatch>
+            </filter>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>ERROR</level>
+                <onMatch>DENY</onMatch>
+            </filter>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>
+                    %level %logger %msg%n%throwable
+                </Pattern>
+            </layout>
+        </appender>
+    </springProfile>
+
+    <root level="info">
+        <appender-ref ref="StdOut"/>
+        <appender-ref ref="StdErr"/>
+    </root>
+
+    <logger name="com.grantcallant" level="warn" additivity="false">
+        <appender-ref ref="StdOut"/>
+        <appender-ref ref="StdErr"/>
+    </logger>
+
+    <logger name="org.springframework" level="warn" additivity="false">
+        <appender-ref ref="StdOut"/>
+        <appender-ref ref="StdErr"/>
+    </logger>
+
+    <logger name="org.apache" level="warn" additivity="false">
+        <appender-ref ref="StdOut"/>
+        <appender-ref ref="StdErr"/>
+    </logger>
+
+    <logger name="org.hibernate" level="warn" additivity="false">
+        <appender-ref ref="StdOut"/>
+        <appender-ref ref="StdErr"/>
+    </logger>
+
+    <logger name="com.zaxxer.hikari" level="warn" additivity="false">
+        <appender-ref ref="StdOut"/>
+        <appender-ref ref="StdErr"/>
+    </logger>
+
+</configuration>

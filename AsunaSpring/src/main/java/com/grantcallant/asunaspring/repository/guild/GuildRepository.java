@@ -1,11 +1,11 @@
 package com.grantcallant.asunaspring.repository.guild;
 
-/**
- * 09 2022
- * Created by Grant Callant for AsunaBot in com.grantcallant.asunaspring.repository.guild.model.com.grantcallant.asunaspring.repository.guild
- *
- * @author Grant Callant
- */
-public class GuildRepository
+import com.grantcallant.asunaspring.repository.guild.model.Guild;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
+
+import java.util.UUID;
+
+public interface GuildRepository extends PagingAndSortingRepository<Guild, UUID>, QuerydslPredicateExecutor<Guild>
 {
 }

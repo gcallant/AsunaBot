@@ -1,5 +1,6 @@
 package com.grantcallant.asunaspring;
 
+import com.grantcallant.asunaspring.controllers.discord.DiscordController;
 import com.grantcallant.asunaspring.utility.configuration.Configuration;
 import com.grantcallant.asunaspring.utility.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,17 @@ import java.util.TimeZone;
 public class Initialization implements ApplicationRunner
 {
   private final Configuration configuration;
+  private final DiscordController discordController;
   private static final String BAR = "▌║█║▌│║▌│║▌║▌█║▌│║▌║▌│║║▌█║▌║█▌║█║▌│║▌│║▌║▌█║▌│║▌║▌│║║▌█║▌║█";
   private static final String LEFT_FRAME = "✩░▒▓▆▅▃▂▁";
   private static final String RIGHT_FRAME = "▁▂▃▅▆▓▒░✩";
 
   @Autowired
-  public Initialization(Configuration configuration) {this.configuration = configuration;}
+  public Initialization(Configuration configuration, DiscordController discordController)
+  {
+    this.configuration = configuration;
+    this.discordController = discordController;
+  }
 
   /**
    * Callback used to run the bean.
@@ -43,7 +49,7 @@ public class Initialization implements ApplicationRunner
     Log.info(LEFT_FRAME + configuration.getApplicationProfile() + RIGHT_FRAME);
     Log.info(LEFT_FRAME + configuration.getStartTime() + RIGHT_FRAME);
     Log.info(BAR);
-
+    discordController.init();
     Log.info(LEFT_FRAME + "STARTING COMPLETE");
     Log.info(BAR);
   }

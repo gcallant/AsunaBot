@@ -2,7 +2,9 @@ package com.grantcallant.asunaspring.service.event;
 
 import com.grantcallant.asunaspring.repository.event.EventRepository;
 import com.grantcallant.asunaspring.repository.event.model.Event;
+import com.grantcallant.asunaspring.repository.event.model.QEvent;
 import com.grantcallant.asunaspring.utility.helpers.ServiceResult;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,9 @@ public class EventService
 
   public ServiceResult<List<Event>> getAllEventsForGuild(UUID guildId)
   {
-    //TODO: Actually get data from repo
-    return new ServiceResult.ServiceResultBuilder<List<Event>>().success().build();
+    QEvent event = QEvent.event;
+    BooleanExpression thisEvent = event.guild.id.eq(guildId);
+    List<Event> eventList = (List<Event>) eventRepository.findAll(thisEvent);
+    return new ServiceResult.ServiceResultBuilder<List<Event>>().success().data(eventList).build();
   }
 }

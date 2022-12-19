@@ -94,6 +94,9 @@ venv.bak/
 *.db
 *.csv
 *.bak
+*.env
+*.env.localhost
+*.properties
 
 # Spyder project settings
 .spyderproject
@@ -175,3 +178,14 @@ fabric.properties
 
 /.phpunit.result.cache
 /projectFilesBackup/.idea/workspace.xml
+/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+/.gradle/4.9/fileHashes/fileHashes.bin
+/.gradle/4.9/fileHashes/fileHashes.lock
+/gradle/wrapper/gradle-wrapper.jar
+/gradlew
+/gradlew.bat
+/.gradle/4.9/fileChanges/last-build.bin
+/.gradle/buildOutputCleanup/outputFiles.bin
+/.jpb/persistence-units.xml
+/.gradle/4.9/taskHistory/taskHistory.bin
+/.gradle/4.9/taskHistory/taskHistory.lock

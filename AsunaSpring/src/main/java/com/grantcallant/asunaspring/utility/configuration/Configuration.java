@@ -87,6 +87,9 @@ public class Configuration
   @Value("${application.version}")
   private String applicationVersion;
 
+  @Value("${discord.token}")
+  private String discordToken;
+
   private final String applicationEnvironment;
 
   public Configuration()
