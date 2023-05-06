@@ -7,6 +7,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Gets environment specific variables and makes them available to the application.
@@ -17,7 +18,8 @@ import java.time.LocalDateTime;
 @Getter
 public class Configuration
 {
-  private final LocalDateTime startTime;
+  private final LocalDateTime rawStartTime;
+  private final String formattedStartTime;
   @Value("${application.name}")
   private String applicationName;
 
@@ -94,8 +96,9 @@ public class Configuration
 
   public Configuration()
   {
-    this.startTime = LocalDateTime.now();
-    applicationEnvironment = System.getenv("INSTANCE_NAME") != null ? System.getenv("INSTANCE_NAME") : "unknown";
+    this.rawStartTime = LocalDateTime.now();
+    this.formattedStartTime = rawStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    applicationEnvironment = System.getenv("OS") != null ? System.getenv("OS") : "unknown";
   }
 }
 

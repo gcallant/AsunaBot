@@ -9,9 +9,9 @@ import com.grantcallant.asunaspring.utility.helpers.ServiceResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -25,25 +25,21 @@ import static org.mockito.Mockito.when;
 /**
  * Test class for EventController.
  */
-@DisplayName("EventControllerTest ")
+@DisplayName("EventControllerTest")
 @SpringBootTest
 class EventControllerTest extends BaseTest
 {
 
   static Event event;
-
-  //  @InjectMocks
-//  ServiceResult<List<Event>> result;
   static List<Event> eventList;
   @Autowired
   EventController eventController;
-  @Mock
+  @MockBean
   EventService eventService;
 
   @BeforeEach
   public void init()
   {
-    eventController = new EventController(modelMapper, eventService);
     event = EventFactory.createEvent();
     eventList = List.of(event);
   }

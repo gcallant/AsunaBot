@@ -58,6 +58,11 @@ public class Log {
     }
   }
 
+  private static Logger getLogger(Class clazz)
+  {
+    return getLogger(clazz.toString());
+  }
+
   /**
    * Cleans string, removes breaking characters.
    */
@@ -114,6 +119,14 @@ public class Log {
     String type = getType(ex);
     String className = getClassName(ex);
     logStackDetails(ex, type, className);
+  }
+
+  /**
+   * Overriden error- allows for logging manual exceptions.
+   */
+  public static void error(String message, Throwable ex)
+  {
+    logStackDetails(ex, message, getClassName(ex));
   }
 
   /**

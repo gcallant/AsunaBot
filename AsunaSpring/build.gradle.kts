@@ -48,7 +48,7 @@ java {
 
 
 dependencies {
-    implementation("com.discord4j:discord4j-core:3.2.3")
+    implementation("com.discord4j:discord4j-core:3.2.4")
     implementation("com.fasterxml.jackson.core:jackson-core:2.14.0")
     implementation("org.flywaydb:flyway-core")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
@@ -60,12 +60,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.security:spring-security-jwt:1.1.1.RELEASE")
     implementation("org.springframework.session:spring-session-core")
     implementation("io.springfox:springfox-boot-starter:3.0.0")
     implementation("io.springfox:springfox-swagger-ui:3.0.0")
     implementation("one.util:streamex:0.8.1")
     implementation("com.zaxxer:HikariCP")
+    implementation("org.jetbrains:annotations:23.0.0")
 
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
