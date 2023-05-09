@@ -1,4 +1,4 @@
-package com.grantcallant.asunaspring.controllers.discord;
+package com.grantcallant.asunaspring.controllers.discord.legacy;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
  * @author Grant Callant
  */
 @Service
-public class MessageCreateListener extends MessageListener implements EventListener<MessageCreateEvent>
+public class MessageCreateListener implements MessageListener, EventListener<MessageCreateEvent>
 {
   @Override
   public Class<MessageCreateEvent> getEventType()

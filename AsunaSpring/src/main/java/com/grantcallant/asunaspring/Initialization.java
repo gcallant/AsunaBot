@@ -1,6 +1,7 @@
 package com.grantcallant.asunaspring;
 
 import com.grantcallant.asunaspring.controllers.discord.SlashCommandCache;
+import com.grantcallant.asunaspring.controllers.discord.legacy.LegacyCommandCache;
 import com.grantcallant.asunaspring.utility.configuration.Configuration;
 import com.grantcallant.asunaspring.utility.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,15 @@ public class Initialization implements ApplicationRunner
   private static final String RIGHT_FRAME = "▁▂▃▅▆▓▒░✩";
   private static final int FRAME_LENGTH = LEFT_FRAME.length() + RIGHT_FRAME.length();
   private final Configuration configuration;
-  private final SlashCommandCache commandCache;
+  private final SlashCommandCache slashCommandCache;
+  private final LegacyCommandCache legacyCommandCache;
 
   @Autowired
-  public Initialization(Configuration configuration, SlashCommandCache commandCache)
+  public Initialization(Configuration configuration, SlashCommandCache slashCommandCache, LegacyCommandCache legacyCommandCache)
   {
     this.configuration = configuration;
-    this.commandCache = commandCache;
+    this.slashCommandCache = slashCommandCache;
+    this.legacyCommandCache = legacyCommandCache;
   }
 
   /**
@@ -76,9 +79,12 @@ public class Initialization implements ApplicationRunner
 
     Log.info(LEFT_FRAME + centerOutput("Setting correct UTC timezone") + RIGHT_FRAME);
     TimeZone.setDefault(TimeZone.getTimeZone("Etc/UTC"));
+    Log.info(BAR);
 
-    commandCache.init();
+    Log.info(LEFT_FRAME + centerOutput(slashCommandCache.init()) + RIGHT_FRAME);
+    Log.info(LEFT_FRAME + centerOutput(legacyCommandCache.init()) + RIGHT_FRAME);
 
+    Log.info(BAR);
     Log.info(LEFT_FRAME + centerOutput("STARTUP COMPLETE") + RIGHT_FRAME);
     Log.info(BAR);
   }

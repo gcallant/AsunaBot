@@ -1,0 +1,12 @@
+{
+  "name": "event",
+  "description": "Creates a new event",
+  "options": [
+    {
+      "name": "name",
+      "description": "Event Name",
+      "type": 3,
+      "required": false
+    }
+  ]
+}

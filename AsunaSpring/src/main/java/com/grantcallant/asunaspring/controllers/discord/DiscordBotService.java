@@ -1,5 +1,6 @@
 package com.grantcallant.asunaspring.controllers.discord;
 
+import com.grantcallant.asunaspring.controllers.discord.legacy.EventListener;
 import com.grantcallant.asunaspring.utility.configuration.Configuration;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
@@ -53,29 +54,13 @@ public class DiscordBotService
     eventListenerList
         .forEach(
             eventListener -> client.on(eventListener.getEventType())
-                .flatMap(eventListener::execute)
-                .onErrorResume(eventListener::handleError)
-                .subscribe()
+                                   .flatMap(eventListener::execute)
+                                   .onErrorResume(eventListener::handleError)
+                                   .subscribe()
         );
     setClientIntents(client.rest().gateway());
     client.updatePresence(ClientPresence.online(ClientActivity.listening("to /commands")));
     return client;
-  }
-
-  @Bean
-  public RestClient discordRestClient(GatewayDiscordClient client)
-  {
-    return client.getRestClient();
-  }
-
-  public long applicationId()
-  {
-    return discordRestClient(client).getApplicationId().block();
-  }
-
-  public ApplicationService applicationService()
-  {
-    return discordRestClient(client).getApplicationService();
   }
 
   /**
@@ -96,5 +81,21 @@ public class DiscordBotService
             Intent.DIRECT_MESSAGE_REACTIONS
         )
     );
+  }
+
+  public long applicationId()
+  {
+    return discordRestClient(client).getApplicationId().block();
+  }
+
+  @Bean
+  public RestClient discordRestClient(GatewayDiscordClient client)
+  {
+    return client.getRestClient();
+  }
+
+  public ApplicationService applicationService()
+  {
+    return discordRestClient(client).getApplicationService();
   }
 }

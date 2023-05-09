@@ -1,4 +1,4 @@
-package com.grantcallant.asunaspring.controllers.discord;
+package com.grantcallant.asunaspring.controllers.discord.legacy;
 
 import discord4j.core.event.domain.message.MessageUpdateEvent;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
  * @author Grant Callant
  */
 @Service
-public class MessageUpdateListener extends MessageListener implements EventListener<MessageUpdateEvent>
+public class MessageUpdateListener implements MessageListener, EventListener<MessageUpdateEvent>
 {
   @Override
   public Class<MessageUpdateEvent> getEventType()
@@ -25,6 +25,6 @@ public class MessageUpdateListener extends MessageListener implements EventListe
     return Mono.just(event)
         .filter(MessageUpdateEvent::isContentChanged)
         .flatMap(MessageUpdateEvent::getMessage)
-        .flatMap(super::processCommand);
+        .flatMap(this::processCommand);
   }
 }

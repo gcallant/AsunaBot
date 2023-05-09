@@ -7,9 +7,9 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -22,17 +22,18 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class SlashCommandCache
 {
   private final ReentrantReadWriteLock lock;
-  private Collection commands;
+  private final List<ApplicationCommandRequest> commands;
+  private final DiscordBotService botService;
 
-  public SlashCommandCache()
+  public SlashCommandCache(DiscordBotService botService)
   {
-    commands = new HashSet();
+    commands = new ArrayList<>();
     this.lock = new ReentrantReadWriteLock();
+    this.botService = botService;
   }
 
-  public void init() throws IOException
+  public String init() throws IOException
   {
-    Log.info("Loading all slash commands...");
     JacksonResources jacksonMapper = JacksonResources.create();
     PathMatchingResourcePatternResolver matcher = new PathMatchingResourcePatternResolver();
 
@@ -47,10 +48,18 @@ public class SlashCommandCache
         }
         catch (IOException ignored) {/*ignore*/}
       });
+
+      int size = commands.size();
+      botService.applicationService().bulkOverwriteGuildApplicationCommand(botService.applicationId(), 373782910010130442L, commands)
+                .doOnNext(ignore -> commands.forEach(
+                    command -> Log.debug(String.format("Registered command %s, 1/%d", command.name(), size))))
+                .doOnError(e -> Log.error("Failed to register commands", e))
+                .subscribe();
+
+      return String.format("Added %d unique slash commands", commands.size());
     }
     finally
     {
-      Log.info(String.format("Added %d unique slash commands", commands.size()));
       lock.writeLock().unlock();
     }
   }
