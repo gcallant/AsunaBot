@@ -1,28 +1,34 @@
-import org.codehaus.groovy.ast.tools.GeneralUtils.args
-
 plugins {
-    id("org.springframework.boot") version "2.7.4"
-    id("io.spring.dependency-management") version "1.0.13.RELEASE"
-    id("org.flywaydb.flyway") version "9.3.0"
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.flyway)
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.spring)
+    alias(libs.plugins.kotlin.jpa)
+    alias(libs.plugins.ben.manes.versions)
     idea
     java
 }
 
 group = "com.grantcallant"
 version = "0.0.1-SNAPSHOT"
-var queryDslVersion = "5.0.0"
-var lombokVersion = "1.18.24"
+val queryDslVersion = "5.1.0"
 
 repositories {
     mavenCentral()
 }
 
+// Fixed idea configuration
 idea {
     module {
         sourceDirs.plusAssign(file("generated/"))
         generatedSourceDirs.plusAssign(file("generated/"))
     }
-    tasks.named("clean") {
+}
+
+// Move clean task outside idea block
+tasks.named("clean") {
+    doFirst {
         delete(file("generated/"))
     }
 }
@@ -32,90 +38,107 @@ idea {
  * IE having migrations run each time during application boot is not best practice.
  */
 flyway {
-    driver = System.getenv("DB_DRIVER")
-    url = System.getenv("DB_URL")
-    user = System.getenv("DB_USER")
-    password = System.getenv("DB_PASSWORD")
+    // Add null checks for environment variables
+    driver = System.getenv("DB_DRIVER") ?: "org.postgresql.Driver"
+    url = System.getenv("DB_URL") ?: "jdbc:postgresql://localhost:5432/asuna"
+    user = System.getenv("DB_USER") ?: "postgres"
+    password = System.getenv("DB_PASSWORD") ?: ""
     cleanDisabled = false
 //    locations = arrayOf("filesystem:resources/db/migration")
 }
 
-
 java {
-    sourceCompatibility = JavaVersion.VERSION_18
+    sourceCompatibility = JavaVersion.VERSION_22
+    targetCompatibility = JavaVersion.VERSION_22
 }
 
+// Configure Kotlin compilation
+kotlin {
+    jvmToolchain(22)
+}
 
+val mockitoAgent = configurations.create("mockitoAgent")
 
 dependencies {
-    implementation("com.discord4j:discord4j-core:3.2.4")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.14.0")
-    implementation("org.flywaydb:flyway-core")
-    implementation("io.jsonwebtoken:jjwt:0.9.1")
-    implementation("org.modelmapper:modelmapper:3.1.1")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa") { exclude("org.apache.tomcat:tomcat-jdbc") }
-    implementation("org.springframework.boot:spring-boot-starter-graphql")
-    implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.session:spring-session-core")
-    implementation("io.springfox:springfox-boot-starter:3.0.0")
-    implementation("io.springfox:springfox-swagger-ui:3.0.0")
-    implementation("one.util:streamex:0.8.1")
-    implementation("com.zaxxer:HikariCP")
-    implementation("org.jetbrains:annotations:23.0.0")
+    implementation(libs.discord4j.core)
+    implementation(libs.jackson.core) // Managed by Spring Boot BOM
+    implementation(libs.flyway.core)
+    implementation(libs.katharsis.spring)
+    
+    implementation(libs.jjwt.api)
+    runtimeOnly(libs.jjwt.impl)
+    runtimeOnly(libs.jjwt.jackson)
+    
+    implementation(libs.modelmapper)
+    implementation(libs.spring.boot.starter.actuator)
+    implementation(libs.spring.boot.starter.data.jpa) { exclude("org.apache.tomcat:tomcat-jdbc") }
+    implementation(libs.spring.boot.starter.graphql)
+    implementation(libs.spring.boot.starter.jdbc)
+    implementation(libs.spring.boot.starter.oauth2.client)
+    implementation(libs.spring.boot.starter.security)
+    implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.session.core)
 
-    compileOnly("org.projectlombok:lombok:${lombokVersion}")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    developmentOnly("com.h2database:h2")
-    runtimeOnly("org.postgresql:postgresql")
+    // Kotlin
+    implementation(libs.kotlin.reflect)
+    implementation(libs.kotlin.gradle.plugin)
+    
+    // Replace deprecated Springfox with SpringDoc OpenAPI
+    implementation(libs.springdoc.openapi.starter.webmvc.ui)
+    
+    implementation(libs.streamex)
+    implementation(libs.hikaricp)
+    implementation(libs.jetbrains.annotations)
 
-    // QueryDSL
-    implementation("com.querydsl:querydsl-core:${queryDslVersion}")
-    implementation("com.querydsl:querydsl-jpa:${queryDslVersion}")
-    implementation("com.querydsl:querydsl-collections:${queryDslVersion}")
-    annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:general")
-    annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
-    annotationProcessor("org.springframework.boot", "spring-boot-starter-data-jpa")
-    annotationProcessor("javax.annotation", "javax.annotation-api", "1.3.2")
-    annotationProcessor("org.hibernate.javax.persistence", "hibernate-jpa-2.1-api", "1.0.2.Final")
-    annotationProcessor("jakarta.annotation:jakarta.annotation-api") // This prevents java.lang.NoClassDefFoundError
-    annotationProcessor("jakarta.persistence:jakarta.persistence-api") // This prevents java.lang.NoClassDefFoundError
+    compileOnly(libs.lombok)
+    developmentOnly(libs.spring.boot.devtools)
+    developmentOnly(libs.h2)
+    runtimeOnly(libs.postgresql)
 
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    // QueryDSL - Updated annotation processors for Jakarta
+    implementation(libs.querydsl.core)
+    implementation("com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta")
+    implementation(libs.querydsl.collections)
+    annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jakarta")
+    annotationProcessor(libs.spring.boot.configuration.processor)
+    
+    // Use only Jakarta annotations (removed javax dependencies)
+    annotationProcessor(libs.jakarta.annotation.api)
+    annotationProcessor(libs.jakarta.persistence.api)
+    annotationProcessor(libs.lombok)
 
     // TEST
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework:spring-webflux")
-    testImplementation("org.springframework.graphql:spring-graphql-test")
-    testImplementation("org.springframework.security:spring-security-test")
-    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
-    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testImplementation(libs.spring.boot.starter.test)
+    testImplementation(libs.spring.webflux)
+    testImplementation(libs.spring.graphql.test)
+    testImplementation(libs.spring.security.test)
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
 
-    // QueryDSL
-    testImplementation("com.querydsl:querydsl-core:${queryDslVersion}")
-    testImplementation("com.querydsl:querydsl-jpa:${queryDslVersion}")
-    testImplementation("com.querydsl:querydsl-collections:${queryDslVersion}")
-    testAnnotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:general")
-    testAnnotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
-    testAnnotationProcessor("org.springframework.boot", "spring-boot-starter-data-jpa")
-    testAnnotationProcessor("javax.annotation", "javax.annotation-api", "1.3.2")
-    testAnnotationProcessor("org.hibernate.javax.persistence", "hibernate-jpa-2.1-api", "1.0.2.Final")
-    testAnnotationProcessor("jakarta.annotation:jakarta.annotation-api") // This prevents java.lang.NoClassDefFoundError
-    testAnnotationProcessor("jakarta.persistence:jakarta.persistence-api") // This prevents java.lang.NoClassDefFoundError
+    // Mockito Agent (Required for JVM 21+)
+    // @see https://javadoc.io/static/org.mockito/mockito-core/5.19.0/org.mockito/org/mockito/Mockito.html#mockito-instrumentation
+    testImplementation(libs.mockito)
+    mockitoAgent(libs.mockito) { isTransitive = false }
+
+    // QueryDSL for tests
+    testImplementation(libs.querydsl.core)
+    testImplementation("com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta")
+    testImplementation(libs.querydsl.collections)
+    testAnnotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jakarta")
+    testAnnotationProcessor(libs.jakarta.annotation.api)
+    testAnnotationProcessor(libs.jakarta.persistence.api)
 }
 
 val buildProfile: String? by project
 apply(from = "profile-${buildProfile ?: "default"}.gradle.kts")
 
-tasks.getByName<Test>("test") {
-    systemProperty("spring.profiles.active", "local")
-    useJUnitPlatform()
-}
-
-tasks.named("build") {
-    args("--spring.profiles.active=local")
+tasks {
+    bootRun {
+      args("--spring.profiles.active=local")
+    }
+    test {
+        systemProperty("spring.profiles.active", "local")
+        useJUnitPlatform()
+        jvmArgs.add("-javaagent:${mockitoAgent.asPath}")
+    }
 }

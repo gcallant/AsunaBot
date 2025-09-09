@@ -1,12 +1,12 @@
 package com.grantcallant.asunaspring.repository.event.model;
 
 import com.grantcallant.asunaspring.repository.guild.model.Guild;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 

@@ -3,6 +3,8 @@ package com.grantcallant.asunaspring.utility.helpers;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.function.Function;
+
 /**
  * Class to carry error or success messages as well as results from services to controllers.
  */
@@ -21,6 +23,52 @@ public class ServiceResult<T>
   private ServiceResult() {}
 
   /**
+   * Transform the data in this ServiceResult to another type while preserving success/failure state.
+   */
+  public <R> ServiceResult<R> map(Function<T, R> mapper)
+  {
+    ServiceResultBuilder<R> builder = new ServiceResultBuilder<R>()
+        .message(this.message)
+        .status(this.status);
+        
+    if (this.success) 
+    {
+      return builder
+          .success()
+          .data(this.data != null ? mapper.apply(this.data) : null)
+          .build();
+    }
+    
+    return builder
+        .failed()
+        .data(null)
+        .build();
+  }
+
+  /**
+   * Transform successful data or provide a default value for failed results.
+   */
+  public <R> ServiceResult<R> mapOrDefault(Function<T, R> mapper, R defaultValue)
+  {
+    ServiceResultBuilder<R> builder = new ServiceResultBuilder<R>()
+        .message(this.message)
+        .status(this.status);
+        
+    if (this.success && this.data != null) 
+    {
+      return builder
+          .success()
+          .data(mapper.apply(this.data))
+          .build();
+    }
+    
+    return builder
+        .failed()
+        .data(defaultValue)
+        .build();
+  }
+
+  /**
    * Builder class allowing Service Result as a builder pattern.
    */
   public static class ServiceResultBuilder<T>
@@ -37,6 +85,7 @@ public class ServiceResult<T>
       result.message = this.message;
       result.status = this.status;
       result.success = this.success;
+      result.failed = !this.success;
       return result;
     }
 

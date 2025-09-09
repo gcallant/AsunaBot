@@ -1,0 +1,81 @@
+[versions]
+queryDsl = "5.1.0"
+lombok = "1.18.40"
+jjwt = "0.13.0"
+springBoot = "4.0.0-M2"
+jetBrainsKotlin = "2.2.20-RC2"
+springDependencyManagement = "1.1.7"
+flyway = "11.12.0"
+benManesVersions = "0.52.0"
+discord4j = "3.3.0-RC3"
+jacksonCore = "2.20.0"
+katharsis = "3.0.2"
+modelMapper = "3.2.4"
+springDocOpenApi = "3.0.0-M1"
+streamex = "0.8.4"
+hikariCp = "7.0.2"
+jetBrainsAnnotations = "26.0.2-1"
+h2Database = "2.3.232"
+postgresql = "42.7.7"
+springWebflux = "7.0.0-M8"
+mockitoCore = "5.19.0"
+jakartaPersistenceApi = "3.1.0"
+jakartaAnnotationApi = "3.0.0-M1"
+
+[libraries]
+discord4j-core = { module = "com.discord4j:discord4j-core", version.ref = "discord4j" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jacksonCore" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+katharsis-spring = { module = "io.katharsis:katharsis-spring", version.ref = "katharsis" }
+
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
+
+modelmapper = { module = "org.modelmapper:modelmapper", version.ref = "modelMapper" }
+
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBoot" }
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "springBoot" }
+spring-boot-starter-graphql = { module = "org.springframework.boot:spring-boot-starter-graphql", version.ref = "springBoot" }
+spring-boot-starter-jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc", version.ref = "springBoot" }
+spring-boot-starter-oauth2-client = { module = "org.springframework.boot:spring-boot-starter-oauth2-client", version.ref = "springBoot" }
+spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "springBoot" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
+spring-session-core = { module = "org.springframework.session:spring-session-core", version.ref = "springBoot" }
+spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }
+spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "springBoot" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
+
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "jetBrainsKotlin" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "jetBrainsKotlin" }
+
+springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springDocOpenApi" }
+
+streamex = { module = "one.util:streamex", version.ref = "streamex" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikariCp" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetBrainsAnnotations" }
+
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+h2 = { module = "com.h2database:h2", version.ref = "h2Database" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+
+querydsl-core = { module = "com.querydsl:querydsl-core", version.ref = "queryDsl" }
+querydsl-collections = { module = "com.querydsl:querydsl-collections", version.ref = "queryDsl" }
+
+jakarta-annotation-api = {module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotationApi" }
+jakarta-persistence-api = {module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakartaPersistenceApi"}
+
+spring-webflux = { module = "org.springframework:spring-webflux", version.ref = "springWebflux" }
+spring-graphql-test.module = "org.springframework.graphql:spring-graphql-test"
+spring-security-test.module = "org.springframework.security:spring-security-test"
+
+mockito = {module = "org.mockito:mockito-core", version.ref = "mockitoCore"}
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
+flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetBrainsKotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "jetBrainsKotlin" }
+kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "jetBrainsKotlin" }
+ben-manes-versions = { id = "com.github.ben-manes.versions", version.ref = "benManesVersions" }

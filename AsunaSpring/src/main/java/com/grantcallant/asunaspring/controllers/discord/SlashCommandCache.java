@@ -1,5 +1,6 @@
 package com.grantcallant.asunaspring.controllers.discord;
 
+import com.grantcallant.asunaspring.utility.configuration.Config;
 import com.grantcallant.asunaspring.utility.logging.Log;
 import discord4j.common.JacksonResources;
 import discord4j.discordjson.json.ApplicationCommandRequest;
@@ -24,12 +25,14 @@ public class SlashCommandCache
   private final ReentrantReadWriteLock lock;
   private final List<ApplicationCommandRequest> commands;
   private final DiscordBotService botService;
+  private final Config config;
 
-  public SlashCommandCache(DiscordBotService botService)
+  public SlashCommandCache(DiscordBotService botService, final Config config)
   {
+    this.botService = botService;
+    this.config = config;
     commands = new ArrayList<>();
     this.lock = new ReentrantReadWriteLock();
-    this.botService = botService;
   }
 
   public String init() throws IOException
@@ -50,11 +53,22 @@ public class SlashCommandCache
       });
 
       int size = commands.size();
-      botService.applicationService().bulkOverwriteGuildApplicationCommand(botService.applicationId(), 373782910010130442L, commands)
-                .doOnNext(ignore -> commands.forEach(
-                    command -> Log.debug(String.format("Registered command %s, 1/%d", command.name(), size))))
-                .doOnError(e -> Log.error("Failed to register commands", e))
-                .subscribe();
+      if(config.getApplicationEnvironment().equalsIgnoreCase("local"))
+      {
+        botService.applicationService().bulkOverwriteGuildApplicationCommand(botService.applicationId(), Long.parseLong(config.getTestGuildId()), commands)
+                  .doOnNext(ignore -> commands.forEach(
+                      command -> Log.debug(String.format("Registered command %s, 1/%d", command.name(), size))))
+                  .doOnError(e -> Log.error("Failed to register commands", e))
+                  .subscribe();
+      }
+      else if (config.getApplicationEnvironment().equalsIgnoreCase("production"))
+      {
+        botService.applicationService().bulkOverwriteGlobalApplicationCommand(botService.applicationId(), commands)
+                  .doOnNext(ignore -> commands.forEach(
+                      command -> Log.debug(String.format("Registered command %s, 1/%d", command.name(), size))))
+                  .doOnError(e -> Log.error("Failed to register commands", e))
+                  .subscribe();
+      }
 
       return String.format("Added %d unique slash commands", commands.size());
     }

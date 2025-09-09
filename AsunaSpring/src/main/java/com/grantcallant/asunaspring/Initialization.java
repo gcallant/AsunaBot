@@ -2,7 +2,7 @@ package com.grantcallant.asunaspring;
 
 import com.grantcallant.asunaspring.controllers.discord.SlashCommandCache;
 import com.grantcallant.asunaspring.controllers.discord.legacy.LegacyCommandCache;
-import com.grantcallant.asunaspring.utility.configuration.Configuration;
+import com.grantcallant.asunaspring.utility.configuration.Config;
 import com.grantcallant.asunaspring.utility.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -25,14 +25,14 @@ public class Initialization implements ApplicationRunner
   private static final String LEFT_FRAME = "✩░▒▓▆▅▃▂▁";
   private static final String RIGHT_FRAME = "▁▂▃▅▆▓▒░✩";
   private static final int FRAME_LENGTH = LEFT_FRAME.length() + RIGHT_FRAME.length();
-  private final Configuration configuration;
+  private final Config config;
   private final SlashCommandCache slashCommandCache;
   private final LegacyCommandCache legacyCommandCache;
 
   @Autowired
-  public Initialization(Configuration configuration, SlashCommandCache slashCommandCache, LegacyCommandCache legacyCommandCache)
+  public Initialization(Config config, SlashCommandCache slashCommandCache, LegacyCommandCache legacyCommandCache)
   {
-    this.configuration = configuration;
+    this.config = config;
     this.slashCommandCache = slashCommandCache;
     this.legacyCommandCache = legacyCommandCache;
   }
@@ -70,19 +70,23 @@ public class Initialization implements ApplicationRunner
     Log.info(BAR);
     Log.info(LEFT_FRAME + centerOutput("STARTING") + RIGHT_FRAME);
     Log.info(BAR);
-    Log.info(LEFT_FRAME + centerOutput(configuration.getApplicationName()) + RIGHT_FRAME);
-    Log.info(LEFT_FRAME + centerOutput(configuration.getApplicationVersion()) + RIGHT_FRAME);
-    Log.info(LEFT_FRAME + centerOutput(configuration.getApplicationEnvironment()) + RIGHT_FRAME);
-    Log.info(LEFT_FRAME + centerOutput(configuration.getApplicationProfile()) + RIGHT_FRAME);
-    Log.info(LEFT_FRAME + centerOutput(configuration.getFormattedStartTime()) + RIGHT_FRAME);
+    Log.info(LEFT_FRAME + centerOutput(config.getApplicationName()) + RIGHT_FRAME);
+    Log.info(LEFT_FRAME + centerOutput(config.getApplicationVersion()) + RIGHT_FRAME);
+    Log.info(LEFT_FRAME + centerOutput(config.getApplicationEnvironment()) + RIGHT_FRAME);
+    Log.info(LEFT_FRAME + centerOutput(config.getApplicationProfile()) + RIGHT_FRAME);
+    Log.info(LEFT_FRAME + centerOutput(config.getFormattedStartTime()) + RIGHT_FRAME);
     Log.info(BAR);
 
     Log.info(LEFT_FRAME + centerOutput("Setting correct UTC timezone") + RIGHT_FRAME);
     TimeZone.setDefault(TimeZone.getTimeZone("Etc/UTC"));
     Log.info(BAR);
 
-    Log.info(LEFT_FRAME + centerOutput(slashCommandCache.init()) + RIGHT_FRAME);
-    Log.info(LEFT_FRAME + centerOutput(legacyCommandCache.init()) + RIGHT_FRAME);
+    //TODO: Figure out how to unbind Discord service from bean at startup- doesn't need to run in testing!
+    if(config.getApplicationEnvironment().equalsIgnoreCase("production"))
+    {
+      Log.info(LEFT_FRAME + centerOutput(slashCommandCache.init()) + RIGHT_FRAME);
+//    Log.info(LEFT_FRAME + centerOutput(legacyCommandCache.init()) + RIGHT_FRAME);
+    }
 
     Log.info(BAR);
     Log.info(LEFT_FRAME + centerOutput("STARTUP COMPLETE") + RIGHT_FRAME);

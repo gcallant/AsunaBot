@@ -15,33 +15,33 @@ import javax.sql.DataSource;
 @Component
 public class HikariPool
 {
-  private final Configuration configuration;
+  private final Config config;
 
   @Autowired
-  public HikariPool(Configuration configuration)
+  public HikariPool(Config config)
   {
-    this.configuration = configuration;
+    this.config = config;
   }
 
   @Bean
   @Primary
   public DataSource dataSource() {
     HikariConfig hikariConfig = new HikariConfig();
-    hikariConfig.setDriverClassName(configuration.getDriverClassName());
-    hikariConfig.setJdbcUrl(configuration.getDataSourceUrl());
-    hikariConfig.setUsername(configuration.getDataSourceUsername());
-    hikariConfig.setPassword(configuration.getDataSourcePassword());
-    hikariConfig.setMaximumPoolSize(configuration.getMaxPoolSize());
+    hikariConfig.setDriverClassName(config.getDriverClassName());
+    hikariConfig.setJdbcUrl(config.getDataSourceUrl());
+    hikariConfig.setUsername(config.getDataSourceUsername());
+    hikariConfig.setPassword(config.getDataSourcePassword());
+    hikariConfig.setMaximumPoolSize(config.getMaxPoolSize());
     hikariConfig.setAllowPoolSuspension(true);
-    hikariConfig.setValidationTimeout(configuration.getValidationTimeout());
-    hikariConfig.setAutoCommit(configuration.isAutoCommit());
-    hikariConfig.setConnectionInitSql(configuration.getInitSql());
-    hikariConfig.setConnectionTestQuery(configuration.getConnTestQuery());
-    hikariConfig.setIdleTimeout(configuration.getIdleTimeout());
-    hikariConfig.setMaxLifetime(configuration.getMaxLifeTime());
-    hikariConfig.setPoolName(configuration.getPoolName());
-    hikariConfig.setMinimumIdle(configuration.getMinIdle());
-    hikariConfig.setConnectionTimeout(configuration.getConnTimeout());
+    hikariConfig.setValidationTimeout(config.getValidationTimeout());
+    hikariConfig.setAutoCommit(config.isAutoCommit());
+    hikariConfig.setConnectionInitSql(config.getInitSql());
+    hikariConfig.setConnectionTestQuery(config.getConnTestQuery());
+    hikariConfig.setIdleTimeout(config.getIdleTimeout());
+    hikariConfig.setMaxLifetime(config.getMaxLifeTime());
+    hikariConfig.setPoolName(config.getPoolName());
+    hikariConfig.setMinimumIdle(config.getMinIdle());
+    hikariConfig.setConnectionTimeout(config.getConnTimeout());
 
     return new HikariDataSource(hikariConfig);
   }

@@ -1,9 +1,11 @@
 package com.grantcallant.asunaspring.utility.configuration;
 
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -16,10 +18,14 @@ import java.time.format.DateTimeFormatter;
 @Order(1)
 @Primary
 @Getter
-public class Configuration
+public class Config
 {
   private final LocalDateTime rawStartTime;
   private final String formattedStartTime;
+
+  @Value("${discord.test-guild-id}")
+  private String testGuildId;
+
   @Value("${application.name}")
   private String applicationName;
 
@@ -92,13 +98,17 @@ public class Configuration
   @Value("${discord.token}")
   private String discordToken;
 
+  private final Environment environment;
+
   private final String applicationEnvironment;
 
-  public Configuration()
+  @Autowired
+  public Config(final Environment environment)
   {
     this.rawStartTime = LocalDateTime.now();
     this.formattedStartTime = rawStartTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-    applicationEnvironment = System.getenv("OS") != null ? System.getenv("OS") : "unknown";
+    this.environment = environment;
+    applicationEnvironment = environment.getActiveProfiles()[0];
   }
 }
 

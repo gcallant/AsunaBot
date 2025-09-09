@@ -1,10 +1,10 @@
 package com.grantcallant.asunaspring.repository.event.model;
 
 import com.grantcallant.asunaspring.repository.eso.model.EsoCharacter;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;

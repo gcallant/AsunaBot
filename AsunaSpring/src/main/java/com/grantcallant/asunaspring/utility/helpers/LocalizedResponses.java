@@ -5,7 +5,8 @@ package com.grantcallant.asunaspring.utility.helpers;
  */
 public enum LocalizedResponses
 {
-  NO_EVENT("noEvent", "No event found");
+  NO_EVENT("noEvent", "No event found"),
+  BAD_PARAMS("eventNotCreated", "There was an error processing your params and the event was not created.");
 
   private final String key;
   private final String localizedDescription;

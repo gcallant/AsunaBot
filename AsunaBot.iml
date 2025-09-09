@@ -23,6 +23,9 @@
     <LOAD_PATH number="0" />
     <I18N_FOLDERS number="1" string0="$MODULE_DIR$/locales" />
   </component>
+  <component name="SonarLintModuleSettings">
+    <option name="uniqueId" value="b4548fa1-bfdc-4662-b455-e76528254d78" />
+  </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="pytest" />
   </component>

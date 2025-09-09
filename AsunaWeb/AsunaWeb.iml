@@ -114,4 +114,7 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="SonarLintModuleSettings">
+    <option name="uniqueId" value="85ce49ee-9244-46e4-ab15-613c93b0b733" />
+  </component>
 </module>

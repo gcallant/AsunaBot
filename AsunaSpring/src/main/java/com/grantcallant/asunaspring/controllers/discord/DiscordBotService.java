@@ -1,7 +1,7 @@
 package com.grantcallant.asunaspring.controllers.discord;
 
 import com.grantcallant.asunaspring.controllers.discord.legacy.EventListener;
-import com.grantcallant.asunaspring.utility.configuration.Configuration;
+import com.grantcallant.asunaspring.utility.configuration.Config;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.Event;
@@ -15,6 +15,7 @@ import discord4j.rest.RestClient;
 import discord4j.rest.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -23,15 +24,15 @@ import java.util.List;
  *
  * @author Grant Callant
  */
-@org.springframework.context.annotation.Configuration
+@Service
 public class DiscordBotService
 {
   private final GatewayDiscordClient client;
 
   @Autowired
-  public DiscordBotService(Configuration configuration)
+  public DiscordBotService(Config config)
   {
-    client = DiscordClientBuilder.create(configuration.getDiscordToken()).build().login().block();
+    client = DiscordClientBuilder.create(config.getDiscordToken()).build().login().block();
   }
 
   /**
@@ -73,7 +74,7 @@ public class DiscordBotService
         IntentSet.of(
             Intent.GUILDS,
             Intent.GUILD_MEMBERS,
-            Intent.GUILD_EMOJIS,
+            Intent.GUILD_EMOJIS_AND_STICKERS,
             Intent.GUILD_INTEGRATIONS,
             Intent.GUILD_MESSAGES,
             Intent.GUILD_MESSAGE_REACTIONS,
@@ -88,7 +89,6 @@ public class DiscordBotService
     return discordRestClient(client).getApplicationId().block();
   }
 
-  @Bean
   public RestClient discordRestClient(GatewayDiscordClient client)
   {
     return client.getRestClient();

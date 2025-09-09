@@ -19,12 +19,10 @@ public class ResponseHelper
     return ResponseEntity.status(HttpStatus.NO_CONTENT).contentType(MediaType.APPLICATION_JSON).body(null);
   }
 
-  @SuppressWarnings("unchecked")
   public static <D> ResponseEntity<Map<String, D>> successfulDataResponse(String message, D data)
   {
     HashMap<String, D> response = new HashMap<>();
-    response.put("message", (D) message);
-    response.put("data", data);
+    response.put(message, data);
     return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
   }
 
@@ -32,8 +30,7 @@ public class ResponseHelper
   public static <D> ResponseEntity<Map<String, D>> failedResponse(String message, D data)
   {
     HashMap<String, D> response = new HashMap<>();
-    response.put("message", (D) message);
-    response.put("data", data);
+    response.put(message, data);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(response);
   }
 }

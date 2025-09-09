@@ -2,10 +2,10 @@ package com.grantcallant.asunaspring.repository.user.model;
 
 import com.grantcallant.asunaspring.repository.guild.model.GuildMember;
 import com.grantcallant.asunaspring.repository.theme.model.Theme;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 import java.util.TimeZone;

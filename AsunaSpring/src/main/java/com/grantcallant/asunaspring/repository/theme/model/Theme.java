@@ -1,10 +1,10 @@
 package com.grantcallant.asunaspring.repository.theme.model;
 
 import com.grantcallant.asunaspring.repository.user.model.User;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
